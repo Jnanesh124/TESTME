@@ -28,6 +28,8 @@ AUTH_USERS = (auth_users + ADMINS) if auth_users else []
 # This Channel Is For When User Start Your Bot Then Bot Send That User Name And Id In This Log Channel, Same For Group Also.
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', ''))
 
+SUPPORT_CHAT_ID = int(environ.get('SUPPORT_CHAT_ID', '-1002145653614'))
+
 # This Is File Channel Where You Upload Your File Then Bot Automatically Save It In Database 
 CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '').split()]  # For Multiple Id Use One Space Between Each.
 
@@ -86,7 +88,7 @@ PUBLIC_FILE_CHANNEL = environ.get('PUBLIC_FILE_CHANNEL', 'JN2FLIX_KANNADA') # Pu
 # Links
 GRP_LNK = environ.get('GRP_LNK', 'https://t.me/vj_bot_disscussion')
 CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/ROCKERSBACKUP')
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'vj_bot_disscussion') # Support Chat Link Without https:// or @
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support Chat Link Without https:// or @
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JN2FLIX')
 
 # True Or False
