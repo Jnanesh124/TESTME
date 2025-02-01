@@ -217,7 +217,7 @@ async def start(client, message):
 
                 if STREAM_MODE == True:
                     [[
-                    InlineKeyboardButton('👀 SEND FILE HERE TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")
+                    InlineKeyboardButton('👀 SEND TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")
                     ]]
                     reply_markup = InlineKeyboardMarkup(button)
                 else:
@@ -286,7 +286,7 @@ async def start(client, message):
  
                 if STREAM_MODE == True:
                     [[
-                    InlineKeyboardButton('👀 SEND FILE HERE TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")
+                    InlineKeyboardButton('👀 SEND TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")
                     ]]
                     reply_markup = InlineKeyboardMarkup(button)
                 else:
@@ -407,7 +407,7 @@ async def start(client, message):
                     )
                     return
             if STREAM_MODE == True:
-                button = [[InlineKeyboardButton('sᴛʀᴇᴀᴍ ᴀɴᴅ ᴅᴏᴡɴʟᴏᴀᴅ', callback_data=f'generate_stream_link:{file_id}')]]
+                button = [[InlineKeyboardButton('👀 SEND TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")]]
                 reply_markup=InlineKeyboardMarkup(button)
             else:
                 reply_markup = None
@@ -470,7 +470,7 @@ async def start(client, message):
                     )
                     return
             if STREAM_MODE == True:
-                button = [[InlineKeyboardButton('sᴛʀᴇᴀᴍ ᴀɴᴅ ᴅᴏᴡɴʟᴏᴀᴅ', callback_data=f'generate_stream_link:{file_id}')]]
+                button = [[InlineKeyboardButton('👀 SEND TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")]]
                 reply_markup=InlineKeyboardMarkup(button)
             else:
                 reply_markup = None
@@ -528,7 +528,7 @@ async def start(client, message):
             )
             return
     if STREAM_MODE == True:
-        button = [[InlineKeyboardButton('sᴛʀᴇᴀᴍ ᴀɴᴅ ᴅᴏᴡɴʟᴏᴀᴅ', callback_data=f'generate_stream_link:{file_id}')]]
+        button = [[InlineKeyboardButton('👀 SEND TO WATCH ONLINE 👀', url=f"https://t.me/Rockers_File_To_Stream_Bot")]]
         reply_markup=InlineKeyboardMarkup(button)
     else:
         reply_markup = None
