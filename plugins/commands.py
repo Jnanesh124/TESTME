@@ -76,7 +76,7 @@ async def start(client, message):
             return
         try:
             btn = [[InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+LboF2BceyP5hMDVl"),
-                    InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+-uJZnBO06H8xZTY1")
+                    InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+Hjf8KEgMRmMzYzFl")
                  ],[
                    InlineKeyboardButton("ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=invite_link.invite_link),
                     InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+ejlq93G-0MFlN2E1")
