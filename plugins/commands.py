@@ -580,7 +580,10 @@ async def delete(bot, message):
         await msg.edit('This is not supported file format')
         return
     
-    file_id, file_ref = unpack_new_file_id(media.file_id)
+    # Updated unpacking to handle all returned values
+    unpacked = unpack_new_file_id(media.file_id)
+    file_id = unpacked[0]  # First value is file_id
+    file_ref = unpacked[1]  # Second value is file_ref
 
     result = col.delete_one({
         'file_id': file_id,
@@ -610,8 +613,6 @@ async def delete(bot, message):
         if result.deleted_count:
             await msg.edit('File is successfully deleted from database')
         else:
-            # files indexed before https://github.com/EvamariaTG/EvaMaria/commit/f3d2a1bcb155faf44178e5d7a685a1b533e714bf#diff-86b613edf1748372103e94cacff3b578b36b698ef9c16817bb98fe9ef22fb669R39 
-            # have original file name.
             result = col.delete_many({
                 'file_name': media.file_name,
                 'file_size': media.file_size
@@ -1335,5 +1336,6 @@ async def purge_requests(client, message):
             parse_mode=enums.ParseMode.MARKDOWN,
             disable_web_page_preview=True
         )
+
 
 
