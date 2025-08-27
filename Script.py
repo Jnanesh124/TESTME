@@ -247,8 +247,13 @@ Nᴀᴍᴇ - {}"""
 
     CAPTION = """<b>📂 ғɪʟᴇɴᴀᴍᴇ : {file_name}
 
-<b>⚙️ sɪᴢᴇ : {file_size}
-@JNK_BACKUP</b>""" 
+⚙️ sɪᴢᴇ : {file_size}
+
+◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+🔞 Adult t.me/+hLQh-FvQcL0xNWZl
+👀 Main channel @JNK_BACKUP
+🛒 Loots channel @JNKFREELOOTS 
+◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️</b>""" 
 
     IMDB_TEMPLATE_TXT = """
 <b>Query: {qurey}
@@ -754,4 +759,5 @@ Example:- /set_caption 📕 File Name: {filename}
 
 
     
+
 
