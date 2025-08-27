@@ -10,6 +10,7 @@ from pyrogram.types import *
 from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file_id, get_bad_files
 from database.users_chats_db import db, delete_all_referal_users, get_referal_users_count, get_referal_all_users, referal_add_user
 from database.join_reqs import JoinReqs
+from database.ignored_words_mdb import add_ignored_word, remove_ignored_word, get_ignored_words
 from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL
 from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds
 from database.connections_mdb import active_connection
@@ -316,7 +317,7 @@ async def start(client, message):
             return await message.reply_text(text="<b>ɪɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ ᴇxᴘɪʀᴇᴅ ʟɪɴᴋ</b>", protect_content=True)
         is_valid = await check_token(client, userid, token)
         if is_valid == True:
-            text = "<b>ʜᴇʏ {} 👋,\n\nʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ...\n\nɴᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ᴛɪʟʟ ᴛᴏᴅᴀʏ ɴᴏᴡ ᴇɴᴊᴏʏ\n\n</b>"
+            text = "<b>ʜᴇʏ {} 👋,\n\nʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ...\n\nɴᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇꜱꜱ ᴛɪʟʟ ᴛᴏᴅᴀʏ ɴᴏᴡ ᴇɴᴊᴏʏ\n\n</b>"
             if PREMIUM_AND_REFERAL_MODE == True:
                 text += "<b>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴅɪʀᴇᴄᴛ ғɪʟᴇꜱ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴꜱ ᴛʜᴇɴ ʙᴜʏ ʙᴏᴛ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ☺️\n\n💶 ꜱᴇɴᴅ /plan ᴛᴏ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ</b>"           
             await message.reply_text(text=text.format(message.from_user.mention), protect_content=True)
@@ -1340,7 +1341,54 @@ async def purge_requests(client, message):
             disable_web_page_preview=True
         )
 
+@Client.on_message(filters.command("rword") & filters.user(ADMINS))
+async def remove_word_handler(client, message):
+    """Remove ignored word command"""
+    if len(message.command) < 2:
+        return await message.reply_text(
+            "<b>Usage: /rword word_to_remove\n\nExample: /rword @username</b>"
+        )
 
+    word = message.command[1]
+    success = await remove_ignored_word(word)
 
+    if success:
+        await message.reply_text(f"<b>Successfully removed '{word}' from ignored words list.</b>")
+    else:
+        await message.reply_text(f"<b>'{word}' was not found in ignored words list.</b>")
 
+@Client.on_message(filters.command("addword") & filters.user(ADMINS))
+async def add_word_handler(client, message):
+    """Add ignored word command"""
+    if len(message.command) < 2:
+        return await message.reply_text(
+            "<b>Usage: /addword word_to_add\n\nExample: /addword @username</b>"
+        )
 
+    word = message.command[1]
+    success = await add_ignored_word(word)
+
+    if success:
+        await message.reply_text(f"<b>Successfully added '{word}' to ignored words list.</b>")
+    else:
+        await message.reply_text(f"<b>'{word}' is already in ignored words list.</b>")
+
+@Client.on_message(filters.command("listr") & filters.user(ADMINS))
+async def list_ignored_words_handler(client, message):
+    """List all ignored words command"""
+    words = await get_ignored_words()
+
+    if not words:
+        return await message.reply_text("<b>No ignored words found.</b>")
+
+    word_list = "\n".join([f"• {word}" for word in words])
+    text = f"<b>Ignored Words List ({len(words)} words):</b>\n\n{word_list}"
+
+    if len(text) > 4096:
+        # If message is too long, send as file
+        with open('ignored_words.txt', 'w+') as f:
+            f.write('\n'.join(words))
+        await message.reply_document('ignored_words.txt', caption=f"<b>Ignored Words List ({len(words)} words)</b>")
+        os.remove('ignored_words.txt')
+    else:
+        await message.reply_text(text)
