@@ -51,7 +51,7 @@ async def get_ignored_words():
     try:
         words = []
         cursor = mycol.find({})
-        async for doc in cursor:
+        for doc in cursor:
             words.append(doc['word'])
         return words
     except Exception as e:
