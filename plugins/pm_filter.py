@@ -34,7 +34,7 @@ SPELL_CHECK = {}
 @Client.on_message(filters.group & filters.text & filters.incoming)
 async def give_filter(client, message):
     # Skip search if the message contains /, @, #, www., or https
-    if any(char in message.text for char in ['/', '@', '#', 'www.', 'https']):
+    if any(char in message.text for char in ['/', '@', '#', 'www.', 'https', '.', 'https']):
         return
 
     if message.chat.id != SUPPORT_CHAT_ID:
@@ -3146,5 +3146,6 @@ async def global_filters(client, message, text=False):
                 break
     else:
         return False
+
 
 
