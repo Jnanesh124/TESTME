@@ -1,0 +1,64 @@
+Instance created. Preparing to start...
+Instance is starting... Waiting for health checks to pass.
+/VJ-FILTER-BOT/bot.py:34: DeprecationWarning: There is no current event loop
+  loop = asyncio.get_event_loop()
+
+
+Initalizing Your Bot
+No additional clients found, using default client
+Tech VJ Imported => connection
+Tech VJ Imported => route
+Tech VJ Imported => __init__
+Tech VJ Imported => gfilters
+Tech VJ Imported => clone
+Tech VJ Imported => misc
+Tech VJ Imported => p_ttishow
+Tech VJ Imported => channel
+Tech VJ Imported => genlink
+Tech VJ Imported => banned
+Tech VJ Imported => filters
+Tech VJ Imported => pm_filter
+Tech VJ Imported => index
+Tech VJ Imported => commands
+Tech VJ Imported => broadcast
+Tech VJ Imported => inline
+Tech VJ Imported => files_delete
+03:26:59 PM - 63 - root - bot - INFO - 
+████████╗███████╗███████╗██╗  ██╗    ╔██        ██╗       ██╗
+╚═ ██╔══╝██╔════╝██╔════╝██║  ██║     ║██      ██║        ██║
+   ██║    █████╗  ██║      ███████║      ║██    ██║         ██║
+   ██║    ██╔══╝  ██║      ██╔══██║       ║██  ██║  ╔██     ██║
+   ██║    ███████╗███████╗██║  ██║        ║████║   ║████████║
+   ╚═╝    ╚══════╝╚══════╝╚═╝  ╚═╝        ╚════╝   ╚════════╝
+Instance is healthy. All health checks are passing.
+Make Your Bot Admin In Force Subscribe Channel With Full Rights
+BACKUP Maaman 2025 Kannada HD 480P 500MB ESub mkv is already saved.
+BACKUP Maaman 2025 Kannada HD 720P 700MB ESub mkv is already saved.
+BACKUP Maaman 2025 Kannada HD 1080P 1 1GB ESub mkv is already saved.
+03:27:55 PM - 376 - pyrogram.dispatcher - dispatcher - ERROR - Telegram says: [403 CHAT_WRITE_FORBIDDEN] (caused by "messages.SendMessage") Pyrogram 2.3.45 thinks: You can't write in this chat
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/VJ-FILTER-BOT/plugins/p_ttishow.py", line 69, in save_group
+    temp.MELCOW['welcome'] = await message.reply_text(
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/types/messages_and_media/message.py", line 1482, in reply_text
+    return await self._client.send_message(
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/methods/messages/send_message.py", line 200, in send_message
+    r = await self.invoke(rpc)
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/methods/advanced/invoke.py", line 80, in invoke
+    r = await self.session.invoke(
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/session/session.py", line 420, in invoke
+    return await self.send(query, timeout=timeout)
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/session/session.py", line 377, in send
+    RPCError.raise_it(result, type(data))
+  File "/usr/local/lib/python3.10/site-packages/pyrogram/errors/rpc_error.py", line 93, in raise_it
+    raise getattr(
+pyrogram.errors.exceptions.forbidden_403.ChatWriteForbidden: Telegram says: [403 CHAT_WRITE_FORBIDDEN] (caused by "messages.SendMessage") Pyrogram 2.3.45 thinks: You can't write in this chat
+03:29:34 PM - 214 - aiohttp.access - web_log - INFO - 10.250.0.21 [27/Aug/2025:15:29:34 +0000] "HEAD / HTTP/1.1" 200 160 "https://resident-kathi-projnanesh-b324562e.koyeb.app/" "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)"
+BACKUP The Terminal List S01E03 Kannada 350MB mkv is successfully saved.
+BACKUP The Terminal List S01E02 Kannada 350MB mkv is successfully saved.
+BACKUP The Terminal List S01E01 Kannada 350MB mkv is successfully saved.
+03:34:37 PM - 214 - aiohttp.access - web_log - INFO - 10.250.0.21 [27/Aug/2025:15:34:37 +0000] "HEAD / HTTP/1.1" 200 160 "https://resident-kathi-projnanesh-b324562e.koyeb.app/" "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)"
+03:39:41 PM - 214 - aiohttp.access - web_log - INFO - 10.250.0.20 [27/Aug/2025:15:39:41 +0000] "HEAD / HTTP/1.1" 200 160 "https://resident-kathi-projnanesh-b324562e.koyeb.app/" "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)"
