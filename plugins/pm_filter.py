@@ -234,7 +234,6 @@ async def next_page(bot, query):
         except MessageNotModified:
             pass
     else:
-d
         try:
             await query.edit_message_reply_markup(
                 reply_markup=InlineKeyboardMarkup(btn)
