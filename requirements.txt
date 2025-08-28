@@ -42,3 +42,4 @@ git+https://github.com/Joelkb/cinemagoer
 beautifulsoup4
 cinemagoer
 pyrogram
+pytz
