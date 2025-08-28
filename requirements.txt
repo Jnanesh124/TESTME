@@ -43,3 +43,5 @@ beautifulsoup4
 cinemagoer
 pyrogram
 pytz
+pyrofork
+pyrogram
