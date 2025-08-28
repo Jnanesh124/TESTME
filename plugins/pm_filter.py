@@ -1085,10 +1085,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
         files_ = await get_file_details(file_id)
         if not files_:
             return await query.answer('No such file exist.')
-        files = files_[0]
-        title = files.file_name
-        size = get_size(files.file_size)
-        f_caption = files.caption
+        files = files_  # files_ is already a single document, not a list
+        title = files['file_name']  # Use dictionary access instead of attribute access
+        size = get_size(files['file_size'])
+        f_caption = files.get('caption')  # Use .get() to handle None values
         settings = await get_settings(query.message.chat.id)
         try:
             if AUTH_CHANNEL and not await is_subscribed(client, query):
@@ -1101,7 +1101,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 await client.send_cached_media(
                     chat_id=query.from_user.id,
                     file_id=file_id,
-                    caption=f_caption or ("<code>{title}</code>\n\n<b>Size:</b> <code>{size}</code>\n<b>Join:</b> @{temp.U_NAME}"),
+                    caption=f_caption or f"<code>{title}</code>\n\n<b>Size:</b> <code>{size}</code>\n<b>Join:</b> @{temp.U_NAME}",
                     protect_content=settings['file_secure'],
                     reply_markup=InlineKeyboardMarkup(
                         [
