@@ -9,6 +9,8 @@ from info import *
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ChatPermissions, WebAppInfo
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
+from utils import get_size, is_subscribed, get_poster
+from database.ia_filterdb import get_file_details
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from utils import get_size, is_subscribed, pub_is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink, get_tutorial, send_all, get_cap, get_token
 from database.users_chats_db import db
@@ -19,7 +21,7 @@ from database.gfilters_mdb import find_gfilter, get_gfilters, del_allg
 from database.ignored_words_mdb import get_ignored_words
 from urllib.parse import quote_plus
 from TechVJ.util.file_properties import get_name, get_hash
-from bot.verification import check_verification
+# from bot.verification import check_verification  # Module not found - commented out
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -1078,7 +1080,46 @@ async def delete_file(client: Client, query: CallbackQuery):
 
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
-    if query.data.startswith("setgs"):
+    if query.data.startswith("file"):
+        ident, file_id = query.data.split("#")
+        files_ = await get_file_details(file_id)
+        if not files_:
+            return await query.answer('No such file exist.')
+        files = files_[0]
+        title = files.file_name
+        size = get_size(files.file_size)
+        f_caption = files.caption
+        settings = await get_settings(query.message.chat.id)
+        try:
+            if AUTH_CHANNEL and not await is_subscribed(client, query):
+                await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+                return
+            elif settings['is_shortlink']:
+                await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+                return
+            else:
+                await client.send_cached_media(
+                    chat_id=query.from_user.id,
+                    file_id=file_id,
+                    caption=f_caption or ("<code>{title}</code>\n\n<b>Size:</b> <code>{size}</code>\n<b>Join:</b> @{temp.U_NAME}"),
+                    protect_content=settings['file_secure'],
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                         [
+                          InlineKeyboardButton('Support Group', url=GRP_LNK),
+                          InlineKeyboardButton('Updates Channel', url=CHNL_LNK)
+                         ]
+                        ]
+                    )
+                )
+                await query.answer('Check PM, file sent.', show_alert=True)
+        except UserIsBlocked:
+            await query.answer('Unblock the bot mahn !', show_alert=True)
+        except PeerIdInvalid:
+            await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+        except Exception as e:
+            await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+    elif query.data.startswith("setgs"):
         ident, set_type, status, grp_id = query.data.split("#")
         grpid = await active_connection(str(query.from_user.id))
 
