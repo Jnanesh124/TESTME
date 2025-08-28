@@ -1012,7 +1012,7 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
             pass
     await query.answer()
 
-    elif query.data.startswith("setgs"):
+    if query.data.startswith("setgs"):
         ident, set_type, status, grp_id = query.data.split("#")
         grpid = await active_connection(str(query.from_user.id))
 
