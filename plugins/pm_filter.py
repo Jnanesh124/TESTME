@@ -21,7 +21,7 @@ from database.gfilters_mdb import find_gfilter, get_gfilters, del_allg
 from database.ignored_words_mdb import get_ignored_words
 from urllib.parse import quote_plus
 from TechVJ.util.file_properties import get_name, get_hash
-from bot.verification import check_verification  # Module not found - commented out
+# from bot.verification import check_verification  # Module not found - commented out
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
