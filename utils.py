@@ -777,3 +777,9 @@ async def get_seconds(time_string):
         return value * 86400 * 365
     else:
         return 0
+
+def start_scheduler():
+    """Initialize any scheduled tasks or background processes"""
+    # Placeholder function for scheduler initialization
+    # Add any scheduled task setup here if needed
+    pass
