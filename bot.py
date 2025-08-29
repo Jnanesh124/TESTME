@@ -18,11 +18,10 @@ from database.users_chats_db import db
 from info import *
 from utils import temp
 from typing import Union, Optional, AsyncGenerator
-from Script import script 
-from datetime import date, datetime 
+from Script import script
+from datetime import date, datetime
 from aiohttp import web
 from plugins import web_server
-from plugins.clone import restart_bots
 
 from TechVJ.bot import TechVJBot
 from TechVJ.util.keepalive import ping_server
@@ -91,9 +90,7 @@ async def start():
     await idle()
 
 
-if __name__ == '__main__':
-    try:
-        loop.run_until_complete(start())
-    except KeyboardInterrupt:
-        logging.info('Service Stopped Bye 👋')
-
+if __name__ == "__main__":
+    from utils import start_scheduler
+    start_scheduler()
+    loop.run_until_complete(start())

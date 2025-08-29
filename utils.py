@@ -540,63 +540,104 @@ async def get_verify_shorted_link(link, url, api):
         return link
         
 async def check_token(bot, userid, token):
-    user = await bot.get_users(userid)
-    if not await db.is_user_exist(user.id):
-        await db.add_user(user.id, user.first_name)
-        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
-    if user.id in TOKENS.keys():
-        TKN = TOKENS[user.id]
-        if token in TKN.keys():
-            is_used = TKN[token]
-            if is_used == True:
-                return False
-            else:
-                return True
-    else:
+    try:
+        user = await bot.get_users(userid)
+        if not await db.is_user_exist(user.id):
+            await db.add_user(user.id, user.first_name)
+            try:
+                await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+            except Exception as e:
+                logger.error(f"Failed to send log message: {e}")
+
+        if user.id in TOKENS.keys():
+            TKN = TOKENS[user.id]
+            if token in TKN.keys():
+                is_used = TKN[token]
+                if is_used == True:
+                    return False
+                else:
+                    return True
+        else:
+            return False
+    except Exception as e:
+        logger.error(f"Error in check_token: {e}")
         return False
 
 async def get_token(bot, userid, link):
-    user = await bot.get_users(userid)
-    if not await db.is_user_exist(user.id):
-        await db.add_user(user.id, user.first_name)
-        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
-    token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
-    TOKENS[user.id] = {token: False}
-    link = f"{link}verify-{user.id}-{token}"
-    shortened_verify_url = await get_verify_shorted_link(link, VERIFY_SHORTLINK_URL, VERIFY_SHORTLINK_API)
-    if VERIFY_SECOND_SHORTNER == True:
-        snd_link = await get_verify_shorted_link(shortened_verify_url, VERIFY_SND_SHORTLINK_URL, VERIFY_SND_SHORTLINK_API)
-        return str(snd_link)
-    else:
-        return str(shortened_verify_url)
+    try:
+        user = await bot.get_users(userid)
+        if not await db.is_user_exist(user.id):
+            await db.add_user(user.id, user.first_name)
+            try:
+                await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+            except Exception as e:
+                logger.error(f"Failed to send log message: {e}")
+
+        token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        TOKENS[user.id] = {token: False}
+        link = f"{link}verify-{user.id}-{token}"
+
+        try:
+            shortened_verify_url = await get_verify_shorted_link(link, VERIFY_SHORTLINK_URL, VERIFY_SHORTLINK_API)
+            if VERIFY_SECOND_SHORTNER == True:
+                snd_link = await get_verify_shorted_link(shortened_verify_url, VERIFY_SND_SHORTLINK_URL, VERIFY_SND_SHORTLINK_API)
+                return str(snd_link)
+            else:
+                return str(shortened_verify_url)
+        except Exception as e:
+            logger.error(f"Error shortening verification link: {e}")
+            return link
+    except Exception as e:
+        logger.error(f"Error in get_token: {e}")
+        return link
 
 async def verify_user(bot, userid, token):
-    user = await bot.get_users(userid)
-    if not await db.is_user_exist(user.id):
-        await db.add_user(user.id, user.first_name)
-        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
-    TOKENS[user.id] = {token: True}
-    tz = pytz.timezone('Asia/Kolkata')
-    today = date.today()
-    VERIFIED[user.id] = str(today)
+    try:
+        user = await bot.get_users(userid)
+        if not await db.is_user_exist(user.id):
+            await db.add_user(user.id, user.first_name)
+            try:
+                await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+            except Exception as e:
+                logger.error(f"Failed to send log message: {e}")
+
+        TOKENS[user.id] = {token: True}
+        tz = pytz.timezone('Asia/Kolkata')
+        today = date.today()
+        VERIFIED[user.id] = str(today)
+
+        # Clean up old tokens to prevent memory buildup
+        if len(TOKENS.get(user.id, {})) > 10:
+            old_tokens = list(TOKENS[user.id].keys())[:-5]
+            for old_token in old_tokens:
+                del TOKENS[user.id][old_token]
+
+    except Exception as e:
+        logger.error(f"Error in verify_user: {e}")
 
 async def check_verification(bot, userid):
-    user = await bot.get_users(userid)
-    if not await db.is_user_exist(user.id):
-        await db.add_user(user.id, user.first_name)
-        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
-    tz = pytz.timezone('Asia/Kolkata')
-    today = date.today()
-    if user.id in VERIFIED.keys():
-        EXP = VERIFIED[user.id]
-        years, month, day = EXP.split('-')
-        comp = date(int(years), int(month), int(day))
-        if comp<today:
-            return False
+    try:
+        user = await bot.get_users(userid)
+        if not await db.is_user_exist(user.id):
+            await db.add_user(user.id, user.first_name)
+            try:
+                await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+            except Exception as e:
+                logger.error(f"Failed to send log message: {e}")
+
+        tz = pytz.timezone('Asia/Kolkata')
+        today = date.today()
+
+        if user.id in VERIFIED.keys():
+            if str(today) == VERIFIED[user.id]:
+                return True
+            else:
+                return False
         else:
-            return True
-    else:
-        return False  
+            return False
+    except Exception as e:
+        logger.error(f"Error in check_verification: {e}")
+        return False
     
 async def send_all(bot, userid, files, ident, chat_id, user_name, query):
     settings = await get_settings(chat_id)
@@ -682,7 +723,7 @@ async def get_cap(settings, remaining_seconds, files, query, total_results, sear
                     producer=imdb["producer"],
                     composer=imdb["composer"],
                     cinematographer=imdb["cinematographer"],
-                    music_team=imdb["music_team"],
+                    music_team=imdb["music_department"],
                     distributors=imdb["distributors"],
                     release_date=imdb['release_date'],
                     year=imdb['year'],
