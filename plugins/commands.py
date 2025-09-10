@@ -81,18 +81,6 @@ async def start(client, message):
         force_sub_channels.extend(AUTH_CHANNELS)
         logger.info(f"User {message.from_user.id} checking AUTH_CHANNELS: {AUTH_CHANNELS}")
     
-    # Add hardcoded channels
-    hardcoded_channels = [
-        -1002105095279,  # JNKFREELOOTS
-        -1001866477662,  # JNK_BACKUP
-        -1002037007557,  # Private channel 1
-        -1002125648371,  # Private channel 2
-        -1002045977971,  # Private channel 3
-        -1002143940197,  # Private channel 4
-        -1002189806949   # Private channel 5
-    ]
-    
-    force_sub_channels.extend(hardcoded_channels)
     logger.info(f"Total force subscribe channels to check: {len(force_sub_channels)}")
     
     # Check all channels for subscription
@@ -117,29 +105,24 @@ async def start(client, message):
             btn = []
             logger.info(f"Creating force subscribe buttons for user {message.from_user.id}")
             
-            # Add hardcoded channel buttons
-            btn.extend([
-                [InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/JNKFREELOOTS"),
-                 InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/JNK_BACKUP")],
-                [InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+hLQh-FvQcL0xNWZl"),
-                 InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+kG8NP8YLiuk0YTE1")],
-                [InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+y9fMTjC6TLJhMTE1"),
-                 InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dd9gZo9nlg9mNjQ1")],
-                [InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dau0zdsJPhI2OWNl")]
-            ])
-            
             # Add invite links for AUTH_CHANNELS that user hasn't joined
             for channel in not_joined_channels:
                 if channel in AUTH_CHANNELS:
                     try:
+                        # Get channel info to display proper name
+                        chat_info = await client.get_chat(int(channel))
+                        channel_name = chat_info.title if chat_info.title else f"Channel {channel}"
+                        
                         if REQUEST_TO_JOIN_MODE == True:
                             invite_link = await client.create_chat_invite_link(chat_id=int(channel), creates_join_request=True)
                         else:
                             invite_link = await client.create_chat_invite_link(int(channel))
-                        btn.append([InlineKeyboardButton(f"ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ {channel}", url=invite_link.invite_link)])
-                        logger.info(f"Created invite link for channel {channel}")
+                        btn.append([InlineKeyboardButton(f"ᴊᴏɪɴ {channel_name}", url=invite_link.invite_link)])
+                        logger.info(f"Created invite link for channel {channel} ({channel_name})")
                     except Exception as e:
                         logger.error(f"Error creating invite link for channel {channel}: {e}")
+                        # Skip invalid channels instead of adding them
+                        continue
             
             # Add try again button
             if len(message.command) > 1 and message.command[1] != "subscribe":
