@@ -1,0 +1,21 @@
+10:08:01 AM - 214 - aiohttp.access - web_log - INFO - 172.31.65.226 [10/Sep/2025:10:08:01 +0000] "GET / HTTP/1.1" 200 174 "https://fd6f86ee-922c-4ed1-b81e-256d6294c5ee-00-2wql5cs4mxsx9.sisko.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1dk%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+10:08:05 AM - 82 - plugins.commands - commands - INFO - User 8077775478 checking AUTH_CHANNELS: [-1003035348951, -1003073097826]
+10:08:05 AM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 2
+10:08:05 AM - 78 - utils - utils - INFO - User 8077775478 status in channel -1003035348951: ChatMemberStatus.MEMBER
+10:08:05 AM - 87 - utils - utils - INFO - User 8077775478 is subscribed to channel -1003035348951
+10:08:05 AM - 92 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003035348951: True
+10:08:05 AM - 78 - utils - utils - INFO - User 8077775478 status in channel -1003073097826: ChatMemberStatus.MEMBER
+10:08:05 AM - 87 - utils - utils - INFO - User 8077775478 is subscribed to channel -1003073097826
+10:08:05 AM - 92 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003073097826: True
+10:08:05 AM - 100 - plugins.commands - commands - INFO - User 8077775478 not joined channels: []
+10:08:34 AM - 82 - plugins.commands - commands - INFO - User 8077775478 checking AUTH_CHANNELS: [-1003035348951, -1003073097826]
+10:08:34 AM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 2
+10:08:35 AM - 78 - utils - utils - INFO - User 8077775478 status in channel -1003035348951: ChatMemberStatus.MEMBER
+10:08:35 AM - 87 - utils - utils - INFO - User 8077775478 is subscribed to channel -1003035348951
+10:08:35 AM - 92 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003035348951: True
+10:08:35 AM - 78 - utils - utils - INFO - User 8077775478 status in channel -1003073097826: ChatMemberStatus.MEMBER
+10:08:35 AM - 87 - utils - utils - INFO - User 8077775478 is subscribed to channel -1003073097826
+10:08:35 AM - 92 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003073097826: True
+10:08:35 AM - 100 - plugins.commands - commands - INFO - User 8077775478 not joined channels: []
+10:08:35 AM - 89 - bot.verification - verification - INFO - User 8077775478 (Jn) verified successfully. Expires at 2025-09-11 10:08:35.351785
+Base64 decode error: not enough values to unpack (expected 2, got 1)
