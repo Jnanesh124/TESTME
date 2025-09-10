@@ -27,8 +27,6 @@ from TechVJ.bot import TechVJBot
 from TechVJ.util.keepalive import ping_server
 from TechVJ.bot.clients import initialize_clients
 
-logger = logging.getLogger(__name__)
-
 ppath = "plugins/*.py"
 files = glob.glob(ppath)
 TechVJBot.start()
@@ -101,6 +99,7 @@ async def start():
     from verification_storage import verification_storage
     from verification_scheduler import verification_scheduler
     
+    logger = logging.getLogger(__name__)
     logger.info(f"Loaded {verification_storage.get_verified_users_count()} verified users from storage")
     
     # Start verification scheduler
