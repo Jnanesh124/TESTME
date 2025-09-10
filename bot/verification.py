@@ -6,24 +6,34 @@ import logging
 from info import *
 from utils import temp
 from database.users_chats_db import db
+from verification_storage import verification_storage
 
 logger = logging.getLogger(__name__)
 
 class VerificationManager:
     def __init__(self):
         self.verification_collection = db.db.verification_users
+        self.json_storage = verification_storage
     
     async def check_verification(self, user_id):
         """Check if user has valid verification token"""
         if not VERIFY:
             return True
         
-        # Check database for valid verification
+        # First check JSON storage (faster and persistent across restarts)
+        if self.json_storage.is_user_verified(user_id):
+            return True
+        
+        # Fallback to database check for backward compatibility
         verification_data = await self.verification_collection.find_one({"user_id": user_id})
         
         if verification_data:
             expiry_time = verification_data.get("expiry_time")
             if isinstance(expiry_time, datetime.datetime) and datetime.datetime.now() <= expiry_time:
+                # Migrate to JSON storage
+                token = verification_data.get("token", "migrated")
+                remaining_hours = (expiry_time - datetime.datetime.now()).total_seconds() / 3600
+                self.json_storage.add_verified_user(user_id, token, max(1, int(remaining_hours)))
                 return True
             else:
                 # Remove expired verification
@@ -39,16 +49,18 @@ class VerificationManager:
         return ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     
     async def verify_user(self, user_id, token, client):
-        """Verify user with token and store in database"""
+        """Verify user with token and store in JSON and database"""
         try:
             # Token validation is already done in check_token function
             # So we can proceed with verification
             
-            # Set 24-hour expiry from now
+            # Add to JSON storage (primary storage)
+            self.json_storage.add_verified_user(user_id, token, 24)
+            
+            # Also store in database for backup
             expiry_time = datetime.datetime.now() + datetime.timedelta(hours=24)
             verification_time = datetime.datetime.now()
             
-            # Store verification in database
             verification_data = {
                 "user_id": user_id,
                 "verification_time": verification_time,
@@ -123,13 +135,19 @@ class VerificationManager:
         return verified_users
     
     async def cleanup_expired_verifications(self):
-        """Remove expired verifications from database"""
+        """Remove expired verifications from JSON storage and database"""
+        # Cleanup JSON storage
+        json_cleaned = self.json_storage.cleanup_expired_users()
+        
+        # Cleanup database
         current_time = datetime.datetime.now()
         result = await self.verification_collection.delete_many({
             "expiry_time": {"$lt": current_time}
         })
-        if result.deleted_count > 0:
-            logger.info(f"Cleaned up {result.deleted_count} expired verifications")
+        
+        total_cleaned = json_cleaned + (result.deleted_count if result else 0)
+        if total_cleaned > 0:
+            logger.info(f"Cleaned up {total_cleaned} expired verifications (JSON: {json_cleaned}, DB: {result.deleted_count if result else 0})")
 
 # Global verification manager instance
 verification_manager = VerificationManager()

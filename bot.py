@@ -95,6 +95,15 @@ async def start():
         except Exception as e:
             logging.error(f"Error in cleanup task: {e}")
 
+    # Initialize verification system
+    from verification_storage import verification_storage
+    from verification_scheduler import verification_scheduler
+    
+    logger.info(f"Loaded {verification_storage.get_verified_users_count()} verified users from storage")
+    
+    # Start verification scheduler
+    verification_scheduler.start()
+    
     # Start cleanup task
     asyncio.create_task(cleanup_expired_verifications())
     

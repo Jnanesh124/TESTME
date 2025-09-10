@@ -600,8 +600,9 @@ async def verify_user(bot, userid, token):
 
 async def check_verification(bot, userid):
     try:
-        from bot.verification import verification_manager
-        return await verification_manager.check_verification(userid)
+        from verification_storage import verification_storage
+        # Use JSON storage for faster checking
+        return verification_storage.is_user_verified(userid)
     except Exception as e:
         logger.error(f"Error in check_verification: {e}")
         return False
