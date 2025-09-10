@@ -1,0 +1,80 @@
+   ╚═╝    ╚══════╝╚══════╝╚═╝  ╚═╝        ╚════╝   ╚════════╝
+Make Your Bot Admin In Force Subscribe Channel With Full Rights
+02:48:08 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+02:48:08 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+02:48:08 PM - 103 - __main__ - bot - INFO - Loaded 1 verified users from storage
+02:48:08 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+02:48:08 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+02:48:08 PM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+02:48:08 PM - 47 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started
+02:48:08 PM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+02:48:08 PM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-10 14:48:08 UTC], next run at: 2025-09-10 14:48:08 UTC)" (scheduled at 2025-09-10 14:48:08.059400+00:00)
+02:48:08 PM - 39 - verification_scheduler - verification_scheduler - INFO - Automatic verification cleanup completed
+02:48:08 PM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-10 14:48:08 UTC], next run at: 2025-09-10 14:48:08 UTC)" executed successfully
+02:48:08 PM - 214 - aiohttp.access - web_log - INFO - 172.31.72.226 [10/Sep/2025:14:48:08 +0000] "GET / HTTP/1.1" 200 174 "https://d7e69dfc-2b03-47be-831b-90cc342170ae-00-26yzczabkuj35.sisko.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1vo%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+02:48:25 PM - 376 - pyrogram.dispatcher - dispatcher - ERROR - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/handlers/callback_query_handler.py", line 207, in resolve_future_or_callback
+    await self.original_callback(client, query, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 240, in advantage_spoll_choker
+    movie = movies[(int(movie_))]
+            ~~~~~~^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+02:49:20 PM - 376 - pyrogram.dispatcher - dispatcher - ERROR - Telegram says: [400 BUTTON_DATA_INVALID] (caused by "messages.EditMessage") Pyrogram 2.3.45 thinks: The button callback data is invalid or too large
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 58, in give_filter
+    await auto_filter(client, message.text, message, reply_msg, ai_search)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 2747, in auto_filter
+    fuk = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/types/messages_and_media/message.py", line 4218, in edit_text
+    return await self._client.edit_message_text(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/methods/messages/edit_message_text.py", line 109, in edit_message_text
+    r = await self.invoke(rpc)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/methods/advanced/invoke.py", line 80, in invoke
+    r = await self.session.invoke(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/session/session.py", line 420, in invoke
+    return await self.send(query, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/session/session.py", line 377, in send
+    RPCError.raise_it(result, type(data))
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/errors/rpc_error.py", line 93, in raise_it
+    raise getattr(
+pyrogram.errors.exceptions.bad_request_400.ButtonDataInvalid: Telegram says: [400 BUTTON_DATA_INVALID] (caused by "messages.EditMessage") Pyrogram 2.3.45 thinks: The button callback data is invalid or too large
+02:50:42 PM - 376 - pyrogram.dispatcher - dispatcher - ERROR - Telegram says: [400 BUTTON_DATA_INVALID] (caused by "messages.EditMessage") Pyrogram 2.3.45 thinks: The button callback data is invalid or too large
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 58, in give_filter
+    await auto_filter(client, message.text, message, reply_msg, ai_search)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 2747, in auto_filter
+    fuk = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/types/messages_and_media/message.py", line 4218, in edit_text
+    return await self._client.edit_message_text(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/methods/messages/edit_message_text.py", line 109, in edit_message_text
+    r = await self.invoke(rpc)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/methods/advanced/invoke.py", line 80, in invoke
+    r = await self.session.invoke(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/session/session.py", line 420, in invoke
+    return await self.send(query, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/session/session.py", line 377, in send
+    RPCError.raise_it(result, type(data))
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/errors/rpc_error.py", line 93, in raise_it
+    raise getattr(
+pyrogram.errors.exceptions.bad_request_400.ButtonDataInvalid: Telegram says: [400 BUTTON_DATA_INVALID] (caused by "messages.EditMessage") Pyrogram 2.3.45 thinks: The button callback data is invalid or too large
