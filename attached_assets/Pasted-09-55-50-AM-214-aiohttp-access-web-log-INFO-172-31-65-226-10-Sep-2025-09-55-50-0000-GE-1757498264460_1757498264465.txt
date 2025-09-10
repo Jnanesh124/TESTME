@@ -1,0 +1,51 @@
+09:55:50 AM - 214 - aiohttp.access - web_log - INFO - 172.31.65.226 [10/Sep/2025:09:55:50 +0000] "GET / HTTP/1.1" 200 174 "https://fd6f86ee-922c-4ed1-b81e-256d6294c5ee-00-2wql5cs4mxsx9.sisko.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ars1%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+09:55:57 AM - 82 - plugins.commands - commands - INFO - User 8077775478 checking AUTH_CHANNELS: [-1003035348951, -1003073097826]
+09:55:57 AM - 96 - plugins.commands - commands - INFO - Total force subscribe channels to check: 9
+09:55:57 AM - 80 - utils - utils - INFO - User 8077775478 is not a participant in channel -1003035348951
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003035348951: False
+09:55:57 AM - 80 - utils - utils - INFO - User 8077775478 is not a participant in channel -1003073097826
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003073097826: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002105095279: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002105095279: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1001866477662: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1001866477662: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002037007557: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002037007557: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002125648371: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002125648371: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002045977971: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002045977971: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002143940197: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002143940197: False
+09:55:57 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002189806949: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:55:57 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002189806949: False
+09:55:57 AM - 112 - plugins.commands - commands - INFO - User 8077775478 not joined channels: [-1003035348951, -1003073097826, -1002105095279, -1001866477662, -1002037007557, -1002125648371, -1002045977971, -1002143940197, -1002189806949]
+09:55:57 AM - 118 - plugins.commands - commands - INFO - Creating force subscribe buttons for user 8077775478
+09:55:58 AM - 140 - plugins.commands - commands - INFO - Created invite link for channel -1003035348951
+09:55:58 AM - 140 - plugins.commands - commands - INFO - Created invite link for channel -1003073097826
+09:56:06 AM - 78 - utils - utils - INFO - User 8077775478 status in channel -1003035348951: ChatMemberStatus.MEMBER
+09:56:06 AM - 87 - utils - utils - INFO - User 8077775478 is subscribed to channel -1003035348951
+09:56:07 AM - 82 - plugins.commands - commands - INFO - User 8077775478 checking AUTH_CHANNELS: [-1003035348951, -1003073097826]
+09:56:07 AM - 96 - plugins.commands - commands - INFO - Total force subscribe channels to check: 9
+09:56:07 AM - 78 - utils - utils - INFO - User 8077775478 status in channel -1003035348951: ChatMemberStatus.MEMBER
+09:56:07 AM - 87 - utils - utils - INFO - User 8077775478 is subscribed to channel -1003035348951
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003035348951: True
+09:56:07 AM - 80 - utils - utils - INFO - User 8077775478 is not a participant in channel -1003073097826
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1003073097826: False
+09:56:07 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002105095279: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002105095279: False
+09:56:07 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1001866477662: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1001866477662: False
+09:56:07 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002037007557: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002037007557: False
+09:56:07 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002125648371: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002125648371: False
+09:56:07 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002045977971: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002045977971: False
+09:56:07 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002143940197: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:07 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002143940197: False
+09:56:08 AM - 83 - utils - utils - ERROR - Error checking subscription for user 8077775478 in channel -1002189806949: Telegram says: [400 CHANNEL_INVALID] (caused by "channels.GetChannels") Pyrogram 2.3.45 thinks: The channel parameter is invalid
+09:56:08 AM - 104 - plugins.commands - commands - INFO - User 8077775478 subscription check for channel -1002189806949: False
+09:56:08 AM - 112 - plugins.commands - commands - INFO - User 8077775478 not joined channels: [-1003073097826, -1002105095279, -1001866477662, -1002037007557, -1002125648371, -1002045977971, -1002143940197, -1002189806949]
+09:56:08 AM - 118 - plugins.commands - commands - INFO - Creating force subscribe buttons for user 8077775478
+09:56:08 AM - 140 - plugins.commands - commands - INFO - Created invite link for channel -1003073097826
