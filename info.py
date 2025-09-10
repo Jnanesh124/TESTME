@@ -102,6 +102,27 @@ CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/JNK_BACKUP')
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support Chat Link Without https:// or @
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
+BAD_WORDS = {
+    "PrivateMovieZ",
+    "toonworld4all",
+    "themoviesboss",
+    "1tamilmv",
+    "tamilblasters",
+    "1tamilblasters",
+    "skymovieshd",
+    "extraflix",
+    "hdm2",
+    "moviesmod",
+    "hdhub4u",
+    "mkvcinemas",
+    "primefix",
+    "join",
+    "www",
+    "villa",
+    "tg",
+    "original"
+} # Set of bad words to filter out
+
 # True Or False
 AI_SPELL_CHECK = bool(environ.get('AI_SPELL_CHECK', True))
 PM_SEARCH = bool(environ.get('PM_SEARCH', True))
