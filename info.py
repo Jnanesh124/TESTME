@@ -39,8 +39,15 @@ REQUEST_TO_JOIN_MODE = bool(environ.get('REQUEST_TO_JOIN_MODE', False)) # Set Tr
 TRY_AGAIN_BTN = bool(environ.get('TRY_AGAIN_BTN', False)) # Set True Or False (This try again button is only for request to join fsub not for normal fsub)
 
 # This Is Force Subscribe Channel, also known as Auth Channel 
+# For multiple channels, separate with spaces: '-1003035348951 -1003073097826'
 auth_channel = environ.get('AUTH_CHANNEL', '') # give your force subscribe channel id here else leave it blank
-AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
+if auth_channel:
+    auth_channels = [int(ch) if id_pattern.search(ch) else ch for ch in auth_channel.split()]
+    AUTH_CHANNEL = auth_channels[0] if auth_channels else None
+    AUTH_CHANNELS = auth_channels  # Multiple channels support
+else:
+    AUTH_CHANNEL = None
+    AUTH_CHANNELS = []
 
 # This Channel Is For When User Request Any File Name With command or hashtag like - /request or #request
 reqst_channel = environ.get('REQST_CHANNEL', '')
@@ -198,5 +205,3 @@ else:
 # Don't Remove Credit @VJ_Botz
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
-
-

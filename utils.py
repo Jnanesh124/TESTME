@@ -70,18 +70,24 @@ async def is_subscribed(bot, query, channel_id=None):
         channel_id = AUTH_CHANNEL
 
     if not channel_id:
+        logger.info(f"No channel_id provided for user {query.from_user.id}")
         return True
 
     try:
         user = await bot.get_chat_member(channel_id, query.from_user.id)
+        logger.info(f"User {query.from_user.id} status in channel {channel_id}: {user.status}")
     except UserNotParticipant:
+        logger.info(f"User {query.from_user.id} is not a participant in channel {channel_id}")
         return False
     except Exception as e:
-        logger.exception(e)
+        logger.error(f"Error checking subscription for user {query.from_user.id} in channel {channel_id}: {e}")
         return False
     else:
         if user.status != enums.ChatMemberStatus.BANNED:
+            logger.info(f"User {query.from_user.id} is subscribed to channel {channel_id}")
             return True
+        else:
+            logger.info(f"User {query.from_user.id} is banned in channel {channel_id}")
     return False
 
 async def get_poster(query, bulk=False, id=False, file=None):

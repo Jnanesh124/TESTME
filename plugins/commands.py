@@ -11,7 +11,7 @@ from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file
 from database.users_chats_db import db, delete_all_referal_users, get_referal_users_count, get_referal_all_users, referal_add_user
 from database.join_reqs import JoinReqs
 from database.ignored_words_mdb import add_ignored_word, remove_ignored_word, get_ignored_words
-from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL
+from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, AUTH_CHANNELS, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL
 from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds
 from database.connections_mdb import active_connection
 from urllib.parse import quote_plus
@@ -73,38 +73,49 @@ async def start(client, message):
         )
         return
     
-    # Check for unlimited force subscribe channels
+    # Check for unlimited force subscribe channels with logging
     force_sub_channels = []
     
-    # Add AUTH_CHANNEL if exists
-    if AUTH_CHANNEL:
-        force_sub_channels.append(AUTH_CHANNEL)
+    # Add all AUTH_CHANNELS if exist
+    if AUTH_CHANNELS:
+        force_sub_channels.extend(AUTH_CHANNELS)
+        logger.info(f"User {message.from_user.id} checking AUTH_CHANNELS: {AUTH_CHANNELS}")
     
     # Add hardcoded channels
     hardcoded_channels = [
-        "JNKFREELOOTS",
-        "JNK_BACKUP", 
-        "@+hLQh-FvQcL0xNWZl",
-        "@+kG8NP8YLiuk0YTE1",
-        "@+y9fMTjC6TLJhMTE1",
-        "@+dd9gZo9nlg9mNjQ1",
-        "@+dau0zdsJPhI2OWNl"
+        -1002105095279,  # JNKFREELOOTS
+        -1001866477662,  # JNK_BACKUP
+        -1002037007557,  # Private channel 1
+        -1002125648371,  # Private channel 2
+        -1002045977971,  # Private channel 3
+        -1002143940197,  # Private channel 4
+        -1002189806949   # Private channel 5
     ]
+    
+    force_sub_channels.extend(hardcoded_channels)
+    logger.info(f"Total force subscribe channels to check: {len(force_sub_channels)}")
     
     # Check all channels for subscription
     not_joined_channels = []
     
     for channel in force_sub_channels:
         try:
-            if not await is_subscribed(client, message, channel):
+            is_member = await is_subscribed(client, message, channel)
+            logger.info(f"User {message.from_user.id} subscription check for channel {channel}: {is_member}")
+            if not is_member:
                 not_joined_channels.append(channel)
-        except:
+        except Exception as e:
+            logger.error(f"Error checking subscription for channel {channel}: {e}")
+            not_joined_channels.append(channel)
             continue
     
+    logger.info(f"User {message.from_user.id} not joined channels: {not_joined_channels}")
+    
     # If user hasn't joined any channel, show force subscribe message
-    if not_joined_channels or force_sub_channels:
+    if not_joined_channels:
         try:
             btn = []
+            logger.info(f"Creating force subscribe buttons for user {message.from_user.id}")
             
             # Add hardcoded channel buttons
             btn.extend([
@@ -117,16 +128,18 @@ async def start(client, message):
                 [InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dau0zdsJPhI2OWNl")]
             ])
             
-            # Add AUTH_CHANNEL invite link if exists
-            if AUTH_CHANNEL:
-                try:
-                    if REQUEST_TO_JOIN_MODE == True:
-                        invite_link = await client.create_chat_invite_link(chat_id=(int(AUTH_CHANNEL)), creates_join_request=True)
-                    else:
-                        invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
-                    btn.insert(1, [InlineKeyboardButton("ᴊᴏɪɴ ᴍᴀɪɴ ᴄʜᴀɴɴᴇʟ", url=invite_link.invite_link)])
-                except Exception as e:
-                    print(f"Error creating invite link: {e}")
+            # Add invite links for AUTH_CHANNELS that user hasn't joined
+            for channel in not_joined_channels:
+                if channel in AUTH_CHANNELS:
+                    try:
+                        if REQUEST_TO_JOIN_MODE == True:
+                            invite_link = await client.create_chat_invite_link(chat_id=int(channel), creates_join_request=True)
+                        else:
+                            invite_link = await client.create_chat_invite_link(int(channel))
+                        btn.append([InlineKeyboardButton(f"ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ {channel}", url=invite_link.invite_link)])
+                        logger.info(f"Created invite link for channel {channel}")
+                    except Exception as e:
+                        logger.error(f"Error creating invite link for channel {channel}: {e}")
             
             # Add try again button
             if len(message.command) > 1 and message.command[1] != "subscribe":
