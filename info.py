@@ -119,7 +119,7 @@ BAD_WORDS = {
     "join",
     "www",
     "villa",
-    "tg",
+    "@RM_Movie_Flix",
     "original"
 } # Set of bad words to filter out
 

@@ -207,7 +207,7 @@ async def broadcast_messages_group(chat_id, message):
         return False, "Error"
 
 def clean_filename(file_name):
-    prefixes = ('[', '@', 'www.')
+    prefixes = ('@RM_Movie_Flix - -', 'www.')
     unwanted = {word.lower() for word in BAD_WORDS}
 
     file_name = ' '.join(
