@@ -73,30 +73,63 @@ async def start(client, message):
         )
         return
     
-    if AUTH_CHANNEL and not await is_subscribed(client, message):
+    # Check for unlimited force subscribe channels
+    force_sub_channels = []
+    
+    # Add AUTH_CHANNEL if exists
+    if AUTH_CHANNEL:
+        force_sub_channels.append(AUTH_CHANNEL)
+    
+    # Add hardcoded channels
+    hardcoded_channels = [
+        "JNKFREELOOTS",
+        "JNK_BACKUP", 
+        "@+hLQh-FvQcL0xNWZl",
+        "@+kG8NP8YLiuk0YTE1",
+        "@+y9fMTjC6TLJhMTE1",
+        "@+dd9gZo9nlg9mNjQ1",
+        "@+dau0zdsJPhI2OWNl"
+    ]
+    
+    # Check all channels for subscription
+    not_joined_channels = []
+    
+    for channel in force_sub_channels:
         try:
-            if REQUEST_TO_JOIN_MODE == True:
-                invite_link = await client.create_chat_invite_link(chat_id=(int(AUTH_CHANNEL)), creates_join_request=True)
-            else:
-                invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
-        except Exception as e:
-            print(e)
-            await message.reply_text("Make sure Bot is admin in Forcesub channel")
-            return
+            if not await is_subscribed(client, message, channel):
+                not_joined_channels.append(channel)
+        except:
+            continue
+    
+    # If user hasn't joined any channel, show force subscribe message
+    if not_joined_channels or force_sub_channels:
         try:
-            btn = [[InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/JNKFREELOOTS"),
-                    InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/JNK_BACKUP")
-                 ],[
-                   InlineKeyboardButton("ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=invite_link.invite_link),
-                    InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+hLQh-FvQcL0xNWZl")
-                 ],[
-                    InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+kG8NP8YLiuk0YTE1"),
-                    InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+y9fMTjC6TLJhMTE1")
-                ],[
-                   InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dd9gZo9nlg9mNjQ1"),
-                   InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dau0zdsJPhI2OWNl")
-                 ]]
-            if message.command[1] != "subscribe":
+            btn = []
+            
+            # Add hardcoded channel buttons
+            btn.extend([
+                [InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/JNKFREELOOTS"),
+                 InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/JNK_BACKUP")],
+                [InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+hLQh-FvQcL0xNWZl"),
+                 InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+kG8NP8YLiuk0YTE1")],
+                [InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=f"https://t.me/+y9fMTjC6TLJhMTE1"),
+                 InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dd9gZo9nlg9mNjQ1")],
+                [InlineKeyboardButton('ᴊᴏɪɴ group', url=f"https://t.me/+dau0zdsJPhI2OWNl")]
+            ])
+            
+            # Add AUTH_CHANNEL invite link if exists
+            if AUTH_CHANNEL:
+                try:
+                    if REQUEST_TO_JOIN_MODE == True:
+                        invite_link = await client.create_chat_invite_link(chat_id=(int(AUTH_CHANNEL)), creates_join_request=True)
+                    else:
+                        invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
+                    btn.insert(1, [InlineKeyboardButton("ᴊᴏɪɴ ᴍᴀɪɴ ᴄʜᴀɴɴᴇʟ", url=invite_link.invite_link)])
+                except Exception as e:
+                    print(f"Error creating invite link: {e}")
+            
+            # Add try again button
+            if len(message.command) > 1 and message.command[1] != "subscribe":
                 if REQUEST_TO_JOIN_MODE == True:
                     if TRY_AGAIN_BTN == True:
                         try:
@@ -110,6 +143,7 @@ async def start(client, message):
                         btn.append([InlineKeyboardButton("↻ ᴛʀʏ ᴀɢᴀɪɴ", callback_data=f"checksub#{kk}#{file_id}")])
                     except (IndexError, ValueError):
                         btn.append([InlineKeyboardButton("↻ ᴛʀʏ ᴀɢᴀɪɴ", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
+            
             if REQUEST_TO_JOIN_MODE == True:
                 if TRY_AGAIN_BTN == True:
                     text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
@@ -118,6 +152,7 @@ async def start(client, message):
                     text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
             else:
                 text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
+            
             await client.send_message(
                 chat_id=message.from_user.id,
                 text=text,
@@ -460,7 +495,23 @@ async def start(client, message):
     user = message.from_user.id
     files_ = await get_file_details(file_id)           
     if not files_:
-        pre, file_id = ((base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))).decode("ascii")).split("_", 1)
+        try:
+            # Try to decode base64 with error handling
+            decoded_bytes = base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))
+            # Try UTF-8 first, then ASCII, then Latin-1 as fallback
+            try:
+                decoded_str = decoded_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                try:
+                    decoded_str = decoded_bytes.decode("ascii")
+                except UnicodeDecodeError:
+                    decoded_str = decoded_bytes.decode("latin-1")
+            
+            pre, file_id = decoded_str.split("_", 1)
+        except Exception as decode_error:
+            print(f"Base64 decode error: {decode_error}")
+            return await message.reply('Invalid file link.')
+        
         try:
             if not await db.has_premium_access(message.from_user.id):
                 if not await check_verification(client, message.from_user.id) and VERIFY == True:
