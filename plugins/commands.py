@@ -18,6 +18,19 @@ from urllib.parse import quote_plus
 from TechVJ.util.file_properties import get_name, get_hash, get_media_file_size
 logger = logging.getLogger(__name__)
 
+async def safe_reply_message(message, text, reply_markup=None, protect_content=False):
+    """Safe reply to message with error handling"""
+    try:
+        return await message.reply_text(
+            text=text,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            disable_web_page_preview=True
+        )
+    except Exception as e:
+        logger.error(f"Error replying to message: {e}")
+        return None
+
 BATCH_FILES = {}
 join_db = JoinReqs
 
