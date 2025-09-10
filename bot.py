@@ -91,6 +91,21 @@ async def start():
 
 
 if __name__ == "__main__":
-    from utils import start_scheduler
-    start_scheduler()
+    # - Log to console and file
+
+    # Add cleanup task for expired verifications
+    async def cleanup_expired_verifications():
+        """Periodic cleanup of expired verifications"""
+        try:
+            from bot.verification import verification_manager
+            while True:
+                await verification_manager.cleanup_expired_verifications()
+                await asyncio.sleep(3600)  # Run every hour
+        except Exception as e:
+            logging.error(f"Error in cleanup task: {e}")
+
+    # Start cleanup task
+    import asyncio
+    asyncio.create_task(cleanup_expired_verifications())
+
     loop.run_until_complete(start())

@@ -361,15 +361,24 @@ async def start(client, message):
             return await message.reply_text(text="<b>ɪɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ ᴇxᴘɪʀᴇᴅ ʟɪɴᴋ</b>", protect_content=True)
         is_valid = await check_token(client, userid, token)
         if is_valid == True:
-            text = "<b>ʜᴇʏ {} 👋,\n\nʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ...\n\nɴᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇꜱꜱ ᴛɪʟʟ ᴛᴏᴅᴀʏ ɴᴏᴡ ᴇɴᴊᴏʏ\n\n</b>"
-            if PREMIUM_AND_REFERAL_MODE == True:
-                text += "<b>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴅɪʀᴇᴄᴛ ғɪʟᴇꜱ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴꜱ ᴛʜᴇɴ ʙᴜʏ ʙᴏᴛ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ☺️\n\n💶 ꜱᴇɴᴅ /plan ᴛᴏ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ</b>"           
-            await safe_reply_message(
-                message=message,
-                text=text.format(message.from_user.mention),
-                protect_content=True
-            )
-            await verify_user(client, userid, token)
+            # Verify user and get result
+            verification_success = await verify_user(client, userid, token)
+            if verification_success:
+                text = "<b>ʜᴇʏ {} 👋,\n\n✅ ʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ!\n\n🕐 ʏᴏᴜ ɴᴏᴡ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇꜱꜱ ғᴏʀ <u>24 ʜᴏᴜʀꜱ</u>\n\n⏰ ᴠᴀʟɪᴅ ᴜɴᴛɪʟ: {}\n\n🎉 ᴇɴᴊᴏʏ !</b>"
+                
+                expiry_time = datetime.datetime.now() + datetime.timedelta(hours=24)
+                expiry_text = expiry_time.strftime('%Y-%m-%d %H:%M:%S')
+                
+                if PREMIUM_AND_REFERAL_MODE == True:
+                    text += "\n\n<b>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴅɪʀᴇᴄᴛ ғɪʟᴇꜱ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴꜱ ᴛʜᴇɴ ʙᴜʏ ʙᴏᴛ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ☺️\n\n💶 ꜱᴇɴᴅ /plan ᴛᴏ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ</b>"           
+                
+                await safe_reply_message(
+                    message=message,
+                    text=text.format(message.from_user.mention, expiry_text),
+                    protect_content=True
+                )
+            else:
+                return await message.reply_text(text="<b>❌ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ғᴀɪʟᴇᴅ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ.</b>", protect_content=True)
         else:
             return await message.reply_text(text="<b>ɪɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ ᴇxᴘɪʀᴇᴅ ʟɪɴᴋ</b>", protect_content=True)
             
@@ -1457,3 +1466,54 @@ async def list_ignored_words_handler(client, message):
         os.remove('ignored_words.txt')
     else:
         await message.reply_text(text)
+
+@Client.on_message(filters.command("count") & filters.user(ADMINS))
+async def verified_users_count(client, message):
+    """Show count and list of verified users in last 24 hours"""
+    try:
+        from bot.verification import verification_manager
+        
+        # Get count and list
+        count = await verification_manager.get_verified_users_count(24)
+        verified_users = await verification_manager.get_verified_users_list(24)
+        
+        if count == 0:
+            return await message.reply_text("<b>📊 No users verified in the last 24 hours.</b>")
+        
+        # Create response text
+        response = f"<b>📊 Verified Users (Last 24 Hours)</b>\n\n"
+        response += f"<b>📈 Total Count:</b> {count} users\n\n"
+        response += "<b>📋 User List:</b>\n"
+        
+        for i, user_data in enumerate(verified_users[:20], 1):  # Limit to 20 users
+            try:
+                user = await client.get_users(user_data["user_id"])
+                verification_time = user_data["verification_time"].strftime('%H:%M:%S')
+                expiry_time = user_data["expiry_time"].strftime('%H:%M:%S')
+                
+                response += f"{i}. <b>{user.first_name}</b> (@{user.username or 'N/A'})\n"
+                response += f"   🆔 <code>{user_data['user_id']}</code>\n"
+                response += f"   ⏰ {verification_time} → ⏳ {expiry_time}\n\n"
+                
+            except Exception as e:
+                response += f"{i}. <b>Unknown User</b>\n"
+                response += f"   🆔 <code>{user_data['user_id']}</code>\n"
+                response += f"   ⏰ {user_data['verification_time'].strftime('%H:%M:%S')}\n\n"
+        
+        if len(verified_users) > 20:
+            response += f"<i>... and {len(verified_users) - 20} more users</i>\n"
+        
+        response += f"\n<i>🕐 Data from last 24 hours</i>"
+        
+        if len(response) > 4096:
+            # If message is too long, send as file
+            with open('verified_users.txt', 'w+', encoding='utf-8') as f:
+                f.write(response)
+            await message.reply_document('verified_users.txt', caption=f"<b>📊 Verified Users Report ({count} users)</b>")
+            os.remove('verified_users.txt')
+        else:
+            await message.reply_text(response)
+            
+    except Exception as e:
+        logger.error(f"Error in verified_users_count: {e}")
+        await message.reply_text("<b>❌ Error retrieving verification data.</b>")

@@ -590,48 +590,16 @@ async def get_token(bot, userid, link):
 
 async def verify_user(bot, userid, token):
     try:
-        user = await bot.get_users(userid)
-        if not await db.is_user_exist(user.id):
-            await db.add_user(user.id, user.first_name)
-            try:
-                await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
-            except Exception as e:
-                logger.error(f"Failed to send log message: {e}")
-
-        TOKENS[user.id] = {token: True}
-        tz = pytz.timezone('Asia/Kolkata')
-        today = date.today()
-        VERIFIED[user.id] = str(today)
-
-        # Clean up old tokens to prevent memory buildup
-        if len(TOKENS.get(user.id, {})) > 10:
-            old_tokens = list(TOKENS[user.id].keys())[:-5]
-            for old_token in old_tokens:
-                del TOKENS[user.id][old_token]
-
+        from bot.verification import verification_manager
+        return await verification_manager.verify_user(userid, token, bot)
     except Exception as e:
         logger.error(f"Error in verify_user: {e}")
+        return False
 
 async def check_verification(bot, userid):
     try:
-        user = await bot.get_users(userid)
-        if not await db.is_user_exist(user.id):
-            await db.add_user(user.id, user.first_name)
-            try:
-                await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
-            except Exception as e:
-                logger.error(f"Failed to send log message: {e}")
-
-        tz = pytz.timezone('Asia/Kolkata')
-        today = date.today()
-
-        if user.id in VERIFIED.keys():
-            if str(today) == VERIFIED[user.id]:
-                return True
-            else:
-                return False
-        else:
-            return False
+        from bot.verification import verification_manager
+        return await verification_manager.check_verification(userid)
     except Exception as e:
         logger.error(f"Error in check_verification: {e}")
         return False
