@@ -83,16 +83,7 @@ async def start():
         print("Restarting All Clone Bots.......")
         await restart_bots()
         print("Restarted All Clone Bots.")
-    app = web.AppRunner(await web_server())
-    await app.setup()
-    bind_address = "0.0.0.0"
-    await web.TCPSite(app, bind_address, PORT).start()
-    await idle()
-
-
-if __name__ == "__main__":
-    # - Log to console and file
-
+    
     # Add cleanup task for expired verifications
     async def cleanup_expired_verifications():
         """Periodic cleanup of expired verifications"""
@@ -105,7 +96,14 @@ if __name__ == "__main__":
             logging.error(f"Error in cleanup task: {e}")
 
     # Start cleanup task
-    import asyncio
     asyncio.create_task(cleanup_expired_verifications())
+    
+    app = web.AppRunner(await web_server())
+    await app.setup()
+    bind_address = "0.0.0.0"
+    await web.TCPSite(app, bind_address, PORT).start()
+    await idle()
 
+
+if __name__ == "__main__":
     loop.run_until_complete(start())
