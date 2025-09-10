@@ -27,6 +27,8 @@ from TechVJ.bot import TechVJBot
 from TechVJ.util.keepalive import ping_server
 from TechVJ.bot.clients import initialize_clients
 
+logger = logging.getLogger(__name__)
+
 ppath = "plugins/*.py"
 files = glob.glob(ppath)
 TechVJBot.start()
