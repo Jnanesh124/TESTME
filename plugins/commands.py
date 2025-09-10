@@ -362,7 +362,8 @@ async def start(client, message):
         is_valid = await check_token(client, userid, token)
         if is_valid == True:
             # Verify user and get result
-            verification_success = await verify_user(client, userid, token)
+            from bot.verification import verification_manager
+            verification_success = await verification_manager.verify_user(userid, token, client)
             if verification_success:
                 text = "<b>ʜᴇʏ {} 👋,\n\n✅ ʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ!\n\n🕐 ʏᴏᴜ ɴᴏᴡ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇꜱꜱ ғᴏʀ <u>24 ʜᴏᴜʀꜱ</u>\n\n⏰ ᴠᴀʟɪᴅ ᴜɴᴛɪʟ: {}\n\n🎉 ᴇɴᴊᴏʏ !</b>"
                 

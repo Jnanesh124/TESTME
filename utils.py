@@ -553,6 +553,8 @@ async def check_token(bot, userid, token):
                 if is_used == True:
                     return False
                 else:
+                    # Mark token as used
+                    TOKENS[user.id][token] = True
                     return True
         else:
             return False

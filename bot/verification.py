@@ -33,17 +33,16 @@ class VerificationManager:
     
     def generate_verification_token(self, user_id):
         """Generate verification token for user"""
-        timestamp = str(int(time.time()))
-        data = f"{user_id}:{timestamp}:{BOT_TOKEN}"
-        return hashlib.md5(data.encode()).hexdigest()
+        import random
+        import string
+        # Generate the same format as get_token function
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     
     async def verify_user(self, user_id, token, client):
         """Verify user with token and store in database"""
         try:
-            # Verify token validity
-            expected_token = self.generate_verification_token(user_id)
-            if token != expected_token:
-                return False
+            # Token validation is already done in check_token function
+            # So we can proceed with verification
             
             # Set 24-hour expiry from now
             expiry_time = datetime.datetime.now() + datetime.timedelta(hours=24)
