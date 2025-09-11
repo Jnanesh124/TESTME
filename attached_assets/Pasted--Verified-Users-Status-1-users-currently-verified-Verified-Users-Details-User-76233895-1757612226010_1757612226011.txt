@@ -1,0 +1,69 @@
+📊 Verified Users Status: 1 users currently verified
+📋 Verified Users Details:
+  👤 User 7623389594: Verified at 2025-09-11 17:30:31, 23.9 hours remaining
+05:33:53 PM - 121 - __main__ - bot - INFO - Loaded 1 verified users from storage
+05:33:53 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:33:53 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:33:53 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:33:53 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:33:53 PM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+05:33:53 PM - 39 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started with 24-hour global verification
+05:33:53 PM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+05:33:53 PM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 17:33:53 UTC], next run at: 2025-09-11 17:33:53 UTC)" (scheduled at 2025-09-11 17:33:53.615736+00:00)
+05:33:53 PM - 81 - verification_scheduler - verification_scheduler - INFO - Automatic verification cleanup completed - no expired verifications found
+05:33:53 PM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 17:33:53 UTC], next run at: 2025-09-11 17:33:53 UTC)" executed successfully
+05:34:07 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:34:07 PM - 100 - plugins.commands - commands - INFO - User 2042135012 not joined channels: []
+Base64 decode error: not enough values to unpack (expected 2, got 1)
+05:35:03 PM - 110 - utils - utils - WARNING - No IMDb results found for: ഭൂതകാലം
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Movie' (found in: '@MovieShopLinks')
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Flix' (found in: '@RM_Movie_Flix')
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'mkv' (found in: '.mkv')
+05:35:08 PM - 266 - utils - utils - INFO - FILENAME CLEANING: Original: 'Movie Flix Alexperience 2025 Tamil WEB DL part002 mkv' -> Cleaned: 'Alexperience 2025 Tamil WEB DL part002' | Removed words: ['Movie', 'Flix', 'mkv']
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Movie' (found in: '@MovieShopLinks')
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Flix' (found in: '@RM_Movie_Flix')
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'mkv' (found in: '.mkv')
+05:35:08 PM - 266 - utils - utils - INFO - FILENAME CLEANING: Original: 'Movie Flix Alexperience 2025 Tamil WEB DL part001 mkv' -> Cleaned: 'Alexperience 2025 Tamil WEB DL part001' | Removed words: ['Movie', 'Flix', 'mkv']
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Movie' (found in: '@MovieShopLinks')
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Flix' (found in: '@RM_Movie_Flix')
+05:35:08 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'mkv' (found in: '.mkv')
+05:35:08 PM - 266 - utils - utils - INFO - FILENAME CLEANING: Original: 'Movie Flix Alexperience 2025 Tamil WEB DL 480p mkv' -> Cleaned: 'Alexperience 2025 Tamil WEB DL 480p' | Removed words: ['Movie', 'Flix', 'mkv']
+05:35:11 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:35:11 PM - 100 - plugins.commands - commands - INFO - User 8077775478 not joined channels: []
+05:35:18 PM - 110 - utils - utils - WARNING - No IMDb results found for: ഭൂതകാലം മലയാളം ഫുൾ മൂവി
+05:35:57 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:35:57 PM - 100 - plugins.commands - commands - INFO - User 8077775478 not joined channels: []
+05:35:57 PM - 53 - verification_storage - verification_storage - INFO - Saved 2 verified users to verified_users.json
+05:35:57 PM - 71 - verification_storage - verification_storage - INFO - Added verified user 8077775478 with expiry at 2025-09-12 17:35:57.446497
+05:35:57 PM - 101 - bot.verification - verification - INFO - User 8077775478 (Jn) verified successfully. Expires at 2025-09-12 17:35:57.447083
+Base64 decode error: not enough values to unpack (expected 2, got 1)
+05:36:04 PM - 376 - pyrogram.dispatcher - dispatcher - ERROR - Telegram says: [403 CHAT_WRITE_FORBIDDEN] (caused by "messages.SendMessage") Pyrogram 2.3.45 thinks: You can't write in this chat
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/p_ttishow.py", line 69, in save_group
+    temp.MELCOW['welcome'] = await message.reply_text(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/types/messages_and_media/message.py", line 1482, in reply_text
+    return await self._client.send_message(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/methods/messages/send_message.py", line 200, in send_message
+    r = await self.invoke(rpc)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/methods/advanced/invoke.py", line 80, in invoke
+    r = await self.session.invoke(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/session/session.py", line 420, in invoke
+    return await self.send(query, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/session/session.py", line 377, in send
+    RPCError.raise_it(result, type(data))
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/errors/rpc_error.py", line 93, in raise_it
+    raise getattr(
+pyrogram.errors.exceptions.forbidden_403.ChatWriteForbidden: Telegram says: [403 CHAT_WRITE_FORBIDDEN] (caused by "messages.SendMessage") Pyrogram 2.3.45 thinks: You can't write in this chat
+05:36:13 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:36:13 PM - 100 - plugins.commands - commands - INFO - User 1589594015 not joined channels: []
+Base64 decode error: not enough values to unpack (expected 2, got 1)
+05:36:38 PM - 1557 - plugins.commands - commands - INFO - Added bad word: @ROCKERSBACKUP
