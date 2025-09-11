@@ -207,12 +207,13 @@ async def broadcast_messages_group(chat_id, message):
         return False, "Error"
 
 def clean_filename(file_name):
-    prefixes = ('@RM_Movie_Flix - -', 'www.')
+    # Make all BAD_WORDS lowercase for case-insensitive matching
     unwanted = {word.lower() for word in BAD_WORDS}
 
+    # Remove ONLY bad words (case-insensitive)
     file_name = ' '.join(
         word for word in file_name.split()
-        if not (word.startswith(prefixes) or word.lower() in unwanted)
+        if word.lower() not in unwanted
     )
     return file_name
     

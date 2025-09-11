@@ -103,7 +103,7 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support C
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
 BAD_WORDS = {
-    "PrivateMovieZ",
+    "[@FilmyHub4u_Official]",
     "toonworld4all",
     "themoviesboss",
     "1tamilmv",
@@ -112,6 +112,7 @@ BAD_WORDS = {
     "skymovieshd",
     "extraflix",
     "hdm2",
+    "HQ",
     "moviesmod",
     "hdhub4u",
     "mkvcinemas",
@@ -119,7 +120,7 @@ BAD_WORDS = {
     "join",
     "www",
     "villa",
-    "@RM_Movie_Flix",
+    "@RM_Movie_Flix - -",
     "original"
 } # Set of bad words to filter out
 
