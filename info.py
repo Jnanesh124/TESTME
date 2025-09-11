@@ -122,6 +122,7 @@ BAD_WORDS = {
     "villa",
     "@RM_Movie_Flix - -",
     "@RM_Movie_Flix",
+    "Movie Flix",
     "original"
 } # Set of bad words to filter out
 
