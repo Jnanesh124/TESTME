@@ -110,7 +110,6 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support C
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
 BAD_WORDS = [
-    "JNK",
     "@MovieShopLinks",
     "UNTOUCHED",
     "AVC",
@@ -118,18 +117,6 @@ BAD_WORDS = [
     "mkv",
     ".mp4",
     "[@FilmyHub4u_Official]",
-    "HQ",
-    "@RM_Movie_Flix",
-    "@JNK_BACKUP",
-    "[MS]",
-    "[",
-    "]",
-    "www.",
-    "@",
-    "@ROCKERSBACKUP",
-    "TEST",
-    "1"
-]",
     "HQ",
     "@RM_Movie_Flix",
     "@JNK_BACKUP",

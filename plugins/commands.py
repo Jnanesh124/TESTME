@@ -1420,6 +1420,123 @@ async def purge_requests(client, message):
             disable_web_page_preview=True
         )
 
+@Client.on_message(filters.command("addbadword") & filters.user(ADMINS))
+async def add_bad_word_handler(client, message):
+    """Add bad word command - adds word to the beginning of BAD_WORDS list"""
+    if len(message.command) < 2:
+        return await message.reply_text(
+            "<b>Usage: /addbadword word_to_add\n\nExample: /addbadword JNK</b>"
+        )
+
+    word = message.command[1]
+    
+    # Import the BAD_WORDS from info
+    from info import BAD_WORDS
+    
+    # Check if word already exists
+    if word in BAD_WORDS:
+        await message.reply_text(f"<b>'{word}' is already in bad words list.</b>")
+        return
+    
+    # Add word to the beginning of the list
+    BAD_WORDS.insert(0, word)
+    
+    # Update the info.py file
+    try:
+        with open('info.py', 'r') as file:
+            content = file.read()
+        
+        # Find the BAD_WORDS list and update it
+        import re
+        pattern = r'BAD_WORDS = \[(.*?)\]'
+        
+        # Create new bad words string
+        bad_words_str = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+        new_bad_words = f'BAD_WORDS = [\n    {bad_words_str}\n]'
+        
+        # Replace in content
+        updated_content = re.sub(
+            r'BAD_WORDS = \[[\s\S]*?\] # List of bad words.*',
+            new_bad_words + ' # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands',
+            content
+        )
+        
+        with open('info.py', 'w') as file:
+            file.write(updated_content)
+        
+        await message.reply_text(f"<b>Successfully added '{word}' to the beginning of bad words list.</b>")
+        
+    except Exception as e:
+        await message.reply_text(f"<b>Error updating file: {str(e)}</b>")
+
+@Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
+async def remove_bad_word_handler(client, message):
+    """Remove bad word command"""
+    if len(message.command) < 2:
+        return await message.reply_text(
+            "<b>Usage: /removebadword word_to_remove\n\nExample: /removebadword JNK</b>"
+        )
+
+    word = message.command[1]
+    
+    # Import the BAD_WORDS from info
+    from info import BAD_WORDS
+    
+    # Check if word exists
+    if word not in BAD_WORDS:
+        await message.reply_text(f"<b>'{word}' was not found in bad words list.</b>")
+        return
+    
+    # Remove word from the list
+    BAD_WORDS.remove(word)
+    
+    # Update the info.py file
+    try:
+        with open('info.py', 'r') as file:
+            content = file.read()
+        
+        # Find the BAD_WORDS list and update it
+        import re
+        
+        # Create new bad words string
+        bad_words_str = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+        new_bad_words = f'BAD_WORDS = [\n    {bad_words_str}\n]'
+        
+        # Replace in content
+        updated_content = re.sub(
+            r'BAD_WORDS = \[[\s\S]*?\] # List of bad words.*',
+            new_bad_words + ' # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands',
+            content
+        )
+        
+        with open('info.py', 'w') as file:
+            file.write(updated_content)
+        
+        await message.reply_text(f"<b>Successfully removed '{word}' from bad words list.</b>")
+        
+    except Exception as e:
+        await message.reply_text(f"<b>Error updating file: {str(e)}</b>")
+
+@Client.on_message(filters.command("listbadwords") & filters.user(ADMINS))
+async def list_bad_words_handler(client, message):
+    """List all bad words command"""
+    from info import BAD_WORDS
+    
+    if not BAD_WORDS:
+        return await message.reply_text("<b>No bad words found.</b>")
+
+    word_list = "\n".join([f"• {word}" for word in BAD_WORDS])
+    text = f"<b>Bad Words List ({len(BAD_WORDS)} words):</b>\n\n{word_list}"
+
+    if len(text) > 4096:
+        # If message is too long, send as file
+        with open('bad_words.txt', 'w+') as f:
+            f.write('\n'.join(BAD_WORDS))
+        await message.reply_document('bad_words.txt', caption=f"<b>Bad Words List ({len(BAD_WORDS)} words)</b>")
+        os.remove('bad_words.txt')
+    else:
+        await message.reply_text(text)
+
 @Client.on_message(filters.command("rword") & filters.user(ADMINS))
 async def remove_word_handler(client, message):
     """Remove ignored word command"""
