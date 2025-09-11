@@ -108,10 +108,10 @@ BAD_WORDS = [
     "@RM_Movie_Flix",
     "@JNK_BACKUP",
     "[MS]",
-    "@",
     "[",
     "]",
     "www.",
+     "@",
 ] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 # True Or False
