@@ -207,14 +207,22 @@ async def broadcast_messages_group(chat_id, message):
         return False, "Error"
 
 def clean_filename(file_name):
-    # Make all BAD_WORDS lowercase for case-insensitive matching
+    # First handle multi-word bad phrases (case-insensitive)
+    for bad_word in BAD_WORDS:
+        if bad_word.lower() in file_name.lower():
+            # Remove the bad phrase (case-insensitive)
+            file_name = re.sub(re.escape(bad_word), '', file_name, flags=re.IGNORECASE)
+    
+    # Then handle individual bad words
     unwanted = {word.lower() for word in BAD_WORDS}
-
-    # Remove ONLY bad words (case-insensitive)
     file_name = ' '.join(
         word for word in file_name.split()
         if word.lower() not in unwanted
     )
+    
+    # Clean up extra spaces
+    file_name = ' '.join(file_name.split())
+    
     return file_name
     
 async def search_gagala(text):
