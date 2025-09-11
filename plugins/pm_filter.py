@@ -9,7 +9,7 @@ from info import *
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ChatPermissions, WebAppInfo
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
-from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
+from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaInvalid
 from utils import get_size, is_subscribed, pub_is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink, get_tutorial, send_all, get_cap, clean_filename
 from database.users_chats_db import db
 from database.ia_filterdb import col, sec_col, db as vjdb, sec_db, get_file_details, get_search_results, get_bad_files
@@ -138,21 +138,25 @@ async def next_page(bot, query):
     curr_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
     if int(req) not in [query.from_user.id, 0]:
         return await query.answer(script.ALRT_TXT.format(query.from_user.first_name), show_alert=True)
+    
+    # Convert offset and n_offset to int to avoid type comparison errors
     try:
-        offset = int(offset)
-    except:
+        offset = int(offset) if offset is not None else 0
+    except (ValueError, TypeError):
         offset = 0
+
+    try:
+        n_offset = int(n_offset) if n_offset is not None else 0
+    except (ValueError, TypeError):
+        n_offset = 0
+
     search = FRESH.get(key)
    # if not search:
       #  await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
        # return
 
-    files, n_offset, total = await get_search_results(query.message.chat.id, search, offset=offset, filter=True)
-    try:
-        n_offset = int(n_offset)
-    except:
-        n_offset = 0
-
+    files, n_offset, total_results = await get_search_results(query.message.chat.id, search, offset=offset, filter=True)
+    
     if not files:
         return
     temp.GETALL[key] = files
@@ -199,23 +203,23 @@ async def next_page(bot, query):
         ])
     try:
         if settings['max_btn']:
-            if 0 < offset <= 10:
+            if 0 < offset <= 5:
                 off_set = 0
             elif offset == 0:
                 off_set = None
             else:
-                off_set = offset - 10
+                off_set = offset - 5
             if n_offset == 0:
                 btn.append(
-                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages")]
+                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages")]
                 )
             elif off_set is None:
-                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
+                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
             else:
                 btn.append(
                     [
                         InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
-                        InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"),
+                        InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"),
                         InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")
                     ],
                 )
@@ -228,37 +232,37 @@ async def next_page(bot, query):
                 off_set = offset - int(MAX_B_TN)
             if n_offset == 0:
                 btn.append(
-                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages")]
+                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total_results/int(MAX_B_TN))}", callback_data="pages")]
                 )
             elif off_set is None:
-                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
+                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total_results/int(MAX_B_TN))}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
             else:
                 btn.append(
                     [
                         InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
-                        InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages"),
+                        InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total_results/int(MAX_B_TN))}", callback_data="pages"),
                         InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")
                     ],
                 )
     except KeyError:
         await save_group_settings(query.message.chat.id, 'max_btn', True)
-        if 0 < offset <= 10:
+        if 0 < offset <= 5:
             off_set = 0
         elif offset == 0:
             off_set = None
         else:
-            off_set = offset - 10
+            off_set = offset - 5
         if n_offset == 0:
             btn.append(
-                [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages")]
+                [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages")]
             )
         elif off_set is None:
-            btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
+            btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
         else:
             btn.append(
                 [
                     InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
-                    InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"),
+                    InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"),
                     InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")
                 ],
             )
@@ -266,7 +270,7 @@ async def next_page(bot, query):
         cur_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
         time_difference = timedelta(hours=cur_time.hour, minutes=cur_time.minute, seconds=(cur_time.second+(cur_time.microsecond/1000000))) - timedelta(hours=curr_time.hour, minutes=curr_time.minute, seconds=(curr_time.second+(curr_time.microsecond/1000000)))
         remaining_seconds = "{:.2f}".format(time_difference.total_seconds())
-        cap = await get_cap(settings, remaining_seconds, files, query, total, search)
+        cap = await get_cap(settings, remaining_seconds, files, query, total_results, search)
         try:
             await query.message.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
         except MessageNotModified:
@@ -1162,13 +1166,13 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
 
 @Client.on_callback_query(filters.regex(r"^sendfiles#"))
 async def send_files_cb_handler(client: Client, query: CallbackQuery):
-    
+
     clicked = query.from_user.id
     try:
         typed = query.message.reply_to_message.from_user.id
     except:
         typed = query.from_user.id
-    
+
     ident, key = query.data.split("#")
     settings = await get_settings(query.message.chat.id)
     pre = 'allfilesp' if settings['file_secure'] else 'allfiles'
@@ -1237,7 +1241,7 @@ async def delete_file_cb(client: Client, query: CallbackQuery):
 @Client.on_callback_query(filters.regex(r"^checksub"))
 async def check_sub_cb(client: Client, query: CallbackQuery):
     if AUTH_CHANNEL and not await is_subscribed(client, query):
-        await query.answer("Jᴏɪɴ ᴏᴜʀ Bᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇʟ ᴍᴀʜɴ! 😒", show_alert=True)
+        await query.answer("Jᴏɪɴ ᴏᴜʀ Bᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇL ᴍᴀʜɴ! 😒", show_alert=True)
         return
     ident, kk, file_id = query.data.split("#")
     await query.answer(url=f"https://t.me/{temp.U_NAME}?start={kk}_{file_id}")
@@ -1521,7 +1525,7 @@ async def uploaded_cb(client: Client, query: CallbackQuery):
              InlineKeyboardButton('Jᴏɪɴ CʜᴀɴɴᴇL', url=link.invite_link),
              InlineKeyboardButton("Vɪᴇᴡ Sᴛᴀᴛᴜs", url=f"{query.message.link}")
            ],[
-             InlineKeyboardButton("Rᴇᴏ̨ᴜᴇsᴛ Gʀᴏᴜᴘ Lɪɴᴋ", url="https://t.me/+KzbVzahVdqQ3MmM1")
+             InlineKeyboardButton("Rᴇᴏ̨ᴜᴇsᴛ Gʀᴏᴜp Lɪɴᴋ", url="https://t.me/+KzbVzahVdqQ3MmM1")
            ]]
     if query.from_user.id in ADMINS:
         user = await client.get_users(from_user)
@@ -1547,7 +1551,7 @@ async def already_available_cb(client: Client, query: CallbackQuery):
         InlineKeyboardButton('Jᴏɪɴ CʜᴀɴɴᴇL', url=link.invite_link),
         InlineKeyboardButton("Vɪᴇᴡ Sᴛᴀᴛᴜs", url=f"{query.message.link}")
     ],[
-        InlineKeyboardButton("Rᴇᴏ̨ᴜᴇsᴛ Gʀᴏᴜᴘ Lɪɴᴋ", url="https://t.me/vj_bots")
+        InlineKeyboardButton("Rᴇᴏ̨ᴜᴇsᴛ Gʀᴏᴜp Lɪɴᴋ", url="https://t.me/vj_bots")
     ]]
     if query.from_user.id in ADMINS:
         user = await client.get_users(from_user)
@@ -1774,7 +1778,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
         buttons = [[
             InlineKeyboardButton('⇚Back', callback_data='start')
         ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
         await client.edit_message_media(
             query.message.chat.id, 
             query.message.id, 
@@ -2096,7 +2099,11 @@ async def cb_handler(client: Client, query: CallbackQuery):
         buttons = [[
             InlineKeyboardButton('⇍ ʙᴀᴄᴋ ⇏', callback_data='help')
         ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
         await query.message.edit_text(
             text="● ◌ ◌"
         )
@@ -2437,23 +2444,23 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         ])
     try:
         if settings['max_btn']:
-            if 0 < offset <= 10:
+            if 0 < offset <= 5:
                 off_set = 0
             elif offset == 0:
                 off_set = None
             else:
-                off_set = offset - 10
+                off_set = offset - 5
             if n_offset == 0:
                 btn.append(
-                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages")]
+                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages")]
                 )
             elif off_set is None:
-                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
+                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
             else:
                 btn.append(
                     [
                         InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
-                        InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"),
+                        InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"),
                         InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")
                     ],
                 )
@@ -2466,37 +2473,37 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 off_set = offset - int(MAX_B_TN)
             if n_offset == 0:
                 btn.append(
-                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages")]
+                    [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total_results/int(MAX_B_TN))}", callback_data="pages")]
                 )
             elif off_set is None:
-                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
+                btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total_results/int(MAX_B_TN))}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
             else:
                 btn.append(
                     [
                         InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
-                        InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages"),
+                        InlineKeyboardButton(f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total_results/int(MAX_B_TN))}", callback_data="pages"),
                         InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")
                     ],
                 )
     except KeyError:
         await save_group_settings(query.message.chat.id, 'max_btn', True)
-        if 0 < offset <= 10:
+        if 0 < offset <= 5:
             off_set = 0
         elif offset == 0:
             off_set = None
         else:
-            off_set = offset - 10
+            off_set = offset - 5
         if n_offset == 0:
             btn.append(
-                [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages")]
+                [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages")]
             )
         elif off_set is None:
-            btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
+            btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
         else:
             btn.append(
                 [
                     InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
-                    InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"),
+                    InlineKeyboardButton(f"{math.ceil(int(offset)/5)+1} / {math.ceil(total_results/5)}", callback_data="pages"),
                     InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")
                 ],
             )
@@ -2573,7 +2580,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                     await asyncio.sleep(300)
                     await hehe.delete()
                     await message.delete()
-        except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
+        except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaInvalid):
             pic = imdb.get('poster')
             poster = pic.replace('.jpg', "._V1_UX360.jpg") 
             hmm = await message.reply_photo(photo=poster, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
@@ -2810,6 +2817,7 @@ async def manual_filters(client, message, text=False):
                                     ai_search = True
                                     reply_msg = await message.reply_text(f"<b><i>Searching For {message.text} 🔍</i></b>")
                                     await auto_filter(client, message.text, message, reply_msg, ai_search)
+
                     elif btn == "[]":
                         joelkb = await client.send_cached_media(
                             group_id,
@@ -3074,16 +3082,16 @@ async def global_filters(client, message, text=False):
                                     ai_search = True
                                     reply_msg = await message.reply_text(f"<b><i>Searching For {message.text} 🔍</i></b>")
                                     await auto_filter(client, message.text, message, reply_msg, ai_search) 
-                        else:
-                            try:
-                                if settings['auto_delete']:
-                                    await joelkb.delete()
-                            except KeyError:
-                                grpid = await active_connection(str(message.from_user.id))
-                                await save_group_settings(grpid, 'auto_delete', True)
-                                settings = await get_settings(message.chat.id)
-                                if settings['auto_delete']:
-                                    await joelkb.delete()
+                            else:
+                                try:
+                                    if settings['auto_delete']:
+                                        await joelkb.delete()
+                                except KeyError:
+                                    grpid = await active_connection(str(message.from_user.id))
+                                    await save_group_settings(grpid, 'auto_delete', True)
+                                    settings = await get_settings(message.chat.id)
+                                    if settings['auto_delete']:
+                                        await joelkb.delete()
 
                     else:
                         button = eval(btn)
