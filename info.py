@@ -41,8 +41,15 @@ TRY_AGAIN_BTN = bool(environ.get('TRY_AGAIN_BTN', False)) # Set True Or False (T
 # This Is Force Subscribe Channel, also known as Auth Channel 
 # For multiple channels, separate with spaces: '-1003035348951 -1003073097826'
 auth_channel = environ.get('AUTH_CHANNEL', '') # give your force subscribe channel id here else leave it blank
-if auth_channel:
-    auth_channels = [int(ch) if id_pattern.search(ch) else ch for ch in auth_channel.split()]
+if auth_channel.strip():
+    auth_channels = []
+    for ch in auth_channel.split():
+        ch = ch.strip()
+        if ch and (ch.startswith('-') or ch.isdigit()):
+            try:
+                auth_channels.append(int(ch))
+            except ValueError:
+                pass
     AUTH_CHANNEL = auth_channels[0] if auth_channels else None
     AUTH_CHANNELS = auth_channels  # Multiple channels support
 else:
@@ -119,15 +126,6 @@ BAD_WORDS = [
     "www.",
     "@",
     "@ROCKERSBACKUP"
-]",
-    "HQ",
-    "@RM_Movie_Flix",
-    "@JNK_BACKUP",
-    "[MS]",
-    "[",
-    "]",
-    "www.",
-    "@"
 ] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 # True Or False

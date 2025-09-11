@@ -73,13 +73,16 @@ async def start(client, message):
         )
         return
 
-    # Check for unlimited force subscribe channels with logging
+    # Check for force subscribe channels with logging
     force_sub_channels = []
 
     # Add all AUTH_CHANNELS if exist
     if AUTH_CHANNELS:
         force_sub_channels.extend(AUTH_CHANNELS)
         logger.info(f"User {message.from_user.id} checking AUTH_CHANNELS: {AUTH_CHANNELS}")
+    elif AUTH_CHANNEL:
+        force_sub_channels.append(AUTH_CHANNEL)
+        logger.info(f"User {message.from_user.id} checking AUTH_CHANNEL: {AUTH_CHANNEL}")
 
     logger.info(f"Total force subscribe channels to check: {len(force_sub_channels)}")
 
@@ -1522,7 +1525,7 @@ async def verified_users_count(client, message):
 
 @Client.on_message(filters.command("addbadword") & filters.user(ADMINS))
 async def add_bad_word(client, message):
-    """Add word to BAD_WORDS list at the beginning"""
+    """Add word to BAD_WORDS list"""
     try:
         if len(message.command) < 2:
             await message.reply_text("Usage: /addbadword <word>")
@@ -1536,21 +1539,22 @@ async def add_bad_word(client, message):
             BAD_WORDS.append(word)
 
             # Read current info.py content
-            with open('info.py', 'r') as f:
+            with open('info.py', 'r', encoding='utf-8') as f:
                 content = f.read()
 
             # Find and replace BAD_WORDS section properly
             import re
-            pattern = r'BAD_WORDS = \[([^\]]*)\]'
+            pattern = r'BAD_WORDS = \[[^\]]*\]'
 
             # Create properly formatted list string
             formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
             new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]'
 
+            # Replace the BAD_WORDS section while preserving the comment
             content = re.sub(pattern, new_bad_words, content, flags=re.DOTALL)
 
             # Write back to file
-            with open('info.py', 'w') as f:
+            with open('info.py', 'w', encoding='utf-8') as f:
                 f.write(content)
 
             await message.reply_text(f"✅ Added '{word}' to bad words list")
@@ -1578,12 +1582,12 @@ async def remove_bad_word(client, message):
             BAD_WORDS.remove(word)
 
             # Read current info.py content
-            with open('info.py', 'r') as f:
+            with open('info.py', 'r', encoding='utf-8') as f:
                 content = f.read()
 
             # Find and replace BAD_WORDS section properly
             import re
-            pattern = r'BAD_WORDS = \[([^\]]*)\]'
+            pattern = r'BAD_WORDS = \[[^\]]*\]'
 
             # Create properly formatted list string
             if BAD_WORDS:
@@ -1595,7 +1599,7 @@ async def remove_bad_word(client, message):
             content = re.sub(pattern, new_bad_words, content, flags=re.DOTALL)
 
             # Write back to file
-            with open('info.py', 'w') as f:
+            with open('info.py', 'w', encoding='utf-8') as f:
                 f.write(content)
 
             await message.reply_text(f"✅ Removed '{word}' from bad words list")
