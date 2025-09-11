@@ -112,7 +112,7 @@ BAD_WORDS = {
     "[MS]",
     "@",
     "MS",
-} # Set of bad words to filter out
+} # Set of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 # True Or False
 AI_SPELL_CHECK = bool(environ.get('AI_SPELL_CHECK', True))
