@@ -225,9 +225,8 @@ def clean_filename(file_name):
     # Remove empty tokens
     tokens = [token for token in tokens if token.strip()]
 
+    # STEP 1: Remove all bad words first (from beginning to end)
     cleaned_tokens = []
-
-    # Compare each token against bad words
     for token in tokens:
         token_removed = False
 
@@ -246,7 +245,7 @@ def clean_filename(file_name):
                 token_removed = True
                 break
 
-            # Check if the token is contained within the bad word (NEW LOGIC)
+            # Check if the token is contained within the bad word
             elif token.lower() in bad_word.lower() and len(token) > 2:  # Only for longer tokens
                 removed_words.append(token)
                 logger.info(f"Removed token found in bad word pattern: '{token}' (found in: '{bad_word}')")
@@ -256,8 +255,30 @@ def clean_filename(file_name):
         if not token_removed:
             cleaned_tokens.append(token)
 
+    # STEP 2: After bad words removal, check and remove prefixes only
+    final_tokens = []
+    prefix_patterns = [
+        r'^[\[\(].*[\]\)]$',  # Remove tokens wrapped in brackets or parentheses
+        r'^@.*',              # Remove tokens starting with @
+        r'^#.*',              # Remove tokens starting with #
+        r'^\d{4}$',           # Remove 4-digit years
+        r'^[A-Z]{2,}$',       # Remove all caps abbreviations
+    ]
+    
+    for token in cleaned_tokens:
+        is_prefix = False
+        for pattern in prefix_patterns:
+            if re.match(pattern, token, re.IGNORECASE):
+                removed_words.append(token)
+                logger.info(f"Removed prefix pattern: '{token}' (pattern: {pattern})")
+                is_prefix = True
+                break
+        
+        if not is_prefix:
+            final_tokens.append(token)
+
     # Rejoin the cleaned tokens with spaces
-    file_name = ' '.join(cleaned_tokens)
+    file_name = ' '.join(final_tokens)
 
     # Clean up extra spaces
     file_name = ' '.join(file_name.split())
@@ -266,7 +287,7 @@ def clean_filename(file_name):
     if removed_words:
         logger.info(f"FILENAME CLEANING: Original: '{original_filename}' -> Cleaned: '{file_name}' | Removed words: {removed_words}")
     else:
-        logger.info(f"FILENAME CLEANING: No bad words found in '{original_filename}'")
+        logger.info(f"FILENAME CLEANING: No bad words or prefixes found in '{original_filename}'")
 
     return file_name
 
