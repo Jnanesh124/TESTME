@@ -104,26 +104,11 @@ OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
 BAD_WORDS = {
     "[@FilmyHub4u_Official]",
-    "toonworld4all",
-    "themoviesboss",
-    "1tamilmv",
-    "tamilblasters",
-    "1tamilblasters",
-    "skymovieshd",
-    "extraflix",
-    "hdm2",
     "HQ",
-    "moviesmod",
-    "hdhub4u",
-    "mkvcinemas",
-    "primefix",
-    "join",
     "www",
-    "villa",
-    "@RM_Movie_Flix - -",
     "@RM_Movie_Flix",
-    "Movie Flix",
-    "original"
+    "-",
+    "@"
 } # Set of bad words to filter out
 
 # True Or False

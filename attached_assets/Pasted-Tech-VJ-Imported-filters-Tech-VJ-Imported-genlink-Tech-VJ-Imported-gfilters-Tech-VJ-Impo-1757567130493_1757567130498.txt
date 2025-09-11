@@ -1,0 +1,212 @@
+Tech VJ Imported => filters
+Tech VJ Imported => genlink
+Tech VJ Imported => gfilters
+Tech VJ Imported => index
+Tech VJ Imported => inline
+Tech VJ Imported => misc
+Tech VJ Imported => p_ttishow
+Tech VJ Imported => route
+Tech VJ Imported => verification_admin
+Tech VJ Imported => pm_filter
+05:03:43 AM - 62 - root - bot - INFO - 
+████████╗███████╗███████╗██╗  ██╗    ╔██        ██╗       ██╗
+╚═ ██╔══╝██╔════╝██╔════╝██║  ██║     ║██      ██║        ██║
+   ██║    █████╗  ██║      ███████║      ║██    ██║         ██║
+   ██║    ██╔══╝  ██║      ██╔══██║       ║██  ██║  ╔██     ██║
+   ██║    ███████╗███████╗██║  ██║        ║████║   ║████████║
+   ╚═╝    ╚══════╝╚══════╝╚═╝  ╚═╝        ╚════╝   ╚════════╝
+Make Your Bot Admin In Force Subscribe Channel With Full Rights
+05:03:45 AM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:03:45 AM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:03:45 AM - 103 - __main__ - bot - INFO - Loaded 1 verified users from storage
+05:03:45 AM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:03:45 AM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:03:45 AM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+05:03:45 AM - 47 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started
+05:03:45 AM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+05:03:45 AM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 05:03:45 UTC], next run at: 2025-09-11 05:03:45 UTC)" (scheduled at 2025-09-11 05:03:45.056419+00:00)
+05:03:45 AM - 39 - verification_scheduler - verification_scheduler - INFO - Automatic verification cleanup completed
+05:03:45 AM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 05:03:45 UTC], next run at: 2025-09-11 05:03:45 UTC)" executed successfully
+05:03:45 AM - 214 - aiohttp.access - web_log - INFO - 172.31.83.34 [11/Sep/2025:05:03:45 +0000] "GET / HTTP/1.1" 200 174 "https://d7e69dfc-2b03-47be-831b-90cc342170ae-00-26yzczabkuj35.sisko.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arht%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+05:03:53 AM - 262 - utils - utils - INFO - FILENAME CLEANING: No bad words found in 'A Tale Of Two Sisters 2003 720p Dual Movies Library mkv'
+05:03:53 AM - 262 - utils - utils - INFO - FILENAME CLEANING: No bad words found in 'A Tale of Two Sisters 2003 REMASTERED 720p BluRay x264 6CH Pahe mkv'
+05:03:55 AM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:03:55 AM - 100 - plugins.commands - commands - INFO - User 8077775478 not joined channels: []
+05:04:08 AM - 245 - utils - utils - INFO - Removed token found in bad word pattern: 'Official' (found in: '[@FilmyHub4u_Official]')
+05:04:08 AM - 260 - utils - utils - INFO - FILENAME CLEANING: Original: 'Official Ufff Yeh Siyapaa 2025 1080p HDT mkv' -> Cleaned: 'Ufff Yeh Siyapaa 2025 1080p HDT mkv' | Removed words: ['Official']
+05:04:08 AM - 245 - utils - utils - INFO - Removed token found in bad word pattern: 'Official' (found in: '[@FilmyHub4u_Official]')
+05:04:08 AM - 260 - utils - utils - INFO - FILENAME CLEANING: Original: 'Official Ufff Yeh Siyapaa 2025 720p HDTC Hi mkv' -> Cleaned: 'Ufff Yeh Siyapaa 2025 720p HDTC Hi mkv' | Removed words: ['Official']
+05:04:08 AM - 245 - utils - utils - INFO - Removed token found in bad word pattern: 'Official' (found in: '[@FilmyHub4u_Official]')
+05:04:08 AM - 260 - utils - utils - INFO - FILENAME CLEANING: Original: 'Official Ufff Yeh Siyapaa 2025 720p HEVC mkv' -> Cleaned: 'Ufff Yeh Siyapaa 2025 720p HEVC mkv' | Removed words: ['Official']
+05:04:08 AM - 245 - utils - utils - INFO - Removed token found in bad word pattern: 'Official' (found in: '[@FilmyHub4u_Official]')
+05:04:08 AM - 260 - utils - utils - INFO - FILENAME CLEANING: Original: 'Official Ufff Yeh Siyapaa 2025 480p HDTC Hi mkv' -> Cleaned: 'Ufff Yeh Siyapaa 2025 480p HDTC Hi mkv' | Removed words: ['Official']
+2025-09-11 05:04:44,160 CRITICAL [imdbpy] /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/_exceptions.py:30: IMDbDataAccessError exception raised; args: ({'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>},); kwds: {}
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 229, in retrieve_unicode
+    response = uopener.open(url, timeout=timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 525, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 405: Not Allowed
+05:04:44 AM - 30 - imdbpy - _exceptions - CRITICAL - IMDbDataAccessError exception raised; args: ({'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>},); kwds: {}
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 229, in retrieve_unicode
+    response = uopener.open(url, timeout=timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 525, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 405: Not Allowed
+05:04:44 AM - 2773 - plugins.pm_filter - pm_filter - ERROR - {'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>}
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 229, in retrieve_unicode
+    response = uopener.open(url, timeout=timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 525, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 405: Not Allowed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/workspace/plugins/pm_filter.py", line 2771, in advantage_spell_chok
+    movies = await get_poster(mv_rqst, bulk=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/utils.py", line 107, in get_poster
+    movieid = imdb.search_movie(title.lower(), results=10)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/__init__.py", line 437, in search_movie
+    res = self._search_movie(title, results)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 399, in _search_movie
+    cont = self._get_search_content('tt', title, results)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 387, in _get_search_content
+    cont = self._retrieve(self.urls['find'] % params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 375, in _retrieve
+    ret = self.urlOpener.retrieve_unicode(url, size=size, timeout=self.timeout)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 254, in retrieve_unicode
+    raise IMDbDataAccessError(
+imdb._exceptions.IMDbDataAccessError: {'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>}
+2025-09-11 05:04:48,440 CRITICAL [imdbpy] /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/_exceptions.py:30: IMDbDataAccessError exception raised; args: ({'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>},); kwds: {}
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 229, in retrieve_unicode
+    response = uopener.open(url, timeout=timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 525, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 405: Not Allowed
+05:04:48 AM - 30 - imdbpy - _exceptions - CRITICAL - IMDbDataAccessError exception raised; args: ({'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>},); kwds: {}
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 229, in retrieve_unicode
+    response = uopener.open(url, timeout=timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 525, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 405: Not Allowed
+05:04:48 AM - 2773 - plugins.pm_filter - pm_filter - ERROR - {'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>}
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 229, in retrieve_unicode
+    response = uopener.open(url, timeout=timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 525, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 405: Not Allowed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/workspace/plugins/pm_filter.py", line 2771, in advantage_spell_chok
+    movies = await get_poster(mv_rqst, bulk=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/utils.py", line 107, in get_poster
+    movieid = imdb.search_movie(title.lower(), results=10)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/__init__.py", line 437, in search_movie
+    res = self._search_movie(title, results)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 399, in _search_movie
+    cont = self._get_search_content('tt', title, results)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 387, in _get_search_content
+    cont = self._retrieve(self.urls['find'] % params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 375, in _retrieve
+    ret = self.urlOpener.retrieve_unicode(url, size=size, timeout=self.timeout)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/imdb/parser/http/__init__.py", line 254, in retrieve_unicode
+    raise IMDbDataAccessError(
+imdb._exceptions.IMDbDataAccessError: {'errcode': None, 'errmsg': 'None', 'url': 'https://www.imdb.com/find/?q=police+day+%282025%29&s=tt', 'proxy': '', 'exception type': 'IOError', 'original exception': <HTTPError 405: 'Not Allowed'>}
