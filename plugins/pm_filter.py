@@ -368,32 +368,8 @@ async def filter_yearss_cb_handler(client: Client, query: CallbackQuery):
             ]
             for file in files
         ]
-        btn.insert(0, 
-            [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{key}")
-            ]
-        )
-        btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{key}")
-        ])
     else:
         btn = []
-        btn.insert(0, 
-            [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{key}")
-            ]
-        )
-        btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{key}")
-        ])
 
     if offset != "":
         try:
@@ -528,7 +504,7 @@ async def filter_episodes_cb_handler(client: Client, query: CallbackQuery):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
+                InlineKeyboardButton(text=f" {get_size(file['file_size'])} | " + clean_filename(
                     file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
@@ -671,7 +647,7 @@ async def filter_languages_cb_handler(client: Client, query: CallbackQuery):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
+                InlineKeyboardButton(text=f" {get_size(file['file_size'])} | " + clean_filename(
                     file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
@@ -843,7 +819,7 @@ async def filter_seasons_cb_handler(client: Client, query: CallbackQuery):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
+                InlineKeyboardButton(text=f" {get_size(file['file_size'])} | " + clean_filename(
                     file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
@@ -956,7 +932,7 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
+                InlineKeyboardButton(text=f" {get_size(file['file_size'])} | " + clean_filename(
                     file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
@@ -2509,7 +2485,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
+                InlineKeyboardButton(text=f" {get_size(file['file_size'])} | " + clean_filename(
                     file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
@@ -2594,12 +2570,10 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 if settings['auto_delete']:
                     await asyncio.sleep(300)
                     await hehe.delete()
-                    await message.delete()
             except KeyError:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
                 await asyncio.sleep(300)
                 await hehe.delete()
-                await message.delete()
         except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
             pic = imdb.get('poster')
             poster = pic.replace('.jpg', "._V1_UX360.jpg") 
@@ -2609,12 +2583,10 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                if settings['auto_delete']:
                     await asyncio.sleep(300)
                     await hmm.delete()
-                    await message.delete()
             except KeyError:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
                 await asyncio.sleep(300)
                 await hmm.delete()
-                await message.delete()
         except Exception as e:
             logger.exception(e) 
             fek = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn))
@@ -2622,12 +2594,10 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 if settings['auto_delete']:
                     await asyncio.sleep(300)
                     await fek.delete()
-                    await message.delete()
             except KeyError:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
                 await asyncio.sleep(300)
                 await fek.delete()
-                await message.delete()
     else:
         fuk = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
 
@@ -2635,12 +2605,10 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             if settings['auto_delete']:
                 await asyncio.sleep(300)
                 await fuk.delete()
-                await message.delete()
         except KeyError:
             await save_group_settings(message.chat.id, 'auto_delete', True)
             await asyncio.sleep(300)
             await fuk.delete()
-            await message.delete()
 
 async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
     mv_id = msg.id
