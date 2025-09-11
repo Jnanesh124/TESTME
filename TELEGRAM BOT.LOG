@@ -1,0 +1,12 @@
+[09/11/2025 08:49:26 AM:pyrogram.dispatcher:376:ERROR] '<' not supported between instances of 'int' and 'str'
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 133, in pm_text
+    await auto_filter(bot, content, message, reply_msg, ai_search)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 2440, in auto_filter
+    if 0 < offset <= 10:
+       ^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'int' and 'str'
