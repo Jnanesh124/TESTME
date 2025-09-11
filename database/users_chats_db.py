@@ -173,6 +173,23 @@ class Database:
     async def delete_user(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
 
+    async def get_all_users(self):
+        return self.col.find({})
+
+    async def get_users_count(self):
+        count = await self.col.count_documents({})
+        return count
+
+    async def set_msg_command(self, user_id, com):
+        await self.col.update_one({'id': user_id}, {'$set': {'command': com}}, upsert=True)
+
+    async def get_msg_command(self, user_id):
+        user = await self.col.find_one({'id': user_id})
+        return user.get('command') if user else None
+
+    async def del_msg_command(self, user_id):
+        await self.col.update_one({'id': user_id}, {'$unset': {'command': ""}}, upsert=True)
+
 
     async def get_banned(self):
         users = self.col.find({'ban_status.is_banned': True})

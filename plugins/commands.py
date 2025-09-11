@@ -387,10 +387,28 @@ async def start(client, message):
                     text=text.format(message.from_user.mention, expiry_text),
                     protect_content=True
                 )
+                
+                # Check if there's a file request stored for this user and redirect
+                try:
+                    stored_command = await db.get_msg_command(userid)
+                    if stored_command:
+                        # Clear the stored command to prevent loops
+                        await db.del_msg_command(userid)
+                        # Send a message to redirect user to their file
+                        btn = [[InlineKeyboardButton("🎬 ɢᴇᴛ ʏᴏᴜʀ ғɪʟᴇ ɴᴏᴡ 🎬", url=f"https://t.me/{temp.U_NAME}?start={stored_command}")]]
+                        await message.reply_text(
+                            "<b>✅ ɴᴏᴡ ʏᴏᴜ ᴄᴀɴ ᴀᴄᴄᴇꜱꜱ ʏᴏᴜʀ ғɪʟᴇ!\n\nᴄʟɪᴄᴋ ᴛʜᴇ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ғɪʟᴇ:</b>",
+                            reply_markup=InlineKeyboardMarkup(btn)
+                        )
+                        return
+                except Exception as e:
+                    logger.error(f"Error handling file redirect after verification: {e}")
+                
             else:
                 return await message.reply_text(text="<b>❌ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ғᴀɪʟᴇᴅ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ.</b>", protect_content=True)
         else:
             return await message.reply_text(text="<b>ɪɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ ᴇxᴘɪʀᴇᴅ ʟɪɴᴋ</b>", protect_content=True)
+        return
 
     if data.startswith("sendfiles"):
         chat_id = int("-" + file_id.split("-")[1])
@@ -538,6 +556,8 @@ async def start(client, message):
         try:
             if not await db.has_premium_access(message.from_user.id):
                 if not await check_verification(client, message.from_user.id) and VERIFY == True:
+                    # Store the original command for after verification
+                    await db.set_msg_command(message.from_user.id, com=data)
                     btn = [[
                         InlineKeyboardButton("ᴠᴇʀɪғʏ", url=await get_token(client, message.from_user.id, f"https://telegram.me/{temp.U_NAME}?start="))
                     ],[
@@ -596,6 +616,8 @@ async def start(client, message):
         f_caption = f"{' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@'), files['file_name'].split()))}"
     if not await db.has_premium_access(message.from_user.id):
         if not await check_verification(client, message.from_user.id) and VERIFY == True:
+            # Store the original command for after verification
+            await db.set_msg_command(message.from_user.id, com=data)
             btn = [[
                 InlineKeyboardButton("ᴠᴇʀɪғʏ", url=await get_token(client, message.from_user.id, f"https://telegram.me/{temp.U_NAME}?start="))
             ],[
@@ -603,7 +625,7 @@ async def start(client, message):
             ]]
             text = "<b>ʜᴇʏ {} 👋,\n\nʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴠᴇʀɪғɪᴇᴅ ᴛᴏᴅᴀʏ, ᴘʟᴇᴀꜱᴇ ᴄʟɪᴄᴋ ᴏɴ ᴠᴇʀɪғʏ & ɢᴇᴛ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇꜱꜱ ғᴏʀ ᴛᴏᴅᴀʏ</b>"
             if PREMIUM_AND_REFERAL_MODE == True:
-                text += "<b>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴅɪʀᴇᴄᴛ ғɪʟᴇꜱ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴꜱ ᴛʜᴇɴ ʙᴜʏ ʙᴏᴛ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ☺️\n\n💶 ꜱᴇɴᴅ /plan ᴛᴏ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ</b>"
+                text += "<b>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴅɪʀᴇᴄᴛ ғɪʟᴇꜱ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ✅ ᴛʜᴇɴ ʙᴜʏ ʙᴏᴛ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ☺️\n\n💶 ꜱᴇɴᴅ /plan ᴛᴏ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ</b>"
             await safe_reply_message(
                 message=message,
                 text=text.format(message.from_user.mention),
