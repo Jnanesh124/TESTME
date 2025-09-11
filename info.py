@@ -110,6 +110,7 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support C
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
 BAD_WORDS = [
+    "2",
     "@MovieShopLinks",
     "UNTOUCHED",
     "AVC",
