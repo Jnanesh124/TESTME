@@ -216,8 +216,14 @@ async def start(client, message):
             )
             return 
     try:
-        pre, file_id = data.split('_', 1)
-    except:
+        split_result = data.split('_', 1)
+        if len(split_result) == 2:
+            pre, file_id = split_result
+        else:
+            pre = ""
+            file_id = split_result[0]
+    except Exception as e:
+        logger.error(f"Error splitting data '{data}': {e}")
         file_id = data
         pre = ""
     if data.split("-", 1)[0] == "BATCH":
@@ -517,9 +523,16 @@ async def start(client, message):
                 except UnicodeDecodeError:
                     decoded_str = decoded_bytes.decode("latin-1")
 
-            pre, file_id = decoded_str.split("_", 1)
+            # Handle split properly - might return 1 or 2 values
+            split_result = decoded_str.split("_", 1)
+            if len(split_result) == 2:
+                pre, file_id = split_result
+            else:
+                pre = ""
+                file_id = split_result[0]
+                
         except Exception as decode_error:
-            print(f"Base64 decode error: {decode_error}")
+            logger.error(f"Base64 decode error: {decode_error}")
             return await message.reply('Invalid file link.')
 
         try:
