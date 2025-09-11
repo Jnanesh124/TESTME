@@ -1610,7 +1610,9 @@ async def generate_stream_link_cb(client: Client, query: CallbackQuery):
         await query.answer(f"something went wrong\n\n{e}", show_alert=True)
         return
 
-    elif query.data == "reqinfo":
+@Client.on_callback_query()
+async def cb_handler(client: Client, query: CallbackQuery):
+    if query.data == "reqinfo":
         await query.answer(text=script.REQINFO, show_alert=True)
 
     elif query.data == "select":
