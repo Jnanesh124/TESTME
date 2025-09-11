@@ -77,7 +77,56 @@ async def pm_text(bot, message):
     content = message.text
     user = message.from_user.first_name
     user_id = message.from_user.id
-    if content.startswith("/") or content.startswith("#"): return  # ignore commands and hashtags
+    
+    # Ignore commands and hashtags
+    if content.startswith("/") or content.startswith("#"): 
+        return
+    
+    # Convert to lowercase for case-insensitive checking
+    content_lower = content.lower()
+    
+    # Ignore if content contains usernames (starting with @)
+    if "@" in content:
+        return
+    
+    # Ignore if content contains any type of links
+    link_patterns = [
+        "t.me", "telegram.me", "http://", "https://", "www.", ".com", ".org", ".net", 
+        ".in", ".co", ".io", ".me", ".ly", ".cc", ".tk", ".ml", ".ga", ".cf",
+        "bit.ly", "tinyurl", "short", "link", "url"
+    ]
+    
+    for pattern in link_patterns:
+        if pattern in content_lower:
+            return
+    
+    # Ignore if content contains encoded/hidden link patterns
+    hidden_link_patterns = [
+        "click here", "download here", "get file", "join now", "visit",
+        "check this", "open link", "go to", "redirect", "shortlink"
+    ]
+    
+    for pattern in hidden_link_patterns:
+        if pattern in content_lower:
+            return
+    
+    # Ignore if content contains suspicious characters that might indicate encoded links
+    suspicious_chars = ["[", "]", "(", ")", "{", "}", "<", ">"]
+    if any(char in content for char in suspicious_chars):
+        return
+    
+    # Ignore very short queries (likely not meaningful search terms)
+    if len(content.strip()) < 3:
+        return
+    
+    # Ignore if content is mostly numbers (likely IDs or codes)
+    if content.replace(" ", "").isdigit():
+        return
+    
+    # Ignore if content contains only special characters
+    if not any(char.isalnum() for char in content):
+        return
+    
     if PM_SEARCH == True:
         ai_search = True
         reply_msg = await bot.send_message(message.from_user.id, f"<b><i>Searching For {content} 🔍</i></b>", reply_to_message_id=message.id)
