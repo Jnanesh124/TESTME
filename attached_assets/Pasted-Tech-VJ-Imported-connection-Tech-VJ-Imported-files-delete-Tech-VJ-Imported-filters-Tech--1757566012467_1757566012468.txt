@@ -1,0 +1,32 @@
+Tech VJ Imported => connection
+Tech VJ Imported => files_delete
+Tech VJ Imported => filters
+Tech VJ Imported => genlink
+Tech VJ Imported => gfilters
+Tech VJ Imported => index
+Tech VJ Imported => inline
+Tech VJ Imported => misc
+Tech VJ Imported => p_ttishow
+Tech VJ Imported => route
+Tech VJ Imported => verification_admin
+Tech VJ Imported => pm_filter
+04:46:21 AM - 62 - root - bot - INFO - 
+████████╗███████╗███████╗██╗  ██╗    ╔██        ██╗       ██╗
+╚═ ██╔══╝██╔════╝██╔════╝██║  ██║     ║██      ██║        ██║
+   ██║    █████╗  ██║      ███████║      ║██    ██║         ██║
+   ██║    ██╔══╝  ██║      ██╔══██║       ║██  ██║  ╔██     ██║
+   ██║    ███████╗███████╗██║  ██║        ║████║   ║████████║
+   ╚═╝    ╚══════╝╚══════╝╚═╝  ╚═╝        ╚════╝   ╚════════╝
+Make Your Bot Admin In Force Subscribe Channel With Full Rights
+04:46:22 AM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+04:46:22 AM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+04:46:22 AM - 103 - __main__ - bot - INFO - Loaded 1 verified users from storage
+04:46:22 AM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+04:46:22 AM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+04:46:22 AM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+04:46:22 AM - 47 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started
+04:46:22 AM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+04:46:22 AM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 04:46:22 UTC], next run at: 2025-09-11 04:46:22 UTC)" (scheduled at 2025-09-11 04:46:22.466532+00:00)
+04:46:22 AM - 39 - verification_scheduler - verification_scheduler - INFO - Automatic verification cleanup completed
+04:46:22 AM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 04:46:22 UTC], next run at: 2025-09-11 04:46:22 UTC)" executed successfully
+04:46:22 AM - 214 - aiohttp.access - web_log - INFO - 172.31.83.34 [11/Sep/2025:04:46:22 +0000] "GET / HTTP/1.1" 200 174 "https://d7e69dfc-2b03-47be-831b-90cc342170ae-00-26yzczabkuj35.sisko.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar23c%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
