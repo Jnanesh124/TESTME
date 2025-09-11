@@ -2402,6 +2402,9 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         search, files, offset, total_results = spoll
         settings = await get_settings(message.chat.id)
         await msg.message.delete()
+    
+    # Initialize n_offset
+    n_offset = 0
     pre = 'filep' if settings['file_secure'] else 'file'
     key = f"{message.chat.id}-{message.id}"
     req = message.from_user.id if message.from_user else 0
@@ -2446,6 +2449,17 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
             InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
         ])
+    # Ensure offset and n_offset are integers
+    try:
+        offset = int(offset) if offset is not None else 0
+    except (ValueError, TypeError):
+        offset = 0
+    
+    try:
+        n_offset = int(n_offset) if n_offset is not None else 0
+    except (ValueError, TypeError):
+        n_offset = 0
+    
     try:
         if settings['max_btn']:
             if 0 < offset <= 5:
@@ -2476,7 +2490,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 off_set = None
             else:
                 off_set = offset - max_btn
-            if n_offset == 0 or n_offset == "":
+            if n_offset == 0:
                 btn.append(
                     [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(offset/max_btn)+1} / {math.ceil(total_results/max_btn)}", callback_data="pages")]
                 )
@@ -2491,14 +2505,14 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                     ],
                 )
     except KeyError:
-        await save_group_settings(query.message.chat.id, 'max_btn', True)
+        await save_group_settings(message.chat.id, 'max_btn', True)
         if 0 < offset <= 5:
             off_set = 0
         elif offset == 0:
             off_set = None
         else:
             off_set = offset - 5
-        if n_offset == 0 or n_offset == "":
+        if n_offset == 0:
             btn.append(
                 [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(offset/5)+1} / {math.ceil(total_results/5)}", callback_data="pages")]
             )
