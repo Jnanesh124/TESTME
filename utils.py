@@ -232,10 +232,17 @@ def clean_filename(file_name):
                 token_removed = True
                 break
             
-            # Also check if the token contains the bad word as a substring
+            # Check if the token contains the bad word as a substring
             elif bad_word.lower() in token.lower() and len(bad_word) > 2:  # Only for longer bad words
                 removed_words.append(token)
                 logger.info(f"Removed token containing bad word: '{token}' (contains: '{bad_word}')")
+                token_removed = True
+                break
+            
+            # Check if the token is contained within the bad word (NEW LOGIC)
+            elif token.lower() in bad_word.lower() and len(token) > 2:  # Only for longer tokens
+                removed_words.append(token)
+                logger.info(f"Removed token found in bad word pattern: '{token}' (found in: '{bad_word}')")
                 token_removed = True
                 break
         

@@ -46,3 +46,7 @@ pytz
 pyrofork
 pyrogram
 pymongo
+aiohttp
+beautifulsoup4
+pytz
+requests
