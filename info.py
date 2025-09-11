@@ -108,7 +108,11 @@ BAD_WORDS = {
     "www",
     "@RM_Movie_Flix",
     "-",
-    "@"
+    "[MS]",
+    "@",
+    "[",
+    "]",
+    "MS"
 } # Set of bad words to filter out
 
 # True Or False
