@@ -255,30 +255,8 @@ def clean_filename(file_name):
         if not token_removed:
             cleaned_tokens.append(token)
 
-    # STEP 2: After bad words removal, check and remove prefixes only
-    final_tokens = []
-    prefix_patterns = [
-        r'^[\[\(].*[\]\)]$',  # Remove tokens wrapped in brackets or parentheses
-        r'^@.*',              # Remove tokens starting with @
-        r'^#.*',              # Remove tokens starting with #
-        r'^\d{4}$',           # Remove 4-digit years
-        r'^[A-Z]{2,}$',       # Remove all caps abbreviations
-    ]
-    
-    for token in cleaned_tokens:
-        is_prefix = False
-        for pattern in prefix_patterns:
-            if re.match(pattern, token, re.IGNORECASE):
-                removed_words.append(token)
-                logger.info(f"Removed prefix pattern: '{token}' (pattern: {pattern})")
-                is_prefix = True
-                break
-        
-        if not is_prefix:
-            final_tokens.append(token)
-
     # Rejoin the cleaned tokens with spaces
-    file_name = ' '.join(final_tokens)
+    file_name = ' '.join(cleaned_tokens)
 
     # Clean up extra spaces
     file_name = ' '.join(file_name.split())
