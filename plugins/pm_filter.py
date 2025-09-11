@@ -2646,7 +2646,13 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         btn.append(
             [InlineKeyboardButton(text="𝐍𝐎 𝐌𝐎𝐑𝐄 𝐏𝐀𝐆𝐄𝐒 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄",callback_data="pages")]
         )
-    imdb = await get_poster(search, file=(files[0])['file_name']) if settings["imdb"] else None
+    imdb = None
+    if settings["imdb"]:
+        try:
+            imdb = await get_poster(search, file=(files[0])['file_name'])
+        except Exception as e:
+            logger.error(f"IMDb lookup failed for '{search}': {e}")
+            imdb = None
     cur_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
     time_difference = timedelta(hours=cur_time.hour, minutes=cur_time.minute, seconds=(cur_time.second+(cur_time.microsecond/1000000))) - timedelta(hours=curr_time.hour, minutes=curr_time.minute, seconds=(curr_time.second+(curr_time.microsecond/1000000)))
     remaining_seconds = "{:.2f}".format(time_difference.total_seconds())
@@ -2770,14 +2776,14 @@ async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
     try:
         movies = await get_poster(mv_rqst, bulk=True)
     except Exception as e:
-        logger.exception(e)
+        logger.error(f"IMDb search failed for '{mv_rqst}': {e}")
         reqst_gle = mv_rqst.replace(" ", "+")
         button = [[
             InlineKeyboardButton("Gᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={reqst_gle}")
         ]]
         if NO_RESULTS_MSG:
             await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
-        k = await reply_msg.edit_text(text=script.I_CUDNT.format(mv_rqst), reply_markup=InlineKeyboardMarkup(button))
+        k = await reply_msg.edit_text(text=f"🔍 **IMDb service temporarily unavailable**\n\nSearch '{mv_rqst}' on Google instead:", reply_markup=InlineKeyboardMarkup(button))
         await asyncio.sleep(30)
         await k.delete()
         return
