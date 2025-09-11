@@ -535,7 +535,7 @@ async def filter_episodes_cb_handler(client: Client, query: CallbackQuery):
         ]
     else:
         btn = []
-
+ 
     if offset != "":
         try:
             if settings['max_btn']:
@@ -960,7 +960,6 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
                     file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
-        ]
     else:
         btn = []
 
@@ -2506,7 +2505,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     FRESH[key] = search
     temp.GETALL[key] = files
     temp.SHORT[message.from_user.id] = message.chat.id
-    if settings.get('button'):
+    f settings.get('button'):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
@@ -2581,7 +2580,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         if settings["button"]:
             cap = f"<b><u>Your Requisted Movie File 📤 👇</b>"
         else:
-            cap = f"<b><u>Your Requisted Movie File 📤 👇</b>"
+            cap = f"<b><u>Your Requisted Movie File 📤 👇</b>""
             cap+="<b><u>🍿 Your Movie Files 👇</u></b>\n\n"
             for file in files:
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
