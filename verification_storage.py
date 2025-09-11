@@ -46,6 +46,8 @@ class JSONVerificationStorage:
                     data_copy['expiry_time'] = data_copy['expiry_time'].isoformat()
                 if 'verification_time' in data_copy and isinstance(data_copy['verification_time'], datetime.datetime):
                     data_copy['verification_time'] = data_copy['verification_time'].isoformat()
+                data_to_save[user_id] = data_copy
+            
             with open(self.file_path, 'w') as f:
                 json.dump(data_to_save, f, indent=2)
             logger.info(f"Saved {len(self.verified_users)} verified users to {self.file_path}")

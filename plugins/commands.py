@@ -1544,10 +1544,10 @@ async def add_bad_word_handler(client, message):
             
             # Find the BAD_WORDS section and update it
             import re
-            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\])'
+            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\]\s*#[^\n]*)'
             
             def replace_bad_words(match):
-                # Format the new BAD_WORDS list
+                # Format the new BAD_WORDS list with proper indentation
                 formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
                 return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
             
@@ -1556,7 +1556,7 @@ async def add_bad_word_handler(client, message):
             with open('info.py', 'w', encoding='utf-8') as f:
                 f.write(new_content)
                 
-            await message.reply_text(f"<b>Successfully added '{word}' to BAD_WORDS list and saved to info.py.</b>")
+            await message.reply_text(f"<b>Successfully added '{word}' to BAD_WORDS list at the beginning and saved to info.py.</b>")
         except Exception as e:
             logger.error(f"Error updating info.py: {e}")
             await message.reply_text(f"<b>Added '{word}' to memory but failed to save to info.py: {e}</b>")
@@ -1584,12 +1584,15 @@ async def remove_bad_word_handler(client, message):
             
             # Find the BAD_WORDS section and update it
             import re
-            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\])'
+            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\]\s*#[^\n]*)'
             
             def replace_bad_words(match):
-                # Format the new BAD_WORDS list
-                formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
-                return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
+                # Format the new BAD_WORDS list with proper indentation
+                if BAD_WORDS:
+                    formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+                    return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
+                else:
+                    return f"{match.group(1)}{match.group(3)}"
             
             new_content = re.sub(pattern, replace_bad_words, content, flags=re.DOTALL)
             

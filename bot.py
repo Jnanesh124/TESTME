@@ -84,6 +84,32 @@ async def start():
         await restart_bots()
         print("Restarted All Clone Bots.")
     
+    # Print verified users details on restart
+    try:
+        from verification_storage import verification_storage
+        verified_count = verification_storage.get_verified_users_count()
+        print(f"📊 Verified Users Status: {verified_count} users currently verified")
+        
+        if verified_count > 0:
+            print("📋 Verified Users Details:")
+            for user_id_str, user_data in verification_storage.verified_users.items():
+                expiry = user_data.get('expiry_time')
+                verification_time = user_data.get('verification_time')
+                if expiry and verification_time:
+                    import datetime
+                    if isinstance(expiry, str):
+                        expiry = datetime.datetime.fromisoformat(expiry)
+                    if isinstance(verification_time, str):
+                        verification_time = datetime.datetime.fromisoformat(verification_time)
+                    
+                    remaining = expiry - datetime.datetime.now()
+                    hours_left = max(0, remaining.total_seconds() / 3600)
+                    print(f"  👤 User {user_id_str}: Verified at {verification_time.strftime('%Y-%m-%d %H:%M:%S')}, {hours_left:.1f} hours remaining")
+        else:
+            print("❌ No verified users found")
+    except Exception as e:
+        print(f"❌ Error loading verified users details: {e}")
+    
     # Add cleanup task for expired verifications
     async def cleanup_expired_verifications():
         """Periodic cleanup of expired verifications"""
