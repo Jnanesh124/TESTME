@@ -1217,6 +1217,29 @@ async def unmute_me_cb(client: Client, query: CallbackQuery):
     except:
         await query.answer("Not For Your My Dear", show_alert=True)
 
+@Client.on_callback_query(filters.regex(r"^file#"))
+async def file_cb(client: Client, query: CallbackQuery):
+    ident, file_id = query.data.split("#")
+    files_ = await get_file_details(file_id)
+    if not files_:
+        return await query.answer('Nᴏ sᴜᴄʜ ғɪʟᴇ ᴇxɪsᴛ.')
+    files = files_
+    title = files['file_name']
+    size = get_size(files['file_size'])
+    f_caption = files['caption']
+    settings = await get_settings(query.message.chat.id)
+    if CUSTOM_FILE_CAPTION:
+        try:
+            f_caption = CUSTOM_FILE_CAPTION.format(file_name='' if title is None else title,
+                                                   file_size='' if size is None else size,
+                                                   file_caption='' if f_caption is None else f_caption)
+        except Exception as e:
+            logger.exception(e)
+        f_caption = f_caption
+    if f_caption is None:
+        f_caption = f"{files['file_name']}"
+    await query.answer(url=f"https://telegram.me/{temp.U_NAME}?start=file_{file_id}")
+
 @Client.on_callback_query(filters.regex(r"^del"))
 async def delete_file_cb(client: Client, query: CallbackQuery):
     ident, file_id = query.data.split("#")
