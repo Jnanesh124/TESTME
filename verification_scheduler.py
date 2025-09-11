@@ -49,14 +49,22 @@ class VerificationScheduler:
             current_time = datetime.now()
             expired_users = []
 
-            for user_id, verification_time_str in verified_users.items():
+            for user_id, user_data in verified_users.items():
                 try:
-                    verification_time = datetime.fromisoformat(verification_time_str)
-                    # Check if verification has expired (24 hours)
-                    if current_time - verification_time >= self.verification_duration:
-                        expired_users.append(user_id)
+                    # Handle new data structure with user_data dict
+                    if isinstance(user_data, dict):
+                        expiry_time_str = user_data.get('expiry_time')
+                        if expiry_time_str:
+                            expiry_time = datetime.fromisoformat(expiry_time_str)
+                            if current_time >= expiry_time:
+                                expired_users.append(user_id)
+                    else:
+                        # Handle old data structure (just timestamp)
+                        verification_time = datetime.fromisoformat(user_data)
+                        if current_time - verification_time >= self.verification_duration:
+                            expired_users.append(user_id)
                 except (ValueError, TypeError) as e:
-                    logger.warning(f"Invalid verification time for user {user_id}: {e}")
+                    logger.warning(f"Invalid verification data for user {user_id}: {e}")
                     expired_users.append(user_id)  # Remove invalid entries
 
             # Remove expired users
@@ -88,11 +96,21 @@ class VerificationScheduler:
             if str(user_id) not in verified_users:
                 return False
 
-            verification_time = datetime.fromisoformat(verified_users[str(user_id)])
+            user_data = verified_users[str(user_id)]
             current_time = datetime.now()
 
-            # Check if verification is still valid (within 24 hours)
-            return current_time - verification_time < self.verification_duration
+            # Handle new data structure with user_data dict
+            if isinstance(user_data, dict):
+                expiry_time_str = user_data.get('expiry_time')
+                if expiry_time_str:
+                    expiry_time = datetime.fromisoformat(expiry_time_str)
+                    return current_time <= expiry_time
+            else:
+                # Handle old data structure (just timestamp)
+                verification_time = datetime.fromisoformat(user_data)
+                return current_time - verification_time < self.verification_duration
+
+            return False
 
         except Exception as e:
             logger.error(f"Error checking user verification: {e}")

@@ -11,7 +11,7 @@ from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file
 from database.users_chats_db import db, delete_all_referal_users, get_referal_users_count, get_referal_all_users, referal_add_user
 from database.join_reqs import JoinReqs
 from database.ignored_words_mdb import add_ignored_word, remove_ignored_word, get_ignored_words
-from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, AUTH_CHANNELS, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL
+from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, AUTH_CHANNELS, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL, BAD_WORDS
 from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds
 from database.connections_mdb import active_connection
 from urllib.parse import quote_plus
@@ -387,6 +387,7 @@ async def start(client, message):
         chat_id = int("-" + file_id.split("-")[1])
         userid = message.from_user.id if message.from_user else None
         settings = await get_settings(chat_id)
+        pre, file_id = file_id.split("-", 1) # Extract pre and file_id correctly
         pre = 'allfilesp' if settings['file_secure'] else 'allfiles'
         g = await get_shortlink(chat_id, f"https://telegram.me/{temp.U_NAME}?start={pre}_{file_id}")
         btn = [[
@@ -1520,91 +1521,91 @@ async def verified_users_count(client, message):
         await message.reply_text("<b>❌ Error retrieving verification data.</b>")
 
 @Client.on_message(filters.command("addbadword") & filters.user(ADMINS))
-async def add_bad_word_handler(client, message):
+async def add_bad_word(client, message):
     """Add word to BAD_WORDS list at the beginning"""
-    if len(message.command) < 2:
-        return await message.reply_text(
-            "<b>Usage: /addbadword word_to_add\n\nExample: /addbadword @username</b>"
-        )
+    try:
+        if len(message.command) < 2:
+            await message.reply_text("Usage: /addbadword <word>")
+            return
 
-    word = message.command[1]
+        word = message.command[1]
 
-    # Import BAD_WORDS from info
-    from info import BAD_WORDS
+        # Add word to BAD_WORDS list
+        from info import BAD_WORDS
+        if word not in BAD_WORDS:
+            BAD_WORDS.append(word)
 
-    if word in BAD_WORDS:
-        await message.reply_text(f"<b>'{word}' is already in BAD_WORDS list.</b>")
-    else:
-        BAD_WORDS.insert(0, word)  # Insert at the beginning
-        
-        # Write changes back to info.py file
-        try:
-            with open('info.py', 'r', encoding='utf-8') as f:
+            # Read current info.py content
+            with open('info.py', 'r') as f:
                 content = f.read()
-            
-            # Find the BAD_WORDS section and update it
+
+            # Find and replace BAD_WORDS section properly
             import re
-            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\]\s*#[^\n]*)'
-            
-            def replace_bad_words(match):
-                # Format the new BAD_WORDS list with proper indentation
-                formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
-                return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
-            
-            new_content = re.sub(pattern, replace_bad_words, content, flags=re.DOTALL)
-            
-            with open('info.py', 'w', encoding='utf-8') as f:
-                f.write(new_content)
-                
-            await message.reply_text(f"<b>Successfully added '{word}' to BAD_WORDS list at the beginning and saved to info.py.</b>")
-        except Exception as e:
-            logger.error(f"Error updating info.py: {e}")
-            await message.reply_text(f"<b>Added '{word}' to memory but failed to save to info.py: {e}</b>")
+            pattern = r'BAD_WORDS = \[([^\]]*)\]'
+
+            # Create properly formatted list string
+            formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+            new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]'
+
+            content = re.sub(pattern, new_bad_words, content, flags=re.DOTALL)
+
+            # Write back to file
+            with open('info.py', 'w') as f:
+                f.write(content)
+
+            await message.reply_text(f"✅ Added '{word}' to bad words list")
+            logger.info(f"Added bad word: {word}")
+        else:
+            await message.reply_text(f"'{word}' is already in bad words list")
+
+    except Exception as e:
+        await message.reply_text(f"Error: {e}")
+        logger.error(f"Error adding bad word: {e}")
 
 @Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
-async def remove_bad_word_handler(client, message):
+async def remove_bad_word(client, message):
     """Remove word from BAD_WORDS list"""
-    if len(message.command) < 2:
-        return await message.reply_text(
-            "<b>Usage: /removebadword word_to_remove\n\nExample: /removebadword @username</b>"
-        )
+    try:
+        if len(message.command) < 2:
+            await message.reply_text("Usage: /removebadword <word>")
+            return
 
-    word = message.command[1]
+        word = message.command[1]
 
-    # Import BAD_WORDS from info
-    from info import BAD_WORDS
+        # Remove word from BAD_WORDS list
+        from info import BAD_WORDS
+        if word in BAD_WORDS:
+            BAD_WORDS.remove(word)
 
-    if word in BAD_WORDS:
-        BAD_WORDS.remove(word)
-        
-        # Write changes back to info.py file
-        try:
-            with open('info.py', 'r', encoding='utf-8') as f:
+            # Read current info.py content
+            with open('info.py', 'r') as f:
                 content = f.read()
-            
-            # Find the BAD_WORDS section and update it
+
+            # Find and replace BAD_WORDS section properly
             import re
-            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\]\s*#[^\n]*)'
-            
-            def replace_bad_words(match):
-                # Format the new BAD_WORDS list with proper indentation
-                if BAD_WORDS:
-                    formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
-                    return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
-                else:
-                    return f"{match.group(1)}{match.group(3)}"
-            
-            new_content = re.sub(pattern, replace_bad_words, content, flags=re.DOTALL)
-            
-            with open('info.py', 'w', encoding='utf-8') as f:
-                f.write(new_content)
-                
-            await message.reply_text(f"<b>Successfully removed '{word}' from BAD_WORDS list and saved to info.py.</b>")
-        except Exception as e:
-            logger.error(f"Error updating info.py: {e}")
-            await message.reply_text(f"<b>Removed '{word}' from memory but failed to save to info.py: {e}</b>")
-    else:
-        await message.reply_text(f"<b>'{word}' was not found in BAD_WORDS list.</b>")
+            pattern = r'BAD_WORDS = \[([^\]]*)\]'
+
+            # Create properly formatted list string
+            if BAD_WORDS:
+                formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+                new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]'
+            else:
+                new_bad_words = 'BAD_WORDS = []'
+
+            content = re.sub(pattern, new_bad_words, content, flags=re.DOTALL)
+
+            # Write back to file
+            with open('info.py', 'w') as f:
+                f.write(content)
+
+            await message.reply_text(f"✅ Removed '{word}' from bad words list")
+            logger.info(f"Removed bad word: {word}")
+        else:
+            await message.reply_text(f"'{word}' is not in bad words list")
+
+    except Exception as e:
+        await message.reply_text(f"Error: {e}")
+        logger.error(f"Error removing bad word: {e}")
 
 @Client.on_message(filters.command("listbadwords") & filters.user(ADMINS))
 async def list_bad_words_handler(client, message):

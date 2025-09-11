@@ -110,29 +110,18 @@ async def start():
     except Exception as e:
         print(f"❌ Error loading verified users details: {e}")
     
-    # Add cleanup task for expired verifications
-    async def cleanup_expired_verifications():
-        """Periodic cleanup of expired verifications"""
-        try:
-            from bot.verification import verification_manager
-            while True:
-                await verification_manager.cleanup_expired_verifications()
-                await asyncio.sleep(3600)  # Run every hour
-        except Exception as e:
-            logging.error(f"Error in cleanup task: {e}")
-
     # Initialize verification system
     from verification_storage import verification_storage
     from verification_scheduler import verification_scheduler
     
     logger = logging.getLogger(__name__)
-    logger.info(f"Loaded {verification_storage.get_verified_users_count()} verified users from storage")
+    
+    # Load verified users count after storage initialization
+    verified_count = verification_storage.get_verified_users_count()
+    logger.info(f"Loaded {verified_count} verified users from storage")
     
     # Start verification scheduler
     verification_scheduler.start()
-    
-    # Start cleanup task
-    asyncio.create_task(cleanup_expired_verifications())
     
     app = web.AppRunner(await web_server())
     await app.setup()
