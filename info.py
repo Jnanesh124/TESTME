@@ -105,13 +105,13 @@ OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 BAD_WORDS = {
     "[@FilmyHub4u_Official]",
     "HQ",
-    "www",
     "@RM_Movie_Flix",
     "@JNK_BACKUP",
-    "-",
     "[MS]",
     "@",
-    "MS",
+    "[",
+    "]",
+    "www.",
 } # Set of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 # True Or False
