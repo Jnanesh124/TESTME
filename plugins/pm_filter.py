@@ -160,39 +160,39 @@ async def next_page(bot, query):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
 
     # Convert offset to int and get n_offset for pagination
@@ -409,39 +409,39 @@ async def filter_yearss_cb_handler(client: Client, query: CallbackQuery):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
 
     if offset != "":
@@ -578,39 +578,39 @@ async def filter_episodes_cb_handler(client: Client, query: CallbackQuery):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
 
     if offset != "":
@@ -694,7 +694,7 @@ async def languages_cb_handler(client: Client, query: CallbackQuery):
         0,
         [
             InlineKeyboardButton(
-                text="👇 𝖲𝖾𝗅𝖾𝖼𝗍 𝖸𝗈𝗎𝗋 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾𝗌 👇", callback_data="ident"
+                text="👇 s𝖾𝗅𝖾𝖼𝗍 𝗒𝗈𝗎𝗋 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾𝗌 👇", callback_data="ident"
             )
         ],
     )
@@ -749,39 +749,39 @@ async def filter_languages_cb_handler(client: Client, query: CallbackQuery):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
 
     if offset != "":
@@ -865,7 +865,7 @@ async def seasons_cb_handler(client: Client, query: CallbackQuery):
         0,
         [
             InlineKeyboardButton(
-                text="👇 𝖲𝖾𝗅𝖾𝖼𝗍 Season 👇", callback_data="ident"
+                text="👇 s𝖾𝗅𝖾𝖼𝗍 Season 👇", callback_data="ident"
             )
         ],
     )
@@ -949,39 +949,39 @@ async def filter_seasons_cb_handler(client: Client, query: CallbackQuery):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     if lang != "homepage":
         req = query.from_user.id
@@ -1090,39 +1090,39 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
 
     if offset != "":
@@ -2402,7 +2402,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         search, files, offset, total_results = spoll
         settings = await get_settings(message.chat.id)
         await msg.message.delete()
-    
+
     # Initialize n_offset
     n_offset = 0
     pre = 'filep' if settings['file_secure'] else 'file'
@@ -2415,51 +2415,51 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         btn = [
             [
                 InlineKeyboardButton(text=f"🔗 {get_size(file['file_size'])} ≽ " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'),
+                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
             ]
             for file in files
         ]
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     else:
         btn = []
-        # Ensure callback data doesn't exceed 64 bytes
-        safe_key = key[:50] if len(key) > 50 else key
+        # Ensure callback data doesn't exceed 64 bytes - be more aggressive with truncation
+        safe_key = key[:40] if len(key) > 40 else key
         btn.insert(0, 
             [
-                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"),
-                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"),
-                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}")
+                InlineKeyboardButton(f'ǫᴜᴀʟɪᴛʏ', callback_data=f"qualities#{safe_key}"[:64]),
+                InlineKeyboardButton("ᴇᴘɪsᴏᴅᴇs", callback_data=f"episodes#{safe_key}"[:64]),
+                InlineKeyboardButton("sᴇᴀsᴏɴs",  callback_data=f"seasons#{safe_key}"[:64])
             ]
         )
         btn.insert(0, [
-            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"),
-            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"),
-            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}")
+            InlineKeyboardButton("𝐒𝐞𝐧𝐝 𝐀𝐥𝐥", callback_data=f"sendfiles#{safe_key}"[:64]),
+            InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇs", callback_data=f"languages#{safe_key}"[:64]),
+            InlineKeyboardButton("ʏᴇᴀʀs", callback_data=f"years#{safe_key}"[:64])
         ])
     # Ensure offset and n_offset are integers
     try:
         offset = int(offset) if offset is not None else 0
     except (ValueError, TypeError):
         offset = 0
-    
+
     try:
         n_offset = int(n_offset) if n_offset is not None else 0
     except (ValueError, TypeError):
         n_offset = 0
-    
+
     try:
         if settings['max_btn']:
             if 0 < offset <= 5:
@@ -2490,7 +2490,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 off_set = None
             else:
                 off_set = offset - max_btn
-            if n_offset == 0:
+            if n_offset == 0 or n_offset == "":
                 btn.append(
                     [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(offset/max_btn)+1} / {math.ceil(total_results/max_btn)}", callback_data="pages")]
                 )
@@ -3040,18 +3040,6 @@ async def global_filters(client, message, text=False):
                                         await save_group_settings(grpid, 'auto_delete', True)
                                         settings = await get_settings(message.chat.id)
                                         if settings['auto_delete']:
-                                            await joelkb.delete()
-                                else:
-                                    try:
-                                        if settings['auto_delete']:
-                                            await asyncio.sleep(600)
-                                            await joelkb.delete()
-                                    except KeyError:
-                                        grpid = await active_connection(str(message.from_user.id))
-                                        await save_group_settings(grpid, 'auto_delete', True)
-                                        settings = await get_settings(message.chat.id)
-                                        if settings['auto_delete']:
-                                            await asyncio.sleep(600)
                                             await joelkb.delete()
                             except KeyError:
                                 grpid = await active_connection(str(message.from_user.id))
