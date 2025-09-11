@@ -72,20 +72,20 @@ async def start(client, message):
             reply_markup=reply_markup
         )
         return
-    
+
     # Check for unlimited force subscribe channels with logging
     force_sub_channels = []
-    
+
     # Add all AUTH_CHANNELS if exist
     if AUTH_CHANNELS:
         force_sub_channels.extend(AUTH_CHANNELS)
         logger.info(f"User {message.from_user.id} checking AUTH_CHANNELS: {AUTH_CHANNELS}")
-    
+
     logger.info(f"Total force subscribe channels to check: {len(force_sub_channels)}")
-    
+
     # Check all channels for subscription
     not_joined_channels = []
-    
+
     for channel in force_sub_channels:
         try:
             is_member = await is_subscribed(client, message, channel)
@@ -96,15 +96,15 @@ async def start(client, message):
             logger.error(f"Error checking subscription for channel {channel}: {e}")
             not_joined_channels.append(channel)
             continue
-    
+
     logger.info(f"User {message.from_user.id} not joined channels: {not_joined_channels}")
-    
+
     # If user hasn't joined any channel, show force subscribe message
     if not_joined_channels:
         try:
             btn = []
             logger.info(f"Creating force subscribe buttons for user {message.from_user.id}")
-            
+
             # Add invite links for AUTH_CHANNELS that user hasn't joined
             for channel in not_joined_channels:
                 if channel in AUTH_CHANNELS:
@@ -112,7 +112,7 @@ async def start(client, message):
                         # Get channel info to display proper name
                         chat_info = await client.get_chat(int(channel))
                         channel_name = chat_info.title if chat_info.title else f"Channel {channel}"
-                        
+
                         if REQUEST_TO_JOIN_MODE == True:
                             invite_link = await client.create_chat_invite_link(chat_id=int(channel), creates_join_request=True)
                         else:
@@ -123,7 +123,7 @@ async def start(client, message):
                         logger.error(f"Error creating invite link for channel {channel}: {e}")
                         # Skip invalid channels instead of adding them
                         continue
-            
+
             # Add try again button
             if len(message.command) > 1 and message.command[1] != "subscribe":
                 if REQUEST_TO_JOIN_MODE == True:
@@ -139,7 +139,7 @@ async def start(client, message):
                         btn.append([InlineKeyboardButton("↻ ᴛʀʏ ᴀɢᴀɪɴ", callback_data=f"checksub#{kk}#{file_id}")])
                     except (IndexError, ValueError):
                         btn.append([InlineKeyboardButton("↻ ᴛʀʏ ᴀɢᴀɪɴ", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
-            
+
             if REQUEST_TO_JOIN_MODE == True:
                 if TRY_AGAIN_BTN == True:
                     text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
@@ -148,7 +148,7 @@ async def start(client, message):
                     text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
             else:
                 text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
-            
+
             await client.send_message(
                 chat_id=message.from_user.id,
                 text=text,
@@ -159,7 +159,7 @@ async def start(client, message):
         except Exception as e:
             print(e)
             return await message.reply_text("something wrong with force subscribe.")
-            
+
     if len(message.command) == 2 and message.command[1] in ["subscribe", "error", "okay", "help"]:
         if PREMIUM_AND_REFERAL_MODE == True:
             buttons = [[
@@ -258,7 +258,7 @@ async def start(client, message):
                     reply_markup = InlineKeyboardMarkup(button)
                 else:
                     reply_markup = None
-                    
+
                 msg = await client.send_cached_media(
                     chat_id=message.from_user.id,
                     file_id=msg.get("file_id"),
@@ -267,7 +267,7 @@ async def start(client, message):
                     reply_markup=reply_markup
                 )
                 filesarr.append(msg)
-                
+
             except FloodWait as e:
                 await asyncio.sleep(e.value)
                 msg = await client.send_cached_media(
@@ -288,7 +288,7 @@ async def start(client, message):
             await x.delete()
         await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ\n\njoin @JNK_BACKUP</b>")  
         return
-    
+
     elif data.split("-", 1)[0] == "DSTORE":
         sts = await message.reply("<b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...</b>")
         b_string = data.split("-", 1)[1]
@@ -319,7 +319,7 @@ async def start(client, message):
                     fileName = {quote_plus(get_name(log_msg))}
                     stream = f"{URL}watch/{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
                     download = f"{URL}{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
- 
+
                 if STREAM_MODE == True:
                     [[
                     InlineKeyboardButton('UPDATE CHANNEL', url=f"https://t.me/JNK_BACKUP")
@@ -366,13 +366,13 @@ async def start(client, message):
             verification_success = await verification_manager.verify_user(userid, token, client)
             if verification_success:
                 text = "<b>ʜᴇʏ {} 👋,\n\n✅ ʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ!\n\n🕐 ʏᴏᴜ ɴᴏᴡ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇꜱꜱ ғᴏʀ <u>24 ʜᴏᴜʀꜱ</u>\n\n⏰ ᴠᴀʟɪᴅ ᴜɴᴛɪʟ: {}\n\n🎉 ᴇɴᴊᴏʏ !</b>"
-                
+
                 expiry_time = datetime.datetime.now() + datetime.timedelta(hours=24)
                 expiry_text = expiry_time.strftime('%Y-%m-%d %H:%M:%S')
-                
+
                 if PREMIUM_AND_REFERAL_MODE == True:
                     text += "\n\n<b>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴅɪʀᴇᴄᴛ ғɪʟᴇꜱ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴꜱ ᴛʜᴇɴ ʙᴜʏ ʙᴏᴛ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ☺️\n\n💶 ꜱᴇɴᴅ /plan ᴛᴏ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ</b>"           
-                
+
                 await safe_reply_message(
                     message=message,
                     text=text.format(message.from_user.mention, expiry_text),
@@ -382,7 +382,7 @@ async def start(client, message):
                 return await message.reply_text(text="<b>❌ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ғᴀɪʟᴇᴅ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ.</b>", protect_content=True)
         else:
             return await message.reply_text(text="<b>ɪɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ ᴇxᴘɪʀᴇᴅ ʟɪɴᴋ</b>", protect_content=True)
-            
+
     if data.startswith("sendfiles"):
         chat_id = int("-" + file_id.split("-")[1])
         userid = message.from_user.id if message.from_user else None
@@ -401,8 +401,8 @@ async def start(client, message):
         await asyncio.sleep(300)
         await k.edit("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ\n\njoin @JNK_BACKUP</b>")
         return
-        
-    
+
+
     elif data.startswith("short"):
         user = message.from_user.id
         chat_id = temp.SHORT.get(user)
@@ -421,7 +421,7 @@ async def start(client, message):
         await asyncio.sleep(1200)
         await k.edit("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ\n\njoin @JNK_BACKUP</b>")
         return
-        
+
     elif data.startswith("all"):
         files = temp.GETALL.get(file_id)
         if not files:
@@ -475,7 +475,7 @@ async def start(client, message):
             await x.delete()
         await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ\n\njoin @JNK_BACKUP</b>")
         return    
-        
+
     elif data.startswith("files"):
         user = message.from_user.id
         if temp.SHORT.get(user)==None:
@@ -512,12 +512,12 @@ async def start(client, message):
                     decoded_str = decoded_bytes.decode("ascii")
                 except UnicodeDecodeError:
                     decoded_str = decoded_bytes.decode("latin-1")
-            
+
             pre, file_id = decoded_str.split("_", 1)
         except Exception as decode_error:
             print(f"Base64 decode error: {decode_error}")
             return await message.reply('Invalid file link.')
-        
+
         try:
             if not await db.has_premium_access(message.from_user.id):
                 if not await check_verification(client, message.from_user.id) and VERIFY == True:
@@ -558,7 +558,7 @@ async def start(client, message):
                     return
             await msg.edit_caption(caption=f_caption)
             btn = [[InlineKeyboardButton("✅ ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ ✅", callback_data=f'del#{file_id}')]]
-            k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+            k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u></b> (ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs), Sᴏ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
             await asyncio.sleep(600)
             await msg.delete()
             await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴀɢᴀɪɴ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ</b>",reply_markup=InlineKeyboardMarkup(btn))
@@ -607,7 +607,7 @@ async def start(client, message):
         reply_markup=reply_markup
     )
     btn = [[InlineKeyboardButton("✅ ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ ✅", callback_data=f'del#{file_id}')]]
-    k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+    k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u></b> (ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs), Sᴏ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
     await asyncio.sleep(600)
     await msg.delete()
     await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴀɢᴀɪɴ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ</b>",reply_markup=InlineKeyboardMarkup(btn))
@@ -658,7 +658,7 @@ async def delete(bot, message):
     else:
         await msg.edit('This is not supported file format')
         return
-    
+
     # Updated unpacking to handle all returned values
     unpacked = unpack_new_file_id(media.file_id)
     file_id = unpacked[0]  # First value is file_id
@@ -679,7 +679,7 @@ async def delete(bot, message):
         for char in unwanted_chars:
             file_name = file_name.replace(char, '')
         file_name = ' '.join(filter(lambda x: not x.startswith('@'), file_name.split()))
-    
+
         result = col.delete_many({
             'file_name': file_name,
             'file_size': media.file_size
@@ -765,7 +765,7 @@ async def settings(client, message):
             and str(userid) not in ADMINS
     ):
         return
-    
+
     settings = await get_settings(grp_id)
 
     try:
@@ -974,7 +974,7 @@ async def requests(bot, message):
         except Exception as e:
             await message.reply_text(f"Error: {e}")
             pass
-        
+
     elif message.text:
         chat_id = message.chat.id
         reporter = str(message.from_user.id)
@@ -1012,7 +1012,7 @@ async def requests(bot, message):
 
     else:
         success = False
-    
+
     if success:
         link = await bot.create_chat_invite_link(int(REQST_CHANNEL))
         btn = [[
@@ -1020,7 +1020,7 @@ async def requests(bot, message):
             InlineKeyboardButton('View Request', url=f"{reported_post.link}")
         ]]
         await message.reply_text("<b>Your request has been added! Please wait for some time.\n\nJoin Channel First & View Request</b>", reply_markup=InlineKeyboardMarkup(btn))
-    
+
 @Client.on_message(filters.command("send") & filters.user(ADMINS))
 async def send_msg(bot, message):
     if message.reply_to_message:
@@ -1081,7 +1081,7 @@ async def shortlink(bot, message):
         return await message.reply(f"You are anonymous admin. Turn off anonymous admin and try again this command")
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
-        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups !\n\n<u>Follow These Steps to Connect Shortener:</u>\n\n1. Add Me in Your Group with Full Admin Rights\n\n2. After Adding in Grp, Set your Shortener\n\nSend this command in your group\n\n—> /shortlink ""{your_shortener_website_name} {your_shortener_api}\n\n#Sample:-\n/shortlink nk.in CAACAgUAAxkBAAEJ4IUC_DSmirN6eFWp4KInAACsQoAAoHSSFYub2D15dGHfy8E\n\nThat's it!!! Enjoy Earning Money 💲\n\n[[[ Trusted Earning Site - https://ink.in]]]\n\nIf you have any Doubts, Feel Free to Ask me - @JNK_BACKUP \n\n(JOIN - @JNK_BACKUP)</b>")
+        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups!\n\nFollow These Steps to Connect Shortener:\n\n1. Add Me in Your Group with Full Admin Rights\n\n2. After Adding in Grp, Set your Shortener\n\nSend this command in your group\n\n—> /shortlink \"{your_shortener_website_name} {your_shortener_api}\n\n#Sample:-\n/shortlink nk.in CAACAgUAAxkBAAEJ4IUC_DSmirN6eFWp4KInAACsQoAAoHSSFYub2D15dGHfy8E\n\nThat's it!!! Enjoy Earning Money 💲\n\n[[[ Trusted Earning Site - https://ink.in]]]\n\nIf you have any Doubts, Feel Free to Ask me - @JNK_BACKUP \n\n(JOIN - @JNK_BACKUP)</b>")
     elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         grpid = message.chat.id
         title = message.chat.title
@@ -1105,7 +1105,7 @@ async def shortlink(bot, message):
     await save_group_settings(grpid, 'shortlink_api', api)
     await save_group_settings(grpid, 'is_shortlink', True)
     await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
-    
+
 @Client.on_message(filters.command("setshortlinkoff"))
 async def offshortlink(bot, message):
     chat_type = message.chat.type
@@ -1125,7 +1125,7 @@ async def offshortlink(bot, message):
     await save_group_settings(grpid, 'is_shortlink', False)
     # ENABLE_SHORTLINK = False
     return await message.reply_text("Successfully disabled shortlink")
-    
+
 @Client.on_message(filters.command("setshortlinkon"))
 async def onshortlink(bot, message):
     chat_type = message.chat.type
@@ -1183,7 +1183,7 @@ async def showshortlink(bot, message):
             return await message.reply_text(f"<b>Tutorial: <code>{st}</code>\n\nShortener Url Not Connected\n\nYou can Connect Using /shortlink command</b>")
         else:
             return await message.reply_text("Shortener url and Tutorial Link Not Connected. Check this commands, /shortlink and /set_tutorial")
-        
+
 
 @Client.on_message(filters.command("set_tutorial"))
 async def settutorial(bot, message):
@@ -1305,7 +1305,7 @@ async def fsub(client, message):
         channels += f'{chat.title}\n'
     await save_group_settings(grpid, 'fsub', fsub_ids)
     await message.reply_text(f"<b>Successfully set force channels for {title} to\n\n{channels}\n\nYou can remove it by /nofsub.</b>")
-        
+
 
 @Client.on_message(filters.command("add_premium"))
 async def give_premium_cmd_handler(client, message):
@@ -1332,7 +1332,7 @@ async def give_premium_cmd_handler(client, message):
             await message.reply_text("Invalid time format. Please use '1day for days', '1hour for hours', or '1min for minutes', or '1month for months' or '1year for year'")
     else:
         await message.reply_text("<b>Usage: /add_premium user_id time \n\nExample /add_premium 1252789 10day \n\n(e.g. for time units '1day for days', '1hour for hours', or '1min for minutes', or '1month for months' or '1year for year')</b>")
-        
+
 @Client.on_message(filters.command("remove_premium"))
 async def remove_premium_cmd_handler(client, message):
     if PREMIUM_AND_REFERAL_MODE == False:
@@ -1359,7 +1359,7 @@ async def remove_premium_cmd_handler(client, message):
             await message.reply_text("Invalid time format.'")
     else:
         await message.reply_text("Usage: /remove_premium user_id")
-        
+
 @Client.on_message(filters.command("plan"))
 async def plans_cmd_handler(client, message): 
     if PREMIUM_AND_REFERAL_MODE == False:
@@ -1374,7 +1374,7 @@ async def plans_cmd_handler(client, message):
         caption=PAYMENT_TEXT,
         reply_markup=reply_markup
     )
-        
+
 @Client.on_message(filters.command("myplan"))
 async def check_plans_cmd(client, message):
     if PREMIUM_AND_REFERAL_MODE == False:
@@ -1473,39 +1473,39 @@ async def verified_users_count(client, message):
     """Show count and list of verified users in last 24 hours"""
     try:
         from bot.verification import verification_manager
-        
+
         # Get count and list
         count = await verification_manager.get_verified_users_count(24)
         verified_users = await verification_manager.get_verified_users_list(24)
-        
+
         if count == 0:
             return await message.reply_text("<b>📊 No users verified in the last 24 hours.</b>")
-        
+
         # Create response text
         response = f"<b>📊 Verified Users (Last 24 Hours)</b>\n\n"
         response += f"<b>📈 Total Count:</b> {count} users\n\n"
         response += "<b>📋 User List:</b>\n"
-        
+
         for i, user_data in enumerate(verified_users[:20], 1):  # Limit to 20 users
             try:
                 user = await client.get_users(user_data["user_id"])
                 verification_time = user_data["verification_time"].strftime('%H:%M:%S')
                 expiry_time = user_data["expiry_time"].strftime('%H:%M:%S')
-                
+
                 response += f"{i}. <b>{user.first_name}</b> (@{user.username or 'N/A'})\n"
                 response += f"   🆔 <code>{user_data['user_id']}</code>\n"
                 response += f"   ⏰ {verification_time} → ⏳ {expiry_time}\n\n"
-                
+
             except Exception as e:
                 response += f"{i}. <b>Unknown User</b>\n"
                 response += f"   🆔 <code>{user_data['user_id']}</code>\n"
                 response += f"   ⏰ {user_data['verification_time'].strftime('%H:%M:%S')}\n\n"
-        
+
         if len(verified_users) > 20:
             response += f"<i>... and {len(verified_users) - 20} more users</i>\n"
-        
+
         response += f"\n<i>🕐 Data from last 24 hours</i>"
-        
+
         if len(response) > 4096:
             # If message is too long, send as file
             with open('verified_users.txt', 'w+', encoding='utf-8') as f:
@@ -1514,7 +1514,7 @@ async def verified_users_count(client, message):
             os.remove('verified_users.txt')
         else:
             await message.reply_text(response)
-            
+
     except Exception as e:
         logger.error(f"Error in verified_users_count: {e}")
         await message.reply_text("<b>❌ Error retrieving verification data.</b>")
@@ -1528,10 +1528,10 @@ async def add_bad_word_handler(client, message):
         )
 
     word = message.command[1]
-    
+
     # Import BAD_WORDS from info
     from info import BAD_WORDS
-    
+
     if word in BAD_WORDS:
         await message.reply_text(f"<b>'{word}' is already in BAD_WORDS list.</b>")
     else:
@@ -1547,10 +1547,10 @@ async def remove_bad_word_handler(client, message):
         )
 
     word = message.command[1]
-    
+
     # Import BAD_WORDS from info
     from info import BAD_WORDS
-    
+
     if word in BAD_WORDS:
         BAD_WORDS.remove(word)
         await message.reply_text(f"<b>Successfully removed '{word}' from BAD_WORDS list.</b>")
@@ -1561,7 +1561,7 @@ async def remove_bad_word_handler(client, message):
 async def list_bad_words_handler(client, message):
     """List all bad words in order"""
     from info import BAD_WORDS
-    
+
     if not BAD_WORDS:
         return await message.reply_text("<b>No bad words found.</b>")
 
