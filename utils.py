@@ -209,9 +209,16 @@ async def broadcast_messages_group(chat_id, message):
 def clean_filename(file_name):
     # First handle multi-word bad phrases (case-insensitive)
     for bad_word in BAD_WORDS:
-        if bad_word.lower() in file_name.lower():
-            # Remove the bad phrase (case-insensitive)
-            file_name = re.sub(re.escape(bad_word), '', file_name, flags=re.IGNORECASE)
+        # Use a more flexible pattern that handles extra spaces and dashes
+        pattern = re.escape(bad_word).replace(r'\ ', r'\s*').replace(r'\-', r'\s*\-\s*')
+        file_name = re.sub(pattern, '', file_name, flags=re.IGNORECASE)
+    
+    # Handle cases where bad words might be at the start with extra characters
+    for bad_word in BAD_WORDS:
+        if bad_word.lower().startswith('@'):
+            # For words starting with @, remove everything from @ until the next space after the word
+            pattern = re.escape(bad_word.split()[0]) + r'[^a-zA-Z]*'
+            file_name = re.sub(pattern, '', file_name, flags=re.IGNORECASE)
     
     # Then handle individual bad words
     unwanted = {word.lower() for word in BAD_WORDS}
@@ -220,8 +227,10 @@ def clean_filename(file_name):
         if word.lower() not in unwanted
     )
     
-    # Clean up extra spaces
-    file_name = ' '.join(file_name.split())
+    # Clean up extra spaces and leading/trailing dashes or spaces
+    file_name = re.sub(r'^\s*[-\s]*', '', file_name)  # Remove leading spaces and dashes
+    file_name = re.sub(r'[-\s]*\s*$', '', file_name)  # Remove trailing spaces and dashes
+    file_name = ' '.join(file_name.split())  # Clean up multiple spaces
     
     return file_name
     
