@@ -19,7 +19,8 @@ from info import *
 from utils import temp
 from typing import Union, Optional, AsyncGenerator
 from Script import script
-from datetime import date, datetime
+import datetime
+from datetime import date
 from aiohttp import web
 from plugins import web_server
 
@@ -62,7 +63,7 @@ async def start():
     logging.info(script.LOGO)
     tz = pytz.timezone('Asia/Kolkata')
     today = date.today()
-    now = datetime.now(tz)
+    now = datetime.datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
     try:
         await TechVJBot.send_message(chat_id=LOG_CHANNEL, text=script.RESTART_TXT.format(today, time))
@@ -96,7 +97,6 @@ async def start():
                 expiry = user_data.get('expiry_time')
                 verification_time = user_data.get('verification_time')
                 if expiry and verification_time:
-                    import datetime
                     if isinstance(expiry, str):
                         expiry = datetime.datetime.fromisoformat(expiry)
                     if isinstance(verification_time, str):
