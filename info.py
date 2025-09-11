@@ -127,16 +127,6 @@ BAD_WORDS = [
     "@",
     "@ROCKERSBACKUP",
     "TEST"
-]",
-    "HQ",
-    "@RM_Movie_Flix",
-    "@JNK_BACKUP",
-    "[MS]",
-    "[",
-    "]",
-    "www.",
-    "@",
-    "@ROCKERSBACKUP"
 ] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 # True Or False
