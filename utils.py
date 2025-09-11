@@ -210,43 +210,49 @@ def clean_filename(file_name):
     original_filename = file_name
     removed_words = []
     
-    # First remove exact phrase matches (case-insensitive)
-    for bad_word in BAD_WORDS:
-        if bad_word.lower() in file_name.lower():
-            # Use regex to find and replace exact matches
-            pattern = re.escape(bad_word)
-            new_filename = re.sub(pattern, '', file_name, flags=re.IGNORECASE)
-            if new_filename != file_name:
-                removed_words.append(bad_word)
-                file_name = new_filename
-                logger.info(f"Removed exact phrase: '{bad_word}' from filename")
+    # First split the filename into tokens using various delimiters
+    # Split by common separators like spaces, dots, dashes, underscores
+    import re
+    tokens = re.split(r'[\s\.\-_]+', file_name)
     
-    # Then handle individual word matches
-    words = file_name.split()
-    cleaned_words = []
+    # Remove empty tokens
+    tokens = [token for token in tokens if token.strip()]
     
-    for word in words:
-        word_removed = False
+    cleaned_tokens = []
+    
+    # Compare each token against bad words
+    for token in tokens:
+        token_removed = False
+        
+        # Check exact match against each bad word (case-insensitive)
         for bad_word in BAD_WORDS:
-            if word.lower() == bad_word.lower():
-                removed_words.append(word)
-                logger.info(f"Removed exact word: '{word}' from filename")
-                word_removed = True
+            if token.lower() == bad_word.lower():
+                removed_words.append(token)
+                logger.info(f"Removed exact word match: '{token}' (matched bad word: '{bad_word}')")
+                token_removed = True
+                break
+            
+            # Also check if the token contains the bad word as a substring
+            elif bad_word.lower() in token.lower() and len(bad_word) > 2:  # Only for longer bad words
+                removed_words.append(token)
+                logger.info(f"Removed token containing bad word: '{token}' (contains: '{bad_word}')")
+                token_removed = True
                 break
         
-        if not word_removed:
-            cleaned_words.append(word)
+        if not token_removed:
+            cleaned_tokens.append(token)
     
-    file_name = ' '.join(cleaned_words)
+    # Rejoin the cleaned tokens with spaces
+    file_name = ' '.join(cleaned_tokens)
     
-    # Clean up extra spaces and dashes
-    file_name = re.sub(r'^\s*[-\s]*', '', file_name)  # Remove leading spaces and dashes
-    file_name = re.sub(r'[-\s]*\s*$', '', file_name)  # Remove trailing spaces and dashes
-    file_name = ' '.join(file_name.split())  # Clean up multiple spaces
+    # Clean up extra spaces
+    file_name = ' '.join(file_name.split())
     
     # Log the cleaning result
     if removed_words:
         logger.info(f"FILENAME CLEANING: Original: '{original_filename}' -> Cleaned: '{file_name}' | Removed words: {removed_words}")
+    else:
+        logger.info(f"FILENAME CLEANING: No bad words found in '{original_filename}'")
     
     return file_name
     
