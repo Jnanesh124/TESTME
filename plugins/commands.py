@@ -1521,7 +1521,7 @@ async def verified_users_count(client, message):
 
 @Client.on_message(filters.command("addbadword") & filters.user(ADMINS))
 async def add_bad_word_handler(client, message):
-    """Add word to BAD_WORDS set"""
+    """Add word to BAD_WORDS list at the beginning"""
     if len(message.command) < 2:
         return await message.reply_text(
             "<b>Usage: /addbadword word_to_add\n\nExample: /addbadword @username</b>"
@@ -1535,12 +1535,12 @@ async def add_bad_word_handler(client, message):
     if word in BAD_WORDS:
         await message.reply_text(f"<b>'{word}' is already in BAD_WORDS list.</b>")
     else:
-        BAD_WORDS.add(word)
+        BAD_WORDS.insert(0, word)  # Insert at the beginning
         await message.reply_text(f"<b>Successfully added '{word}' to BAD_WORDS list.</b>")
 
 @Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
 async def remove_bad_word_handler(client, message):
-    """Remove word from BAD_WORDS set"""
+    """Remove word from BAD_WORDS list"""
     if len(message.command) < 2:
         return await message.reply_text(
             "<b>Usage: /removebadword word_to_remove\n\nExample: /removebadword @username</b>"
@@ -1559,19 +1559,19 @@ async def remove_bad_word_handler(client, message):
 
 @Client.on_message(filters.command("listbadwords") & filters.user(ADMINS))
 async def list_bad_words_handler(client, message):
-    """List all bad words"""
+    """List all bad words in order"""
     from info import BAD_WORDS
     
     if not BAD_WORDS:
         return await message.reply_text("<b>No bad words found.</b>")
 
-    word_list = "\n".join([f"• {word}" for word in sorted(BAD_WORDS)])
+    word_list = "\n".join([f"• {word}" for word in BAD_WORDS])  # Maintain original order
     text = f"<b>BAD_WORDS List ({len(BAD_WORDS)} words):</b>\n\n{word_list}"
 
     if len(text) > 4096:
         # If message is too long, send as file
         with open('bad_words.txt', 'w+', encoding='utf-8') as f:
-            f.write('\n'.join(sorted(BAD_WORDS)))
+            f.write('\n'.join(BAD_WORDS))
         await message.reply_document('bad_words.txt', caption=f"<b>BAD_WORDS List ({len(BAD_WORDS)} words)</b>")
         os.remove('bad_words.txt')
     else:

@@ -102,7 +102,7 @@ CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/JNK_BACKUP')
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support Chat Link Without https:// or @
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
-BAD_WORDS = {
+BAD_WORDS = [
     "[@FilmyHub4u_Official]",
     "HQ",
     "@RM_Movie_Flix",
@@ -112,7 +112,7 @@ BAD_WORDS = {
     "[",
     "]",
     "www.",
-} # Set of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
+] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 # True Or False
 AI_SPELL_CHECK = bool(environ.get('AI_SPELL_CHECK', True))
