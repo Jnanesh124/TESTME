@@ -107,12 +107,11 @@ BAD_WORDS = {
     "HQ",
     "www",
     "@RM_Movie_Flix",
+    "@JNK_BACKUP",
     "-",
     "[MS]",
     "@",
-    "[",
-    "]",
-    "MS"
+    "MS",
 } # Set of bad words to filter out
 
 # True Or False
