@@ -207,26 +207,46 @@ async def broadcast_messages_group(chat_id, message):
         return False, "Error"
 
 def clean_filename(file_name):
-    # First remove complete phrases (case-insensitive)
-    for bad_word in BAD_WORDS:
-        # Create a case-insensitive pattern that handles flexible spacing
-        if bad_word.lower() in file_name.lower():
-            # Find the position and remove the exact match
-            start_pos = file_name.lower().find(bad_word.lower())
-            if start_pos != -1:
-                file_name = file_name[:start_pos] + file_name[start_pos + len(bad_word):]
+    original_filename = file_name
+    removed_words = []
     
-    # Then handle individual words
-    unwanted = {word.lower() for word in BAD_WORDS}
-    file_name = ' '.join(
-        word for word in file_name.split()
-        if word.lower() not in unwanted
-    )
+    # First remove exact phrase matches (case-insensitive)
+    for bad_word in BAD_WORDS:
+        if bad_word.lower() in file_name.lower():
+            # Use regex to find and replace exact matches
+            pattern = re.escape(bad_word)
+            new_filename = re.sub(pattern, '', file_name, flags=re.IGNORECASE)
+            if new_filename != file_name:
+                removed_words.append(bad_word)
+                file_name = new_filename
+                logger.info(f"Removed exact phrase: '{bad_word}' from filename")
+    
+    # Then handle individual word matches
+    words = file_name.split()
+    cleaned_words = []
+    
+    for word in words:
+        word_removed = False
+        for bad_word in BAD_WORDS:
+            if word.lower() == bad_word.lower():
+                removed_words.append(word)
+                logger.info(f"Removed exact word: '{word}' from filename")
+                word_removed = True
+                break
+        
+        if not word_removed:
+            cleaned_words.append(word)
+    
+    file_name = ' '.join(cleaned_words)
     
     # Clean up extra spaces and dashes
     file_name = re.sub(r'^\s*[-\s]*', '', file_name)  # Remove leading spaces and dashes
     file_name = re.sub(r'[-\s]*\s*$', '', file_name)  # Remove trailing spaces and dashes
     file_name = ' '.join(file_name.split())  # Clean up multiple spaces
+    
+    # Log the cleaning result
+    if removed_words:
+        logger.info(f"FILENAME CLEANING: Original: '{original_filename}' -> Cleaned: '{file_name}' | Removed words: {removed_words}")
     
     return file_name
     
