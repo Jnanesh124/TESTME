@@ -1536,7 +1536,30 @@ async def add_bad_word_handler(client, message):
         await message.reply_text(f"<b>'{word}' is already in BAD_WORDS list.</b>")
     else:
         BAD_WORDS.insert(0, word)  # Insert at the beginning
-        await message.reply_text(f"<b>Successfully added '{word}' to BAD_WORDS list.</b>")
+        
+        # Write changes back to info.py file
+        try:
+            with open('info.py', 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Find the BAD_WORDS section and update it
+            import re
+            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\])'
+            
+            def replace_bad_words(match):
+                # Format the new BAD_WORDS list
+                formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+                return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
+            
+            new_content = re.sub(pattern, replace_bad_words, content, flags=re.DOTALL)
+            
+            with open('info.py', 'w', encoding='utf-8') as f:
+                f.write(new_content)
+                
+            await message.reply_text(f"<b>Successfully added '{word}' to BAD_WORDS list and saved to info.py.</b>")
+        except Exception as e:
+            logger.error(f"Error updating info.py: {e}")
+            await message.reply_text(f"<b>Added '{word}' to memory but failed to save to info.py: {e}</b>")
 
 @Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
 async def remove_bad_word_handler(client, message):
@@ -1553,7 +1576,30 @@ async def remove_bad_word_handler(client, message):
 
     if word in BAD_WORDS:
         BAD_WORDS.remove(word)
-        await message.reply_text(f"<b>Successfully removed '{word}' from BAD_WORDS list.</b>")
+        
+        # Write changes back to info.py file
+        try:
+            with open('info.py', 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Find the BAD_WORDS section and update it
+            import re
+            pattern = r'(BAD_WORDS\s*=\s*\[)(.*?)(\])'
+            
+            def replace_bad_words(match):
+                # Format the new BAD_WORDS list
+                formatted_words = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
+                return f"{match.group(1)}\n    {formatted_words}\n{match.group(3)}"
+            
+            new_content = re.sub(pattern, replace_bad_words, content, flags=re.DOTALL)
+            
+            with open('info.py', 'w', encoding='utf-8') as f:
+                f.write(new_content)
+                
+            await message.reply_text(f"<b>Successfully removed '{word}' from BAD_WORDS list and saved to info.py.</b>")
+        except Exception as e:
+            logger.error(f"Error updating info.py: {e}")
+            await message.reply_text(f"<b>Removed '{word}' from memory but failed to save to info.py: {e}</b>")
     else:
         await message.reply_text(f"<b>'{word}' was not found in BAD_WORDS list.</b>")
 
