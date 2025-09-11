@@ -1,0 +1,22 @@
+Make Your Bot Admin In Force Subscribe Channel With Full Rights
+📊 Verified Users Status: 0 users currently verified
+❌ No verified users found
+05:28:03 PM - 129 - __main__ - bot - INFO - Loaded 0 verified users from storage
+05:28:03 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:28:03 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:28:03 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:28:03 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:28:03 PM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+05:28:03 PM - 39 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started with 24-hour global verification
+05:28:03 PM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+05:28:03 PM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 17:28:03 UTC], next run at: 2025-09-11 17:28:03 UTC)" (scheduled at 2025-09-11 17:28:03.809469+00:00)
+05:28:03 PM - 73 - verification_scheduler - verification_scheduler - INFO - Automatic verification cleanup completed - no expired verifications found
+05:28:03 PM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 17:28:03 UTC], next run at: 2025-09-11 17:28:03 UTC)" executed successfully
+05:29:50 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:29:50 PM - 100 - plugins.commands - commands - INFO - User 7623389594 not joined channels: []
+05:30:31 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:30:31 PM - 100 - plugins.commands - commands - INFO - User 7623389594 not joined channels: []
+05:30:31 PM - 53 - verification_storage - verification_storage - INFO - Saved 1 verified users to verified_users.json
+05:30:31 PM - 71 - verification_storage - verification_storage - INFO - Added verified user 7623389594 with expiry at 2025-09-12 17:30:31.899995
+05:30:32 PM - 101 - bot.verification - verification - INFO - User 7623389594 (Jack) verified successfully. Expires at 2025-09-12 17:30:31.905065
+Base64 decode error: not enough values to unpack (expected 2, got 1)

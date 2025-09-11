@@ -1,0 +1,27 @@
+📊 Verified Users Status: 0 users currently verified
+❌ No verified users found
+05:24:28 PM - 129 - __main__ - bot - INFO - Loaded 0 verified users from storage
+05:24:28 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:24:28 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+05:24:28 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:24:28 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+05:24:28 PM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+05:24:28 PM - 39 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started with 24-hour global verification
+05:24:28 PM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+05:24:28 PM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 17:24:28 UTC], next run at: 2025-09-11 17:24:28 UTC)" (scheduled at 2025-09-11 17:24:28.641991+00:00)
+05:24:28 PM - 73 - verification_scheduler - verification_scheduler - INFO - Automatic verification cleanup completed - no expired verifications found
+05:24:28 PM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-09-11 17:24:28 UTC], next run at: 2025-09-11 17:24:28 UTC)" executed successfully
+05:24:42 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Movie' (found in: '@RM_Movie_Flix')
+05:24:42 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'Flix' (found in: '@RM_Movie_Flix')
+05:24:42 PM - 237 - utils - utils - INFO - Removed exact word match: 'HQ' (matched bad word: 'HQ')
+05:24:42 PM - 251 - utils - utils - INFO - Removed token found in bad word pattern: 'mkv' (found in: '.mkv')
+05:24:42 PM - 266 - utils - utils - INFO - FILENAME CLEANING: Original: 'Movie Flix Gandhi Kannadi 2025 Tamil HQ PreDVD x mkv' -> Cleaned: 'Gandhi Kannadi 2025 Tamil PreDVD x' | Removed words: ['Movie', 'Flix', 'HQ', 'mkv']
+05:24:45 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:24:45 PM - 100 - plugins.commands - commands - INFO - User 7623389594 not joined channels: []
+05:25:36 PM - 84 - plugins.commands - commands - INFO - Total force subscribe channels to check: 0
+05:25:36 PM - 100 - plugins.commands - commands - INFO - User 7623389594 not joined channels: []
+05:25:36 PM - 53 - verification_storage - verification_storage - INFO - Saved 1 verified users to verified_users.json
+05:25:36 PM - 71 - verification_storage - verification_storage - INFO - Added verified user 7623389594 with expiry at 2025-09-12 17:25:36.695847
+05:25:37 PM - 101 - bot.verification - verification - INFO - User 7623389594 (Jack) verified successfully. Expires at 2025-09-12 17:25:36.696408
+Base64 decode error: not enough values to unpack (expected 2, got 1)
+05:25:41 PM - 214 - aiohttp.access - web_log - INFO - 172.31.112.194 [11/Sep/2025:17:25:41 +0000] "GET / HTTP/1.1" 200 174 "https://1db7d4bd-3721-4b27-8176-4d4371d22d91-00-dup8pc5phdl5.pike.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1el%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
