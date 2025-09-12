@@ -214,7 +214,18 @@ Nᴀᴍᴇ - {}"""
     I_CUD_NT = """ɪ ᴄᴏᴜʟᴅɴ'ᴛ ꜰɪɴᴅ ᴀɴʏ ᴍᴏᴠɪᴇ ʀᴇʟᴀᴛᴇᴅ ᴛᴏ {}.
 ᴘʟᴇᴀꜱᴇ ᴄʜᴇᴄᴋ ᴛʜᴇ ꜱᴘᴇʟʟɪɴɢ ᴏɴ ɢᴏᴏɢʟᴇ ᴏʀ ɪᴍᴅʙ..."""
 
-    MVE_NT_FND = """ᴍᴏᴠɪᴇ ɴᴏᴛ ꜰᴏᴜɴᴅ ɪɴ ᴅᴀᴛᴀʙᴀꜱᴇ..."""
+    MVE_NT_FND = """
+🎬 <b>Scene Not Found!</b>
+
+I've searched the reels, but this title is missing from the archive.
+
+<b>Potential Plot Holes:</b>
+• The director (admin) hasn't sent it over.
+• It's still in production (unreleased).
+• The title might have a typo.
+
+🎯 <b>Solution:</b> Ask for a different movie or check the title on Google!
+"""
 
     TOP_ALRT_MSG = """Cʜᴇᴄᴋɪɴɢ Fᴏʀ Mᴏᴠɪᴇ Iɴ Dᴀᴛᴀʙᴀsᴇ..."""
 
@@ -759,5 +770,6 @@ Example:- /set_caption 📕 File Name: {filename}
 
 
     
+
 
 
