@@ -1888,8 +1888,11 @@ async def handle_auto_search(client, message, search_query):
 
         reply_markup = InlineKeyboardMarkup(buttons)
         
-        # Use simpler format to match PM filter style
-        caption = f"<b>Your Requested Movie File 📤 👇</b>"
+        # Use new format with search results details
+        caption = f"<b>🎬 Search Results for '{search_query}'</b>\n\n"
+        caption += f"<b>📊 Found:</b> {len(files)} files\n"
+        caption += f"<b>👤 Requested by:</b> {message.from_user.first_name}\n\n"
+        caption += f"<b>Select a file to download:</b>"
 
         await message.reply_text(
             text=caption,

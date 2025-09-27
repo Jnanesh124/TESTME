@@ -929,7 +929,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             except UserIsBlocked:
                 await client.send_message(chat_id=int(SUPPORT_CHAT_ID), text=f"<b>Hᴇʏ {user.mention}, Yᴏᴜʀ ʀᴇᴏ̨ᴜᴇsᴛ ʜᴀs ʙᴇᴇɴ ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴏᴜʀ ᴍᴏᴅᴇʀᴀᴛᴏʀs. Kɪɴᴅʟʏ sᴇᴀʀᴄʜ ɪɴ ᴏᴜʀ Gʀᴏᴜᴘ.\n\nNᴏᴛᴇ: Tʜɪs ᴍᴇssᴀɢᴇ ɪs sᴇɴᴛ ᴛᴏ ᴛʜɪs ɢʀᴏᴜᴘ ʙᴇᴄᴀᴜsᴇ ʏᴏᴜ'ᴠᴇ ʙʟᴏᴄᴋᴇᴅ ᴛʜᴇ ʙᴏᴛ. Tᴏ sᴇɴᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ PM, Mᴜsᴛ ᴜɴʙʟᴏᴄᴋ ᴛʜᴇ ʙᴏᴛ.</b>", reply_markup=InlineKeyboardMarkup(btn2))
         else:
-            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
+            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢʜᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
 
     elif query.data.startswith("already_available"):
         ident, from_user = query.data.split("#")
@@ -954,31 +954,31 @@ async def cb_handler(client: Client, query: CallbackQuery):
             except UserIsBlocked:
                 await client.send_message(chat_id=int(SUPPORT_CHAT_ID), text=f"<b>Hᴇʏ {user.mention}, Yᴏᴜʀ ʀᴇᴏ̨ᴜᴇsᴛ ɪs ᴀʟʀᴇᴀᴅʏ ᴀᴠᴀɪʟᴀʙʟᴇ ᴏɴ ᴏᴜʀ ʙᴏᴛ's ᴅᴀᴛᴀʙᴀsᴇ. Kɪɴᴅʟʏ sᴇᴀʀᴄʜ ɪɴ ᴏᴜʀ Gʀᴏᴜᴘ.\n\nNᴏᴛᴇ: Tʜɪs ᴍᴇssᴀɢᴇ ɪs sᴇɴᴛ ᴛᴏ ᴛʜɪs ɢʀᴏᴜᴘ ʙᴇᴄᴀᴜsᴇ ʏᴏᴜ'ᴠᴇ ʙʟᴏᴄᴋᴇᴅ ᴛʜᴇ ʙᴏᴛ. Tᴏ sᴇɴᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ PM, Mᴜsᴛ ᴜɴʙʟᴏᴄᴋ ᴛʜᴇ ʙᴏᴛ.</b>", reply_markup=InlineKeyboardMarkup(btn2))
         else:
-            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
+            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢʜᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
 
     elif query.data.startswith("alalert"):
         ident, from_user = query.data.split("#")
         if int(query.from_user.id) == int(from_user):
             user = await client.get_users(from_user)
-            await query.answer(f"Hᴇʏ {user.first_name}, Yᴏᴜʀ Rᴇᴏ̨ᴜᴇsᴛ ɪs Aʟʀᴇᴀᴅʏ Aᴠᴀɪʟᴀʙʟᴇ !", show_alert=True)
+            await query.answer(f"Hᴇʏ {user.first_name}, Yᴏᴜʀ Rᴇǫᴜᴇsᴛ ɪs Aʟʀᴇᴀᴅʏ Aᴠᴀɪʟᴀʙʟᴇ !", show_alert=True)
         else:
-            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
+            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢʜᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
 
     elif query.data.startswith("upalert"):
         ident, from_user = query.data.split("#")
         if int(query.from_user.id) == int(from_user):
             user = await client.get_users(from_user)
-            await query.answer(f"Hᴇʏ {user.first_name}, Yᴏᴜʀ Rᴇᴏ̨ᴜᴇsᴛ ɪs Uᴘʟᴏᴀᴅᴇᴅ !", show_alert=True)
+            await query.answer(f"Hᴇʏ {user.first_name}, Yᴏᴜʀ Rᴇǫᴜᴇsᴛ ɪs Uᴘʟᴏᴀᴅᴇᴅ !", show_alert=True)
         else:
-            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
+            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢʜᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
 
     elif query.data.startswith("unalert"):
         ident, from_user = query.data.split("#")
         if int(query.from_user.id) == int(from_user):
             user = await client.get_users(from_user)
-            await query.answer(f"Hᴇʏ {user.first_name}, Yᴏᴜʀ Rᴇᴏ̨ᴜᴇsᴛ ɪs Uɴᴀᴠᴀɪʟᴀʙʟᴇ !", show_alert=True)
+            await query.answer(f"Hᴇʏ {user.first_name}, Yᴏᴜʀ Rᴇǫᴜᴇsᴛ ɪs Uɴᴀᴠᴀɪʟᴀʙʟᴇ !", show_alert=True)
         else:
-            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
+            await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ sᴜғғɪᴄɪᴀɴᴛ ʀɪɢʜᴛs ᴛᴏ ᴅᴏ ᴛʜɪs !", show_alert=True)
 
     elif query.data.startswith("generate_stream_link"):
         _, file_id = query.data.split(":")
@@ -1177,7 +1177,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             InlineKeyboardButton('⟸ Bᴀᴄᴋ', callback_data='filters'),
             InlineKeyboardButton('Bᴜᴛᴛᴏɴs', callback_data='button')
         ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
         await client.edit_message_media(
             query.message.chat.id, 
             query.message.id, 
@@ -1197,7 +1196,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.BUTTON_TXT,
             reply_markup=reply_markup,
@@ -1212,7 +1210,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.AUTOFILTER_TXT,
             reply_markup=reply_markup,
@@ -1227,7 +1224,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.CONNECTION_TXT,
             reply_markup=reply_markup,
@@ -1243,7 +1239,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.ADMIN_TXT,
             reply_markup=reply_markup,
@@ -1259,7 +1254,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.FILE_STORE_TXT,
             reply_markup=reply_markup,
@@ -1275,7 +1269,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.RENAME_TXT,
             reply_markup=reply_markup,
@@ -1291,7 +1284,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.STREAM_TXT,
             reply_markup=reply_markup,
@@ -1307,7 +1299,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             query.message.id, 
             InputMediaPhoto(random.choice(PICS))
         )
-        reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
             text=script.EXTRAMOD_TXT.format(OWNER_LNK, CHNL_LNK),
             reply_markup=reply_markup,
@@ -1852,9 +1843,15 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
     else:
         if settings["button"]:
-            cap = f"<b>Your Requested Movie File 📤 👇</b>"
+            cap = f"<b>🎬 Search Results for '{search}'</b>\n\n"
+            cap += f"<b>📊 Found:</b> {total_results} files\n"
+            cap += f"<b>👤 Requested by:</b> {message.from_user.first_name}\n\n"
+            cap += f"<b>Select a file to download:</b>"
         else:
-            cap = f"<b>Your Requested Movie File 📤 👇</b>"
+            cap = f"<b>🎬 Search Results for '{search}'</b>\n\n"
+            cap += f"<b>📊 Found:</b> {total_results} files\n"
+            cap += f"<b>👤 Requested by:</b> {message.from_user.first_name}\n\n"
+            cap += f"<b>Select a file to download:</b>"
             cap+="<b><u>🍿 Your Movie Files 👇</u></b>\n\n"
             for file in files:
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
@@ -2055,7 +2052,6 @@ async def manual_filters(client, message, text=False):
                                     ai_search = True
                                     reply_msg = await message.reply_text(f"<b><i>Searching For {message.text} 🔍</i></b>")
                                     await auto_filter(client, message.text, message, reply_msg, ai_search)
-
                         else:
                             button = eval(btn)
                             joelkb = await client.send_message(
@@ -2364,16 +2360,16 @@ async def global_filters(client, message, text=False):
                                     ai_search = True
                                     reply_msg = await message.reply_text(f"<b><i>Searching For {message.text} 🔍</i></b>")
                                     await auto_filter(client, message.text, message, reply_msg, ai_search) 
-                        else:
-                            try:
-                                if settings['auto_delete']:
-                                    await joelkb.delete()
-                            except KeyError:
-                                grpid = await active_connection(str(message.from_user.id))
-                                await save_group_settings(grpid, 'auto_delete', True)
-                                settings = await get_settings(message.chat.id)
-                                if settings['auto_delete']:
-                                    await joelkb.delete()
+                            else:
+                                try:
+                                    if settings['auto_delete']:
+                                        await joelkb.delete()
+                                except KeyError:
+                                    grpid = await active_connection(str(message.from_user.id))
+                                    await save_group_settings(grpid, 'auto_delete', True)
+                                    settings = await get_settings(message.chat.id)
+                                    if settings['auto_delete']:
+                                        await joelkb.delete()
 
                     else:
                         button = eval(btn)
@@ -2420,16 +2416,16 @@ async def global_filters(client, message, text=False):
                                     ai_search = True
                                     reply_msg = await message.reply_text(f"<b><i>Searching For {message.text} 🔍</i></b>")
                                     await auto_filter(client, message.text, message, reply_msg, ai_search)
-                        else:
-                            try:
-                                if settings['auto_delete']:
-                                    await joelkb.delete()
-                            except KeyError:
-                                grpid = await active_connection(str(message.from_user.id))
-                                await save_group_settings(grpid, 'auto_delete', True)
-                                settings = await get_settings(message.chat.id)
-                                if settings['auto_delete']:
-                                    await joelkb.delete()
+                            else:
+                                try:
+                                    if settings['auto_delete']:
+                                        await joelkb.delete()
+                                except KeyError:
+                                    grpid = await active_connection(str(message.from_user.id))
+                                    await save_group_settings(grpid, 'auto_delete', True)
+                                    settings = await get_settings(message.chat.id)
+                                    if settings['auto_delete']:
+                                        await joelkb.delete()
 
 
                 except Exception as e:
