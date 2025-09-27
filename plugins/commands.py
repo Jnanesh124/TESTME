@@ -1873,11 +1873,9 @@ async def handle_auto_search(client, message, search_query):
         
         buttons = []
         for file in files:
-            file_name = clean_filename(file['file_name'])
-            file_size = get_size(file['file_size'])
-            
-            # Use same format as PM filter: "[size] | filename"
-            btn_text = f"{file_size} | {file_name}"
+            # Use enhanced button formatting
+            from utils import format_file_button
+            btn_text = format_file_button(file)
             
             buttons.append([
                 InlineKeyboardButton(

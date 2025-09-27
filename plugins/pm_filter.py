@@ -1773,8 +1773,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f"{get_size(file['file_size'])} | " + clean_filename(
-                    file['file_name']), callback_data=f'{pre}#{file["file_id"]}'),
+                InlineKeyboardButton(text=format_file_button(file), callback_data=f'{pre}#{file["file_id"]}'),
             ]
             for file in files
         ]

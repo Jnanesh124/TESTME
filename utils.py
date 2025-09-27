@@ -809,6 +809,206 @@ async def get_seconds(time_string):
     else:
         return 0
 
+def format_file_button(file):
+    """Format file button with enhanced info extraction"""
+    filename = file['file_name']
+    file_size = get_size(file['file_size'])
+    
+    # Extract enhanced info
+    movie_info = extract_enhanced_movie_info(filename)
+    
+    # Build button text: {file_size} | {movie_name} {year} {language} {quality}
+    button_parts = [file_size]
+    
+    if movie_info['name']:
+        button_parts.append(movie_info['name'])
+    
+    details = []
+    if movie_info['year']:
+        details.append(movie_info['year'])
+    if movie_info['language']:
+        details.append(movie_info['language'])
+    if movie_info['quality']:
+        details.append(movie_info['quality'])
+    
+    if details:
+        button_parts.append(" ".join(details))
+    
+    return " | ".join(button_parts)
+
+def extract_enhanced_movie_info(filename):
+    """Extract movie name, year, language, and quality from filename"""
+    import re
+    
+    # Clean filename first
+    original_filename = filename
+    
+    # Remove file extension
+    name_without_ext = re.sub(r'\.[^.]+$', '', filename)
+    
+    # Extract year
+    year_match = re.search(r'\b(19|20)\d{2}\b', name_without_ext)
+    year = year_match.group(0) if year_match else None
+    
+    # Extract quality patterns
+    quality_patterns = [
+        r'\b(4K|2160p|1080p|720p|480p|360p|240p)\b',
+        r'\b(HDRip|WEBRip|BluRay|DVDRip|CAMRip|HDCAM|PreDVD|WEB-DL|HDTV)\b',
+        r'\b(HEVC|x264|x265)\b'
+    ]
+    
+    qualities = []
+    for pattern in quality_patterns:
+        matches = re.findall(pattern, name_without_ext, re.IGNORECASE)
+        qualities.extend([m.upper() for m in matches])
+    
+    # Remove duplicates while preserving order
+    unique_qualities = []
+    for q in qualities:
+        if q not in unique_qualities:
+            unique_qualities.append(q)
+    
+    quality = " ".join(unique_qualities[:2]) if unique_qualities else None  # Limit to 2 quality tags
+    
+    # Extract language patterns
+    language_patterns = {
+        r'\b(Hindi|Hin)\b': 'Hindi',
+        r'\b(Tamil|Tam)\b': 'Tamil', 
+        r'\b(Telugu|Tel)\b': 'Telugu',
+        r'\b(Malayalam|Mal)\b': 'Malayalam',
+        r'\b(Kannada|Kan)\b': 'Kannada',
+        r'\b(English|Eng)\b': 'English',
+        r'\b(Bengali|Ben)\b': 'Bengali',
+        r'\b(Marathi|Mar)\b': 'Marathi',
+        r'\b(Gujarati|Guj)\b': 'Gujarati',
+        r'\b(Punjabi|Pun)\b': 'Punjabi',
+        r'\bDual\s*Audio\b': 'Dual',
+        r'\bMulti\s*Audio\b': 'Multi'
+    }
+    
+    languages = []
+    for pattern, lang_name in language_patterns.items():
+        if re.search(pattern, name_without_ext, re.IGNORECASE):
+            languages.append(lang_name)
+    
+    # Check for bracket format like [Tam + Tel + Hin]
+    bracket_match = re.search(r'\[([^\]]+)\]', name_without_ext)
+    if bracket_match:
+        bracket_content = bracket_match.group(1)
+        bracket_langs = re.split(r'\s*\+\s*', bracket_content)
+        lang_mapping = {
+            'tam': 'Tamil', 'tel': 'Telugu', 'hin': 'Hindi',
+            'mal': 'Malayalam', 'kan': 'Kannada', 'eng': 'English',
+            'ben': 'Bengali', 'mar': 'Marathi', 'guj': 'Gujarati', 'pun': 'Punjabi'
+        }
+        
+        for lang in bracket_langs:
+            lang_clean = lang.strip().lower()
+            if lang_clean in lang_mapping:
+                if lang_mapping[lang_clean] not in languages:
+                    languages.append(lang_mapping[lang_clean])
+    
+    # Remove duplicates and limit
+    unique_languages = []
+    for lang in languages:
+        if lang not in unique_languages:
+            unique_languages.append(lang)
+    
+    language = "+".join(unique_languages[:3]) if unique_languages else None  # Limit to 3 languages
+    
+    # Extract clean movie name
+    movie_name = extract_clean_movie_name_enhanced(name_without_ext, year, quality, language)
+    
+    return {
+        'name': movie_name,
+        'year': year,
+        'language': language,
+        'quality': quality
+    }
+
+def extract_clean_movie_name_enhanced(filename, year=None, quality=None, language=None):
+    """Extract clean movie name by removing unwanted elements"""
+    import re
+    
+    # Start with filename
+    clean_name = filename
+    
+    # Remove year if found
+    if year:
+        clean_name = re.sub(rf'\b{re.escape(year)}\b', '', clean_name)
+    
+    # Remove quality indicators
+    quality_remove_patterns = [
+        r'\b(4K|2160p|1080p|720p|480p|360p|240p)\b',
+        r'\b(HDRip|WEBRip|BluRay|DVDRip|CAMRip|HDCAM|PreDVD|WEB-DL|HDTV|BRRip|BDRip)\b',
+        r'\b(HEVC|x264|x265|AAC|AC3|DTS)\b',
+        r'\b(10bit|8bit)\b'
+    ]
+    
+    for pattern in quality_remove_patterns:
+        clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
+    
+    # Remove language indicators
+    language_remove_patterns = [
+        r'\b(Hindi|Hin|Tamil|Tam|Telugu|Tel|Malayalam|Mal|Kannada|Kan)\b',
+        r'\b(English|Eng|Bengali|Ben|Marathi|Mar|Gujarati|Guj|Punjabi|Pun)\b',
+        r'\b(Dual\s*Audio|Multi\s*Audio|Dubbed|Original)\b',
+        r'\[([^\]]+)\]'  # Remove bracket content like [Tam + Tel + Hin]
+    ]
+    
+    for pattern in language_remove_patterns:
+        clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
+    
+    # Remove common unwanted words and patterns
+    unwanted_patterns = [
+        r'\b(Movie|Movies|Film|Films|Cinema|Theater|Print)\b',
+        r'\b(Backup|Files|Download|HD|HQ|LQ)\b',
+        r'\b(www\.[^\s]+|@[^\s]+)\b',  # Remove websites and mentions
+        r'\b(mkv|mp4|avi|mov)\b',  # File extensions
+        r'\b(Season|Series|Episode|EP|Part)\b',  # Series indicators
+        r'\b\d+(\.\d+)?(GB|MB|KB)\b',  # File sizes
+        r'[-_~\.]{2,}',  # Multiple separators
+        r'\([^)]*\)',  # Content in parentheses
+        r'\{[^}]*\}',  # Content in curly braces
+    ]
+    
+    for pattern in unwanted_patterns:
+        clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
+    
+    # Clean up separators and normalize spaces
+    clean_name = re.sub(r'[-_~\.]+', ' ', clean_name)
+    clean_name = re.sub(r'\s+', ' ', clean_name)
+    clean_name = clean_name.strip()
+    
+    # Split into tokens and filter
+    tokens = clean_name.split()
+    clean_tokens = []
+    
+    for token in tokens:
+        # Skip very short tokens (unless they're meaningful like "V" in "Gen V")
+        if len(token) < 2 and not (len(token) == 1 and token.isalpha()):
+            continue
+            
+        # Skip tokens that are just numbers or special characters
+        if token.isdigit() or not any(c.isalpha() for c in token):
+            continue
+            
+        # Skip common bad words that might remain
+        bad_words = ['rm', 'jnk', 'dd', 'hd', 'hq', 'org', 'pre', 'cam', 'ts', 'tc']
+        if token.lower() in bad_words:
+            continue
+            
+        clean_tokens.append(token)
+    
+    # Rebuild name
+    if clean_tokens:
+        movie_name = ' '.join(clean_tokens)
+        # Proper case the name
+        movie_name = ' '.join(word.capitalize() for word in movie_name.split())
+        return movie_name[:50]  # Limit length for button
+    
+    return "Unknown Movie"
+
 def start_scheduler():
     """Initialize any scheduled tasks or background processes"""
     # Placeholder function for scheduler initialization
