@@ -810,15 +810,15 @@ async def get_seconds(time_string):
         return 0
 
 def format_file_button(file):
-    """Format file button with enhanced info extraction"""
+    """Format file button with enhanced info extraction - Format: {file_size} ! {movie_name} {year} {language} {quality}"""
     filename = file['file_name']
     file_size = get_size(file['file_size'])
     
-    # Extract enhanced info
-    movie_info = extract_enhanced_movie_info(filename)
+    # Extract enhanced info using improved methods
+    movie_info = extract_enhanced_movie_info(filename, file.get('caption', ''))
     
-    # Build button text: {file_size} | {movie_name} {year} {language} {quality}
-    button_parts = [file_size]
+    # Build button text: {file_size} ! {movie_name} {year} {language} {quality}
+    button_parts = [file_size, "!"]
     
     if movie_info['name']:
         button_parts.append(movie_info['name'])
@@ -834,89 +834,27 @@ def format_file_button(file):
     if details:
         button_parts.append(" ".join(details))
     
-    return " | ".join(button_parts)
+    return " ".join(button_parts)
 
-def extract_enhanced_movie_info(filename):
-    """Extract movie name, year, language, and quality from filename"""
+def extract_enhanced_movie_info(filename, caption_text=None):
+    """Extract movie name, year, language, and quality from filename and caption"""
     import re
     
-    # Clean filename first
-    original_filename = filename
+    logger.info(f"🔍 Starting enhanced extraction for: {filename}")
     
     # Remove file extension
     name_without_ext = re.sub(r'\.[^.]+$', '', filename)
     
-    # Extract year
-    year_match = re.search(r'\b(19|20)\d{2}\b', name_without_ext)
-    year = year_match.group(0) if year_match else None
+    # Step 1: Extract Year
+    year = extract_year_from_filename(name_without_ext)
     
-    # Extract quality patterns
-    quality_patterns = [
-        r'\b(4K|2160p|1080p|720p|480p|360p|240p)\b',
-        r'\b(HDRip|WEBRip|BluRay|DVDRip|CAMRip|HDCAM|PreDVD|WEB-DL|HDTV)\b',
-        r'\b(HEVC|x264|x265)\b'
-    ]
+    # Step 2: Extract Quality using token-based method
+    quality = extract_quality_from_tokens(name_without_ext)
     
-    qualities = []
-    for pattern in quality_patterns:
-        matches = re.findall(pattern, name_without_ext, re.IGNORECASE)
-        qualities.extend([m.upper() for m in matches])
+    # Step 3: Extract Language from both filename and caption, prioritize caption
+    language = extract_language_comprehensive(name_without_ext, caption_text)
     
-    # Remove duplicates while preserving order
-    unique_qualities = []
-    for q in qualities:
-        if q not in unique_qualities:
-            unique_qualities.append(q)
-    
-    quality = " ".join(unique_qualities[:2]) if unique_qualities else None  # Limit to 2 quality tags
-    
-    # Extract language patterns
-    language_patterns = {
-        r'\b(Hindi|Hin)\b': 'Hindi',
-        r'\b(Tamil|Tam)\b': 'Tamil', 
-        r'\b(Telugu|Tel)\b': 'Telugu',
-        r'\b(Malayalam|Mal)\b': 'Malayalam',
-        r'\b(Kannada|Kan)\b': 'Kannada',
-        r'\b(English|Eng)\b': 'English',
-        r'\b(Bengali|Ben)\b': 'Bengali',
-        r'\b(Marathi|Mar)\b': 'Marathi',
-        r'\b(Gujarati|Guj)\b': 'Gujarati',
-        r'\b(Punjabi|Pun)\b': 'Punjabi',
-        r'\bDual\s*Audio\b': 'Dual',
-        r'\bMulti\s*Audio\b': 'Multi'
-    }
-    
-    languages = []
-    for pattern, lang_name in language_patterns.items():
-        if re.search(pattern, name_without_ext, re.IGNORECASE):
-            languages.append(lang_name)
-    
-    # Check for bracket format like [Tam + Tel + Hin]
-    bracket_match = re.search(r'\[([^\]]+)\]', name_without_ext)
-    if bracket_match:
-        bracket_content = bracket_match.group(1)
-        bracket_langs = re.split(r'\s*\+\s*', bracket_content)
-        lang_mapping = {
-            'tam': 'Tamil', 'tel': 'Telugu', 'hin': 'Hindi',
-            'mal': 'Malayalam', 'kan': 'Kannada', 'eng': 'English',
-            'ben': 'Bengali', 'mar': 'Marathi', 'guj': 'Gujarati', 'pun': 'Punjabi'
-        }
-        
-        for lang in bracket_langs:
-            lang_clean = lang.strip().lower()
-            if lang_clean in lang_mapping:
-                if lang_mapping[lang_clean] not in languages:
-                    languages.append(lang_mapping[lang_clean])
-    
-    # Remove duplicates and limit
-    unique_languages = []
-    for lang in languages:
-        if lang not in unique_languages:
-            unique_languages.append(lang)
-    
-    language = "+".join(unique_languages[:3]) if unique_languages else None  # Limit to 3 languages
-    
-    # Extract clean movie name
+    # Step 4: Extract clean movie name (remove bad words first)
     movie_name = extract_clean_movie_name_enhanced(name_without_ext, year, quality, language)
     
     return {
@@ -926,18 +864,253 @@ def extract_enhanced_movie_info(filename):
         'quality': quality
     }
 
-def extract_clean_movie_name_enhanced(filename, year=None, quality=None, language=None):
-    """Extract clean movie name by removing unwanted elements"""
+def extract_year_from_filename(filename):
+    """Extract year from filename using the method from example code"""
     import re
     
-    # Start with filename
-    clean_name = filename
+    # Look for 4-digit year patterns
+    year_pattern = re.compile(r"(?<![A-Za-z0-9])(?:19|20)\d{2}(?![A-Za-z0-9])")
+    year_match = year_pattern.search(filename)
     
-    # Remove year if found
+    if year_match:
+        year = year_match.group(0)
+        logger.info(f"📅 Found year: {year}")
+        return year
+    
+    logger.info(f"📅 No year found")
+    return None
+
+def extract_quality_from_tokens(filename):
+    """Extract quality using token-based method from example code"""
+    import re
+    
+    logger.info(f"🎯 Extracting quality from: {filename}")
+
+    # Split into tokens using multiple delimiters
+    tokens = re.split(r'[\s\-_\.]+', filename)
+    quality_tokens = []
+
+    # Quality indicators to look for (comprehensive list from example)
+    quality_patterns = {
+        'hdcam': 'HDCAM', 'hdtc': 'HDTC', 'camrip': 'CAMRip', 'cam': 'CAM',
+        'ts': 'TS', 'tc': 'TC', 'telesync': 'TeleSync',
+        'dvdscr': 'DVDScr', 'dvdrip': 'DVDRip', 'predvd': 'PreDVD',
+        'webrip': 'WEBRip', 'web-dl': 'WEB-DL', 'webdl': 'WEBRip', 'web': 'WEB',
+        'tvrip': 'TVRip', 'hdtv': 'HDTV', 'bluray': 'BluRay', 'brrip': 'BRRip',
+        'bdrip': 'BDRip', 'hevc': 'HEVC', 'hdrip': 'HDRip',
+        '360p': '360p', '480p': '480p', '720p': '720p', '1080p': '1080p',
+        '2160p': '2160p', '4k': '4K', '1440p': '1440p', '540p': '540p',
+        '240p': '240p', '140p': '140p', 'uhd': 'UHD', 'fhd': 'FHD', 'hd': 'HD',
+        'x264': 'x264', 'x265': 'x265', 'aac': 'AAC', 'ac3': 'AC3', 'dts': 'DTS'
+    }
+
+    for token in tokens:
+        # Clean token but preserve original case for display
+        token_clean = re.sub(r'[@#~\-_()]+', '', token).lower()
+        if token_clean in quality_patterns:
+            quality_tokens.append(quality_patterns[token_clean])
+            logger.info(f"✅ Found quality token: {token_clean} -> {quality_patterns[token_clean]}")
+
+    # Also check for resolution patterns that might be written differently
+    resolution_pattern = re.search(r'\b(\d{3,4})p?\b', filename, re.IGNORECASE)
+    if resolution_pattern:
+        res_value = resolution_pattern.group(1)
+        if res_value in ['360', '480', '720', '1080', '2160']:
+            res_quality = f"{res_value}p"
+            if res_quality not in quality_tokens:
+                quality_tokens.append(res_quality)
+                logger.info(f"✅ Found resolution pattern: {res_quality}")
+
+    # Remove duplicates while preserving order and limit to 2 most important
+    unique_qualities = []
+    for quality in quality_tokens:
+        if quality not in unique_qualities:
+            unique_qualities.append(quality)
+
+    result = " ".join(unique_qualities[:2]) if unique_qualities else None
+    logger.info(f"🎯 Final quality: {result}")
+    return result
+
+def extract_language_comprehensive(filename, caption_text=None):
+    """Extract language from both filename and caption, prioritizing caption hashtags"""
+    import re
+    
+    logger.info(f"🌍 Extracting language from filename: {filename}")
+    if caption_text:
+        logger.info(f"📝 Caption available for language extraction")
+
+    all_languages = []
+
+    # Step 1: Extract from caption first (hashtags and text patterns)
+    if caption_text:
+        caption_languages = extract_language_from_caption(caption_text)
+        if caption_languages and caption_languages != "N/A":
+            all_languages.extend(caption_languages.split(", "))
+            logger.info(f"✅ Found caption languages: {caption_languages}")
+
+    # Step 2: Extract from filename tokens
+    filename_languages = extract_language_from_tokens(filename)
+    if filename_languages and filename_languages != "N/A":
+        filename_langs = filename_languages.split(", ")
+        for lang in filename_langs:
+            if lang not in all_languages:
+                all_languages.append(lang)
+        logger.info(f"✅ Found filename languages: {filename_languages}")
+
+    # Step 3: Check for bracket format like [Tam + Tel + Hin]
+    bracket_languages = extract_bracket_languages(filename)
+    if bracket_languages:
+        for lang in bracket_languages:
+            if lang not in all_languages:
+                all_languages.append(lang)
+        logger.info(f"✅ Found bracket languages: {', '.join(bracket_languages)}")
+
+    # Remove duplicates and limit to 3 languages
+    unique_languages = []
+    for lang in all_languages:
+        if lang not in unique_languages:
+            unique_languages.append(lang)
+
+    result = "+".join(unique_languages[:3]) if unique_languages else None
+    logger.info(f"🌍 Final comprehensive language: {result}")
+    return result
+
+def extract_language_from_caption(caption_text):
+    """Extract language from message caption (hashtags and text patterns)"""
+    import re
+    
+    if not caption_text:
+        return "N/A"
+
+    logger.info(f"🌍 Extracting language from caption: {caption_text[:100]}...")
+
+    # Look for hashtag patterns like #Hindi, #Tamil etc.
+    hashtag_pattern = re.findall(r'#(\w+)', caption_text)
+    language_tokens = []
+
+    # Language mapping for hashtags and text
+    lang_mapping = {
+        'hindi': 'Hindi', 'english': 'English', 'tamil': 'Tamil', 
+        'telugu': 'Telugu', 'malayalam': 'Malayalam', 'kannada': 'Kannada',
+        'bengali': 'Bengali', 'marathi': 'Marathi', 'gujarati': 'Gujarati',
+        'punjabi': 'Punjabi', 'urdu': 'Urdu', 'korean': 'Korean', 'japanese': 'Japanese'
+    }
+
+    # Check hashtags first
+    for hashtag in hashtag_pattern:
+        hashtag_lower = hashtag.lower()
+        if hashtag_lower in lang_mapping:
+            language_name = lang_mapping[hashtag_lower]
+            if language_name not in language_tokens:
+                language_tokens.append(language_name)
+                logger.info(f"✅ Found caption hashtag language: #{hashtag} -> {language_name}")
+
+    # Also check for direct language mentions in caption text
+    caption_lower = caption_text.lower()
+    for lang_key, lang_name in lang_mapping.items():
+        if lang_key in caption_lower and lang_name not in language_tokens:
+            language_tokens.append(lang_name)
+            logger.info(f"✅ Found caption text language: {lang_key} -> {lang_name}")
+
+    # Check for common patterns like "Tamil", "Hindi" etc.
+    text_pattern = re.findall(r'\b(Tamil|Hindi|English|Telugu|Malayalam|Kannada|Bengali|Marathi|Gujarati|Punjabi|Urdu|Korean|Japanese)\b', caption_text, re.IGNORECASE)
+    for lang in text_pattern:
+        lang_name = lang.capitalize()
+        if lang_name not in language_tokens:
+            language_tokens.append(lang_name)
+            logger.info(f"✅ Found direct language mention: {lang} -> {lang_name}")
+
+    result = ", ".join(language_tokens) if language_tokens else "N/A"
+    logger.info(f"🌍 Final caption language: {result}")
+    return result
+
+def extract_language_from_tokens(filename):
+    """Extract language using token-based method"""
+    import re
+    
+    # Token-based method - split filename into tokens
+    tokens = re.split(r'[\s\-_\.]+', filename)
+    language_tokens = []
+
+    # Extended language patterns including exact matches
+    extended_languages = {
+        # Direct language names
+        'hindi': 'Hindi', 'english': 'English', 'tamil': 'Tamil', 
+        'telugu': 'Telugu', 'malayalam': 'Malayalam', 'kannada': 'Kannada',
+        'bengali': 'Bengali', 'marathi': 'Marathi', 'gujarati': 'Gujarati',
+        'punjabi': 'Punjabi', 'urdu': 'Urdu', 'korean': 'Korean', 'japanese': 'Japanese',
+        # Abbreviations
+        'hin': 'Hindi', 'eng': 'English', 'tam': 'Tamil', 'tel': 'Telugu',
+        'mal': 'Malayalam', 'kan': 'Kannada', 'ben': 'Bengali', 'mar': 'Marathi',
+        'guj': 'Gujarati', 'pun': 'Punjabi', 'urd': 'Urdu', 'kor': 'Korean', 'jpn': 'Japanese',
+        # Additional patterns
+        'dual': 'Dual', 'multi': 'Multi', 'dubbed': 'Dubbed',
+        'org': 'Original', 'original': 'Original'
+    }
+
+    for token in tokens:
+        # Clean token but preserve original case for checking
+        original_token = token.lower()
+        token_clean = re.sub(r'[@#~\-_()]+', '', original_token)
+
+        # Check both cleaned and original token
+        for check_token in [token_clean, original_token]:
+            if check_token in extended_languages:
+                language_name = extended_languages[check_token]
+                if language_name not in language_tokens:
+                    language_tokens.append(language_name)
+                    logger.info(f"✅ Found filename language token: {check_token} -> {language_name}")
+
+    result = ", ".join(language_tokens) if language_tokens else "N/A"
+    return result
+
+def extract_bracket_languages(filename):
+    """Extract languages from bracket format like [Tam + Tel + Hin]"""
+    import re
+    
+    bracket_pattern = re.search(r'\[([^\]]+)\]', filename)
+    if bracket_pattern:
+        bracket_content = bracket_pattern.group(1)
+        logger.info(f"🔍 Found bracket content: {bracket_content}")
+
+        # Split by + and clean each language
+        bracket_langs = re.split(r'\s*\+\s*', bracket_content)
+        language_tokens = []
+
+        for lang in bracket_langs:
+            lang_clean = lang.strip().lower()
+            # Map common abbreviations to full names
+            lang_mapping = {
+                'tam': 'Tamil', 'tel': 'Telugu', 'hin': 'Hindi',
+                'mal': 'Malayalam', 'kan': 'Kannada', 'eng': 'English',
+                'ben': 'Bengali', 'mar': 'Marathi', 'guj': 'Gujarati',
+                'pun': 'Punjabi', 'urd': 'Urdu', 'kor': 'Korean', 'jpn': 'Japanese'
+            }
+
+            if lang_clean in lang_mapping:
+                language_tokens.append(lang_mapping[lang_clean])
+                logger.info(f"✅ Found bracket language: {lang_clean} -> {lang_mapping[lang_clean]}")
+
+        return language_tokens
+    
+    return []
+
+def extract_clean_movie_name_enhanced(filename, year=None, quality=None, language=None):
+    """Extract clean movie name by removing bad words first, then other unwanted elements"""
+    import re
+    
+    logger.info(f"🔍 Starting movie name extraction for: {filename}")
+
+    # Step 1: Remove bad words first (before any other processing)
+    clean_name = remove_bad_words_from_filename(filename)
+    logger.info(f"📝 After removing bad words: {clean_name}")
+    
+    # Step 2: Remove year if found
     if year:
         clean_name = re.sub(rf'\b{re.escape(year)}\b', '', clean_name)
+        logger.info(f"📅 After removing year: {clean_name}")
     
-    # Remove quality indicators
+    # Step 3: Remove quality indicators
     quality_remove_patterns = [
         r'\b(4K|2160p|1080p|720p|480p|360p|240p)\b',
         r'\b(HDRip|WEBRip|BluRay|DVDRip|CAMRip|HDCAM|PreDVD|WEB-DL|HDTV|BRRip|BDRip)\b',
@@ -948,7 +1121,7 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     for pattern in quality_remove_patterns:
         clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
     
-    # Remove language indicators
+    # Step 4: Remove language indicators
     language_remove_patterns = [
         r'\b(Hindi|Hin|Tamil|Tam|Telugu|Tel|Malayalam|Mal|Kannada|Kan)\b',
         r'\b(English|Eng|Bengali|Ben|Marathi|Mar|Gujarati|Guj|Punjabi|Pun)\b',
@@ -959,12 +1132,8 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     for pattern in language_remove_patterns:
         clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
     
-    # Remove common unwanted words and patterns
+    # Step 5: Remove other unwanted patterns
     unwanted_patterns = [
-        r'\b(Movie|Movies|Film|Films|Cinema|Theater|Print)\b',
-        r'\b(Backup|Files|Download|HD|HQ|LQ)\b',
-        r'\b(www\.[^\s]+|@[^\s]+)\b',  # Remove websites and mentions
-        r'\b(mkv|mp4|avi|mov)\b',  # File extensions
         r'\b(Season|Series|Episode|EP|Part)\b',  # Series indicators
         r'\b\d+(\.\d+)?(GB|MB|KB)\b',  # File sizes
         r'[-_~\.]{2,}',  # Multiple separators
@@ -975,12 +1144,12 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     for pattern in unwanted_patterns:
         clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
     
-    # Clean up separators and normalize spaces
+    # Step 6: Clean up separators and normalize spaces
     clean_name = re.sub(r'[-_~\.]+', ' ', clean_name)
     clean_name = re.sub(r'\s+', ' ', clean_name)
     clean_name = clean_name.strip()
     
-    # Split into tokens and filter
+    # Step 7: Split into tokens and filter
     tokens = clean_name.split()
     clean_tokens = []
     
@@ -993,21 +1162,70 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         if token.isdigit() or not any(c.isalpha() for c in token):
             continue
             
-        # Skip common bad words that might remain
-        bad_words = ['rm', 'jnk', 'dd', 'hd', 'hq', 'org', 'pre', 'cam', 'ts', 'tc']
-        if token.lower() in bad_words:
-            continue
-            
         clean_tokens.append(token)
     
-    # Rebuild name
+    # Step 8: Rebuild name
     if clean_tokens:
         movie_name = ' '.join(clean_tokens)
         # Proper case the name
         movie_name = ' '.join(word.capitalize() for word in movie_name.split())
+        logger.info(f"✨ Final movie name: '{movie_name}'")
         return movie_name[:50]  # Limit length for button
+    else:
+        logger.warning(f"⚠️ No valid tokens found, returning 'Unknown Movie'")
+        return "Unknown Movie"
+
+def remove_bad_words_from_filename(filename):
+    """Remove bad words first using the same method as clean_filename function"""
+    import re
     
-    return "Unknown Movie"
+    original_filename = filename
+    removed_words = []
+
+    # Split the filename into tokens using various delimiters
+    tokens = re.split(r'[\s\.\-_]+', filename)
+    tokens = [token for token in tokens if token.strip()]
+
+    # Remove all bad words first (from beginning to end)
+    cleaned_tokens = []
+    for token in tokens:
+        token_removed = False
+
+        # Check exact match against each bad word (case-insensitive)
+        for bad_word in BAD_WORDS:
+            if token.lower() == bad_word.lower():
+                removed_words.append(token)
+                logger.info(f"Removed exact word match: '{token}' (matched bad word: '{bad_word}')")
+                token_removed = True
+                break
+
+            # Check if the token contains the bad word as a substring
+            elif bad_word.lower() in token.lower() and len(bad_word) > 2:  # Only for longer bad words
+                removed_words.append(token)
+                logger.info(f"Removed token containing bad word: '{token}' (contains: '{bad_word}')")
+                token_removed = True
+                break
+
+            # Check if the token is contained within the bad word
+            elif token.lower() in bad_word.lower() and len(token) > 2:  # Only for longer tokens
+                removed_words.append(token)
+                logger.info(f"Removed token found in bad word pattern: '{token}' (found in: '{bad_word}')")
+                token_removed = True
+                break
+
+        if not token_removed:
+            cleaned_tokens.append(token)
+
+    # Rejoin the cleaned tokens with spaces
+    clean_filename_result = ' '.join(cleaned_tokens)
+    clean_filename_result = ' '.join(clean_filename_result.split())  # Clean up extra spaces
+
+    if removed_words:
+        logger.info(f"BAD WORDS REMOVAL: Original: '{original_filename}' -> Cleaned: '{clean_filename_result}' | Removed words: {removed_words}")
+    else:
+        logger.info(f"BAD WORDS REMOVAL: No bad words found in '{original_filename}'")
+
+    return clean_filename_result
 
 def start_scheduler():
     """Initialize any scheduled tasks or background processes"""
