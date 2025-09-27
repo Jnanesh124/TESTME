@@ -7,12 +7,12 @@ from Script import script
 from pyrogram import Client, filters, enums
 from pyrogram.errors import ChatAdminRequired, FloodWait
 from pyrogram.types import *
-from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file_id, get_bad_files
+from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file_id, get_bad_files, get_search_results
 from database.users_chats_db import db, delete_all_referal_users, get_referal_users_count, get_referal_all_users, referal_add_user
 from database.join_reqs import JoinReqs
 from database.ignored_words_mdb import add_ignored_word, remove_ignored_word, get_ignored_words
 from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, AUTH_CHANNELS, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL, BAD_WORDS
-from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds
+from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds, clean_filename
 from database.connections_mdb import active_connection
 from urllib.parse import quote_plus
 from TechVJ.util.file_properties import get_name, get_hash, get_media_file_size
@@ -181,6 +181,14 @@ async def start(client, message):
         )
         return
     data = message.command[1]
+    
+    # Handle getfile format for auto-search
+    if data.startswith("getfile-"):
+        search_query = data.replace("getfile-", "").replace("-", " ")
+        # Trigger auto-search functionality
+        await handle_auto_search(client, message, search_query)
+        return
+    
     if data.split("-", 1)[0] == "VJ":
         user_id = int(data.split("-", 1)[1])
         vj = await referal_add_user(user_id, message.from_user.id)
@@ -1782,3 +1790,123 @@ async def list_bad_words_handler(client, message):
         os.remove('bad_words.txt')
     else:
         await message.reply_text(text)
+
+@Client.on_message(filters.command("getfile") & filters.user(ADMINS))
+async def generate_getfile_link(client, message):
+    """Generate auto-search link for given movie name"""
+    if len(message.command) < 2:
+        return await message.reply_text("<b>Usage: /getfile movie name\n\nExample: /getfile Saare Jahaan Se Mehnga</b>")
+    
+    movie_name = " ".join(message.command[1:])
+    # Convert spaces to hyphens for URL
+    url_safe_name = movie_name.replace(" ", "-")
+    
+    bot_username = temp.U_NAME
+    getfile_link = f"https://t.me/{bot_username}?start=getfile-{url_safe_name}"
+    
+    await message.reply_text(
+        f"<b>🎬 Auto-Search Link Generated:</b>\n\n"
+        f"<b>Movie:</b> {movie_name}\n"
+        f"<b>Link:</b> <code>{getfile_link}</code>\n\n"
+        f"<i>When users click this link, it will automatically search for '{movie_name}' in your bot.</i>"
+    )
+
+async def handle_auto_search(client, message, search_query):
+    """Handle auto-search functionality for getfile links"""
+    try:
+        # Check force subscribe
+        force_sub_channels = []
+        if AUTH_CHANNELS:
+            force_sub_channels.extend(AUTH_CHANNELS)
+        elif AUTH_CHANNEL:
+            force_sub_channels.append(AUTH_CHANNEL)
+
+        # Check subscription
+        not_joined_channels = []
+        for channel in force_sub_channels:
+            try:
+                is_member = await is_subscribed(client, message, channel)
+                if not is_member:
+                    not_joined_channels.append(channel)
+            except Exception as e:
+                logger.error(f"Error checking subscription for channel {channel}: {e}")
+                not_joined_channels.append(channel)
+
+        if not_joined_channels:
+            btn = []
+            for channel in not_joined_channels:
+                if channel in AUTH_CHANNELS:
+                    try:
+                        chat_info = await client.get_chat(int(channel))
+                        channel_name = chat_info.title if chat_info.title else f"Channel {channel}"
+                        if REQUEST_TO_JOIN_MODE == True:
+                            invite_link = await client.create_chat_invite_link(chat_id=int(channel), creates_join_request=True)
+                        else:
+                            invite_link = await client.create_chat_invite_link(int(channel))
+                        btn.append([InlineKeyboardButton(f"ᴊᴏɪɴ {channel_name}", url=invite_link.invite_link)])
+                    except Exception as e:
+                        logger.error(f"Error creating invite link for channel {channel}: {e}")
+                        continue
+
+            text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
+            await client.send_message(
+                chat_id=message.from_user.id,
+                text=text,
+                reply_markup=InlineKeyboardMarkup(btn),
+                parse_mode=enums.ParseMode.MARKDOWN
+            )
+            return
+
+        # Perform search
+        files, next_offset, total = await get_search_results("", search_query, max_results=50, offset=0)
+        
+        if not files:
+            await message.reply_text(
+                f"<b>❌ No files found for '{search_query}'</b>\n\n"
+                f"<i>Try different keywords or check spelling.</i>"
+            )
+            return
+
+        # Create buttons for files
+        buttons = []
+        for file in files[:20]:  # Limit to 20 files
+            file_name = clean_filename(file['file_name'])
+            file_size = get_size(file['file_size'])
+            
+            # Create callback data for file
+            btn_text = f"📁 {file_name}"
+            if len(btn_text) > 64:
+                btn_text = btn_text[:61] + "..."
+            
+            buttons.append([
+                InlineKeyboardButton(
+                    btn_text,
+                    callback_data=f"file#{file['file_id']}"
+                )
+            ])
+
+        # Add pagination if more files exist
+        if len(files) > 20:
+            buttons.append([
+                InlineKeyboardButton(f"📄 Next ({total-20} more)", callback_data=f"next_{search_query}_20")
+            ])
+
+        reply_markup = InlineKeyboardMarkup(buttons)
+        
+        caption = f"<b>🎬 Search Results for '{search_query}'</b>\n\n"
+        caption += f"<b>📊 Found:</b> {total} files\n"
+        caption += f"<b>👤 Requested by:</b> {message.from_user.mention}\n\n"
+        caption += f"<i>Select a file to download:</i>"
+
+        await message.reply_text(
+            text=caption,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+
+    except Exception as e:
+        logger.error(f"Error in auto search: {e}")
+        await message.reply_text(
+            f"<b>❌ Error occurred while searching for '{search_query}'</b>\n\n"
+            f"<i>Please try again later or contact support.</i>"
+        )
