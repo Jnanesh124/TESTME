@@ -1232,24 +1232,36 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     name_without_ext = re.sub(r'\.[^.]+$', '', filename)
     logger.info(f"📝 After removing extension: {name_without_ext}")
 
-    # Step 2: Remove BAD_WORDS first (HIGHEST PRIORITY)
-    clean_name = remove_bad_words_from_filename(name_without_ext)
-    logger.info(f"❌ After removing BAD_WORDS (Priority 1): {clean_name}")
-
-    # Step 3: Remove IGNORE_WORDS second priority
-    clean_name = remove_ignore_words_from_filename(clean_name)
-    logger.info(f"🚫 After removing IGNORE_WORDS (Priority 2): {clean_name}")
-
-    # Step 4: Remove special characters @ ~ # last (lowest priority)
-    clean_name = re.sub(r'[@~#]+', ' ', clean_name)
-    logger.info(f"🧹 After removing special chars (@~#) (Priority 3): {clean_name}")
-
-    # Step 5: Remove year if found
+    # Step 2: NEW METHOD - Remove everything after year if year is found (HIGHEST PRIORITY)
     if year:
-        clean_name = re.sub(rf'\b{re.escape(year)}\b', '', clean_name)
-        logger.info(f"📅 After removing year {year}: {clean_name}")
+        # Find year position and keep only text before year
+        year_pattern = rf'\b{re.escape(year)}\b'
+        year_match = re.search(year_pattern, name_without_ext)
+        if year_match:
+            # Keep only text before the year
+            name_before_year = name_without_ext[:year_match.start()].strip()
+            logger.info(f"🎯 YEAR-BACKWARD METHOD: Found year '{year}' at position {year_match.start()}")
+            logger.info(f"🎯 Text before year: '{name_before_year}'")
+            logger.info(f"🎯 Ignored text after year: '{name_without_ext[year_match.start():].strip()}'")
+            name_without_ext = name_before_year
+        else:
+            logger.info(f"🎯 YEAR-BACKWARD METHOD: Year '{year}' not found in filename, proceeding normally")
 
-    # Step 6: Remove quality and codec indicators (be more aggressive)
+    # Step 3: Remove BAD_WORDS 
+    clean_name = remove_bad_words_from_filename(name_without_ext)
+    logger.info(f"❌ After removing BAD_WORDS (Priority 2): {clean_name}")
+
+    # Step 4: Remove IGNORE_WORDS
+    clean_name = remove_ignore_words_from_filename(clean_name)
+    logger.info(f"🚫 After removing IGNORE_WORDS (Priority 3): {clean_name}")
+
+    # Step 5: Remove special characters @ ~ # 
+    clean_name = re.sub(r'[@~#]+', ' ', clean_name)
+    logger.info(f"🧹 After removing special chars (@~#) (Priority 4): {clean_name}")
+
+    # Step 6: Year already removed in step 2, so skip this step
+
+    # Step 7: Remove quality and codec indicators (be more aggressive) - Only if year method didn't handle it
     quality_remove_patterns = [
         r'\b(4K|2160p|1080p|720p|480p|360p|240p|140p|540p|1440p)\b',
         r'\b(HDRip|WEBRip|BluRay|DVDRip|CAMRip|HDCAM|PreDVD|WEB-DL|HDTV|BRRip|BDRip|HDTC|TS|TC)\b',
@@ -1264,7 +1276,7 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         if before != clean_name:
             logger.info(f"🎯 Removed quality pattern: {pattern}")
 
-    # Step 7: Remove language indicators more aggressively
+    # Step 8: Remove language indicators more aggressively - Only if year method didn't handle it  
     language_remove_patterns = [
         r'\b(Hindi|Hin|Tamil|Tam|Telugu|Tel|Malayalam|Mal|Kannada|Kan)\b',
         r'\b(English|Eng|Bengali|Ben|Marathi|Mar|Gujarati|Guj|Punjabi|Pun)\b',
@@ -1280,7 +1292,7 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         if before != clean_name:
             logger.info(f"🌍 Removed language pattern: {pattern}")
 
-    # Step 8: Remove other unwanted patterns
+    # Step 9: Remove other unwanted patterns - Only if year method didn't handle it
     unwanted_patterns = [
         r'\b(Season|Series|Episode|EP|Part|Vol|Volume)\b',  # Series indicators
         r'\b\d+(\.\d+)?(GB|MB|KB|TB)\b',  # File sizes
@@ -1295,13 +1307,13 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         if before != clean_name:
             logger.info(f"🗑️ Removed unwanted pattern: {pattern}")
 
-    # Step 9: Clean up separators and normalize spaces
+    # Step 10: Clean up separators and normalize spaces
     clean_name = re.sub(r'[-_~\.]+', ' ', clean_name)
     clean_name = re.sub(r'\s+', ' ', clean_name)
     clean_name = clean_name.strip()
     logger.info(f"✨ After cleanup: {clean_name}")
 
-    # Step 10: Split into tokens and final filtering
+    # Step 11: Split into tokens and final filtering
     tokens = clean_name.split()
     clean_tokens = []
     ignore_words_lower = {word.lower() for word in IGNORE_WORDS}
@@ -1332,12 +1344,15 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         clean_tokens.append(token)
         logger.info(f"✅ Token accepted: '{token}'")
 
-    # Step 11: Rebuild name
+    # Step 12: Rebuild name
     if clean_tokens:
         movie_name = ' '.join(clean_tokens)
         # Proper case the name
         movie_name = ' '.join(word.capitalize() for word in movie_name.split())
-        logger.info(f"🎬 Final movie name: '{movie_name}'")
+        if year:
+            logger.info(f"🎬 Final movie name (using year-backward method): '{movie_name}'")
+        else:
+            logger.info(f"🎬 Final movie name (standard method): '{movie_name}'")
         return movie_name[:50]  # Limit length for button
     else:
         logger.warning(f"⚠️ No valid tokens found, returning 'Unknown Movie'")
