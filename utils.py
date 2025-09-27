@@ -871,8 +871,7 @@ def extract_quality_from_tokens(filename):
         'bdrip': 'BDRip', 'hevc': 'HEVC', 'hdrip': 'HDRip',
         '360p': '360p', '480p': '480p', '720p': '720p', '1080p': '1080p',
         '2160p': '2160p', '4k': '4K', '1440p': '1440p', '540p': '540p',
-        '240p': '240p', '140p': '140p', 'uhd': 'UHD', 'fhd': 'FHD', 'hd': 'HD',
-        'x264': 'x264', 'x265': 'x265', 'aac': 'AAC', 'ac3': 'AC3', 'dts': 'DTS'
+        '240p': '240p', '140p': '140p', 'uhd': 'UHD', 'fhd': 'FHD', 'hd': 'HD'
     }
 
     for token in tokens:

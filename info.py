@@ -148,7 +148,7 @@ IGNORE_WORDS = {
     "hq", "hdrip", "jnk_backup", "jnk", "backup", "dd", "moviez", "shetty", "moviez2",
     "shettymoviez", "shettymoviez2", "thedd", "snxt", "h", "264", "aac2", "0", "adda", 
     "addafiles", "files", "cinema", "films", "theater", "print", "movies", "we", "ds4k",
-    "10bit", "bit", "x264", "x265", "cam", "esub", "msub", "org", "original", "dual",
+    "10bit", "bit", "x264", "x265", "cam", "esub", "msub", "org", "ms", "original", "dual",
     "multi", "dubbed", "subtitled", "uhd", "fhd", "hd", "quality", "rip", "cam", "tc",
     "~", "-", "_", ".", "(", ")", "[", "]", "{", "}", ""
 }
