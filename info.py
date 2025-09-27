@@ -130,6 +130,29 @@ BAD_WORDS = [
     "TEST"
 ] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
+IGNORE_WORDS = {
+    "rarbg", "dub", "sub", "sample", "mkv", "aac", "combined",
+    "action", "adventure", "animation", "biography", "comedy", "crime",
+    "documentary", "drama", "family", "fantasy", "film-noir", "history",
+    "horror", "music", "musical", "mystery", "romance", "sci-fi", "sport",
+    "thriller", "war", "western", "hdcam", "hdtc", "camrip", "ts", "tc",
+    "telesync", "dvdscr", "dvdrip", "predvd", "webrip", "web-dl", "tvrip",
+    "hdtv", "web", "dl", "webdl", "bluray", "brrip", "bdrip", "360p", "480p",
+    "720p", "1080p", "2160p", "4k", "1440p", "540p", "240p", "140p", "hevc",
+    "hdrip", "hin", "hindi", "tam", "tamil", "kan", "kannada", "tel", "telugu",
+    "mal", "malayalam", "eng", "english", "pun", "punjabi", "ben", "bengali",
+    "mar", "marathi", "guj", "gujarati", "urd", "urdu", "kor", "korean", "jpn",
+    "japanese", "nf", "netflix", "sonyliv", "sony", "sliv", "amzn", "prime",
+    "primevideo", "hotstar", "zee5", "jio", "jhs", "aha", "hbo", "paramount",
+    "apple", "hoichoi", "sunnxt", "viki", "rm_movie_flix", "rm", "movie", "flix",
+    "hq", "hdrip", "jnk_backup", "jnk", "backup", "dd", "moviez", "shetty", "moviez2",
+    "shettymoviez", "shettymoviez2", "thedd", "snxt", "h", "264", "aac2", "0", "adda", 
+    "addafiles", "files", "cinema", "films", "theater", "print", "movies", "we", "ds4k",
+    "10bit", "bit", "x264", "x265", "cam", "esub", "msub", "org", "original", "dual",
+    "multi", "dubbed", "subtitled", "uhd", "fhd", "hd", "quality", "rip", "cam", "tc",
+    "~", "-", "_", ".", "(", ")", "[", "]", "{", "}", ""
+}
+
 # True Or False
 AI_SPELL_CHECK = bool(environ.get('AI_SPELL_CHECK', True))
 PM_SEARCH = bool(environ.get('PM_SEARCH', True))
