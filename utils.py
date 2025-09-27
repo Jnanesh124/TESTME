@@ -216,56 +216,27 @@ async def broadcast_messages_group(chat_id, message):
 def clean_filename(file_name):
     original_filename = file_name
     removed_words = []
-
-    # First split the filename into tokens using various delimiters
-    # Split by common separators like spaces, dots, dashes, underscores
     import re
-    tokens = re.split(r'[\s\.\-_]+', file_name)
 
-    # Remove empty tokens
-    tokens = [token for token in tokens if token.strip()]
+    logger.info(f"🔧 Starting filename cleaning with priority order for: {original_filename}")
 
-    # STEP 1: Remove all bad words first (from beginning to end)
-    cleaned_tokens = []
-    for token in tokens:
-        token_removed = False
+    # STEP 1: Remove BAD_WORDS first (HIGHEST PRIORITY)
+    file_name = remove_bad_words_from_filename(file_name)
+    logger.info(f"❌ After removing BAD_WORDS (Priority 1): {file_name}")
 
-        # Check exact match against each bad word (case-insensitive)
-        for bad_word in BAD_WORDS:
-            if token.lower() == bad_word.lower():
-                removed_words.append(token)
-                logger.info(f"Removed exact word match: '{token}' (matched bad word: '{bad_word}')")
-                token_removed = True
-                break
+    # STEP 2: Remove IGNORE_WORDS second priority  
+    file_name = remove_ignore_words_from_filename(file_name)
+    logger.info(f"🚫 After removing IGNORE_WORDS (Priority 2): {file_name}")
 
-            # Check if the token contains the bad word as a substring
-            elif bad_word.lower() in token.lower() and len(bad_word) > 2:  # Only for longer bad words
-                removed_words.append(token)
-                logger.info(f"Removed token containing bad word: '{token}' (contains: '{bad_word}')")
-                token_removed = True
-                break
-
-            # Check if the token is contained within the bad word
-            elif token.lower() in bad_word.lower() and len(token) > 2:  # Only for longer tokens
-                removed_words.append(token)
-                logger.info(f"Removed token found in bad word pattern: '{token}' (found in: '{bad_word}')")
-                token_removed = True
-                break
-
-        if not token_removed:
-            cleaned_tokens.append(token)
-
-    # Rejoin the cleaned tokens with spaces
-    file_name = ' '.join(cleaned_tokens)
+    # STEP 3: Remove special characters @ ~ # last (lowest priority)
+    file_name = re.sub(r'[@~#]+', ' ', file_name)
+    logger.info(f"🧹 After removing special chars (@~#) (Priority 3): {file_name}")
 
     # Clean up extra spaces
     file_name = ' '.join(file_name.split())
 
     # Log the cleaning result
-    if removed_words:
-        logger.info(f"FILENAME CLEANING: Original: '{original_filename}' -> Cleaned: '{file_name}' | Removed words: {removed_words}")
-    else:
-        logger.info(f"FILENAME CLEANING: No bad words or prefixes found in '{original_filename}'")
+    logger.info(f"✅ FILENAME CLEANING COMPLETE: '{original_filename}' -> '{file_name}'")
 
     return file_name
 
@@ -1127,7 +1098,7 @@ def extract_bracket_languages(filename):
     return []
 
 def extract_clean_movie_name_enhanced(filename, year=None, quality=None, language=None):
-    """Extract clean movie name by removing bad words first, then other unwanted elements"""
+    """Extract clean movie name following exact priority: BAD_WORDS (highest) -> IGNORE_WORDS -> special characters"""
     import re
     
     logger.info(f"🔍 Starting enhanced movie name extraction for: {filename}")
@@ -1136,17 +1107,17 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     name_without_ext = re.sub(r'\.[^.]+$', '', filename)
     logger.info(f"📝 After removing extension: {name_without_ext}")
 
-    # Step 2: Remove special characters @ ~ # first before any processing
-    clean_name = re.sub(r'[@~#]+', ' ', name_without_ext)
-    logger.info(f"🧹 After removing special chars (@~#): {clean_name}")
-
-    # Step 3: Remove BAD_WORDS first (highest priority)
-    clean_name = remove_bad_words_from_filename(clean_name)
-    logger.info(f"❌ After removing BAD_WORDS: {clean_name}")
+    # Step 2: Remove BAD_WORDS first (HIGHEST PRIORITY)
+    clean_name = remove_bad_words_from_filename(name_without_ext)
+    logger.info(f"❌ After removing BAD_WORDS (Priority 1): {clean_name}")
     
-    # Step 4: Remove IGNORE_WORDS using enhanced tokenization
+    # Step 3: Remove IGNORE_WORDS second priority
     clean_name = remove_ignore_words_from_filename(clean_name)
-    logger.info(f"🚫 After removing IGNORE_WORDS: {clean_name}")
+    logger.info(f"🚫 After removing IGNORE_WORDS (Priority 2): {clean_name}")
+
+    # Step 4: Remove special characters @ ~ # last (lowest priority)
+    clean_name = re.sub(r'[@~#]+', ' ', clean_name)
+    logger.info(f"🧹 After removing special chars (@~#) (Priority 3): {clean_name}")
     
     # Step 5: Remove year if found
     if year:
