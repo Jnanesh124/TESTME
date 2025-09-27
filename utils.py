@@ -346,6 +346,10 @@ def clean_filename(file_name):
 
     logger.info(f"🔧 Starting filename cleaning with priority order for: {original_filename}")
 
+    # STEP 0: Replace ! with | (character replacement)
+    file_name = file_name.replace('!', '|')
+    logger.info(f"🔄 After replacing ! with |: {file_name}")
+
     # STEP 1: Remove BAD_WORDS first (HIGHEST PRIORITY)
     file_name = remove_bad_words_from_filename(file_name)
     logger.info(f"❌ After removing BAD_WORDS (Priority 1): {file_name}")
@@ -907,18 +911,23 @@ async def get_seconds(time_string):
         return 0
 
 def format_file_button(file):
-    """Format file button with enhanced info extraction - Format: {file_size} ! {movie_name} {year} {language} {quality}"""
+    """Format file button with enhanced info extraction - Format: {file_size} | {movie_name} {year} {language} {quality}"""
     filename = file['file_name']
     file_size = get_size(file['file_size'])
+
+    # Replace ! with | in filename if present
+    filename = filename.replace('!', '|')
 
     # Extract enhanced info using improved methods
     movie_info = extract_enhanced_movie_info(filename, file.get('caption', ''))
 
-    # Build button text: {file_size} ! {movie_name} {year} {language} {quality}
-    button_parts = [file_size, "!"]
+    # Build button text: {file_size} | {movie_name} {year} {language} {quality}
+    button_parts = [file_size, "|"]
 
     if movie_info['name']:
-        button_parts.append(movie_info['name'])
+        # Also replace ! with | in movie name
+        movie_name = movie_info['name'].replace('!', '|')
+        button_parts.append(movie_name)
 
     details = []
     if movie_info['year']:
