@@ -50,3 +50,14 @@ aiohttp
 beautifulsoup4
 pytz
 requests
+aiofiles
+aiohttp
+beautifulsoup4
+motor
+pymongo
+pyrofork
+pyrogram
+python-decouple
+pytz
+requests
+tgcrypto
