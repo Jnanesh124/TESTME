@@ -110,6 +110,14 @@ async def start():
     except Exception as e:
         print(f"❌ Error loading verified users details: {e}")
     
+    # Initialize bad words database
+    from database.bad_words_mdb import initialize_bad_words_from_info
+    try:
+        await initialize_bad_words_from_info()
+        print("✅ Bad words database initialized successfully")
+    except Exception as e:
+        print(f"❌ Error initializing bad words database: {e}")
+    
     # Initialize verification system
     from verification_storage import verification_storage
     from verification_scheduler import verification_scheduler

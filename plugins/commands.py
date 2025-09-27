@@ -11,6 +11,7 @@ from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file
 from database.users_chats_db import db, delete_all_referal_users, get_referal_users_count, get_referal_all_users, referal_add_user
 from database.join_reqs import JoinReqs
 from database.ignored_words_mdb import add_ignored_word, remove_ignored_word, get_ignored_words
+from database.bad_words_mdb import add_bad_word, remove_bad_word, get_bad_words # Import database functions for bad words
 from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, AUTH_CHANNELS, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL, BAD_WORDS
 from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds, clean_filename
 from database.connections_mdb import active_connection
@@ -181,14 +182,14 @@ async def start(client, message):
         )
         return
     data = message.command[1]
-    
+
     # Handle getfile format for auto-search
     if data.startswith("getfile-"):
         search_query = data.replace("getfile-", "").replace("-", " ")
         # Trigger auto-search functionality
         await handle_auto_search(client, message, search_query)
         return
-    
+
     if data.split("-", 1)[0] == "VJ":
         user_id = int(data.split("-", 1)[1])
         vj = await referal_add_user(user_id, message.from_user.id)
@@ -299,7 +300,7 @@ async def start(client, message):
                 continue
             await asyncio.sleep(1) 
         await sts.delete()
-        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></b></blockquote>")
         await asyncio.sleep(600)
         for x in filesarr:
             await x.delete()
@@ -364,7 +365,7 @@ async def start(client, message):
             filesarr.append(p)
             await asyncio.sleep(1)
         await sts.delete()
-        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></b></blockquote>")
         await asyncio.sleep(600)
         for x in filesarr:
             await x.delete()
@@ -395,7 +396,7 @@ async def start(client, message):
                     text=text.format(message.from_user.mention, expiry_text),
                     protect_content=True
                 )
-                
+
                 # Check if there's a file request stored for this user and redirect
                 try:
                     stored_command = await db.get_msg_command(userid)
@@ -411,7 +412,7 @@ async def start(client, message):
                         return
                 except Exception as e:
                     logger.error(f"Error handling file redirect after verification: {e}")
-                
+
             else:
                 return await message.reply_text(text="<b>❌ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ғᴀɪʟᴇᴅ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ.</b>", protect_content=True)
         else:
@@ -505,7 +506,7 @@ async def start(client, message):
                 reply_markup=reply_markup
             )
             filesarr.append(msg)
-        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></b></blockquote>")
         await asyncio.sleep(600)
         for x in filesarr:
             await x.delete()
@@ -556,7 +557,7 @@ async def start(client, message):
             else:
                 pre = ""
                 file_id = split_result[0]
-                
+
         except Exception as decode_error:
             logger.error(f"Base64 decode error: {decode_error}")
             return await message.reply('Invalid file link.')
@@ -603,7 +604,7 @@ async def start(client, message):
                     return
             await msg.edit_caption(caption=f_caption)
             btn = [[InlineKeyboardButton("✅ ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ ✅", callback_data=f'del#{file_id}')]]
-            k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u></b> (ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs), Sᴏ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+            k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u></b> (ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs), Sᴏ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></b></blockquote>")
             await asyncio.sleep(600)
             await msg.delete()
             await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴀɢᴀɪɴ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ</b>",reply_markup=InlineKeyboardMarkup(btn))
@@ -654,7 +655,7 @@ async def start(client, message):
         reply_markup=reply_markup
     )
     btn = [[InlineKeyboardButton("✅ ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ ✅", callback_data=f'del#{file_id}')]]
-    k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u></b> (ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs), Sᴏ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></blockquote>")
+    k = await msg.reply(text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u></b> (ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs), Sᴏ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></b></blockquote>")
     await asyncio.sleep(600)
     await msg.delete()
     await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴀɢᴀɪɴ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ</b>",reply_markup=InlineKeyboardMarkup(btn))
@@ -1465,117 +1466,60 @@ async def purge_requests(client, message):
 
 @Client.on_message(filters.command("addbadword") & filters.user(ADMINS))
 async def add_bad_word_handler(client, message):
-    """Add bad word command - adds word to the beginning of BAD_WORDS list"""
+    """Add bad word command - adds word to database"""
     if len(message.command) < 2:
         return await message.reply_text(
             "<b>Usage: /addbadword word_to_add\n\nExample: /addbadword JNK</b>"
         )
 
     word = message.command[1]
-    
-    # Import the BAD_WORDS from info
-    from info import BAD_WORDS
-    
-    # Check if word already exists
-    if word in BAD_WORDS:
+
+    from database.bad_words_mdb import add_bad_word
+
+    success = await add_bad_word(word)
+
+    if success:
+        await message.reply_text(f"<b>Successfully added '{word}' to bad words list.</b>")
+    else:
         await message.reply_text(f"<b>'{word}' is already in bad words list.</b>")
-        return
-    
-    # Add word to the beginning of the list
-    BAD_WORDS.insert(0, word)
-    
-    # Update the info.py file
-    try:
-        with open('info.py', 'r') as file:
-            content = file.read()
-        
-        # Find the BAD_WORDS list and update it
-        import re
-        pattern = r'BAD_WORDS = \[(.*?)\]'
-        
-        # Create new bad words string
-        bad_words_str = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
-        new_bad_words = f'BAD_WORDS = [\n    {bad_words_str}\n]'
-        
-        # Replace in content
-        updated_content = re.sub(
-            r'BAD_WORDS = \[[\s\S]*?\] # List of bad words.*',
-            new_bad_words + ' # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands',
-            content
-        )
-        
-        with open('info.py', 'w') as file:
-            file.write(updated_content)
-        
-        await message.reply_text(f"<b>Successfully added '{word}' to the beginning of bad words list.</b>")
-        
-    except Exception as e:
-        await message.reply_text(f"<b>Error updating file: {str(e)}</b>")
 
 @Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
 async def remove_bad_word_handler(client, message):
-    """Remove bad word command"""
+    """Remove bad word command - removes word from database"""
     if len(message.command) < 2:
         return await message.reply_text(
             "<b>Usage: /removebadword word_to_remove\n\nExample: /removebadword JNK</b>"
         )
 
     word = message.command[1]
-    
-    # Import the BAD_WORDS from info
-    from info import BAD_WORDS
-    
-    # Check if word exists
-    if word not in BAD_WORDS:
-        await message.reply_text(f"<b>'{word}' was not found in bad words list.</b>")
-        return
-    
-    # Remove word from the list
-    BAD_WORDS.remove(word)
-    
-    # Update the info.py file
-    try:
-        with open('info.py', 'r') as file:
-            content = file.read()
-        
-        # Find the BAD_WORDS list and update it
-        import re
-        
-        # Create new bad words string
-        bad_words_str = ',\n    '.join([f'"{w}"' for w in BAD_WORDS])
-        new_bad_words = f'BAD_WORDS = [\n    {bad_words_str}\n]'
-        
-        # Replace in content
-        updated_content = re.sub(
-            r'BAD_WORDS = \[[\s\S]*?\] # List of bad words.*',
-            new_bad_words + ' # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands',
-            content
-        )
-        
-        with open('info.py', 'w') as file:
-            file.write(updated_content)
-        
+
+    from database.bad_words_mdb import remove_bad_word
+
+    success = await remove_bad_word(word)
+
+    if success:
         await message.reply_text(f"<b>Successfully removed '{word}' from bad words list.</b>")
-        
-    except Exception as e:
-        await message.reply_text(f"<b>Error updating file: {str(e)}</b>")
+    else:
+        await message.reply_text(f"<b>'{word}' was not found in bad words list.</b>")
 
 @Client.on_message(filters.command("listbadwords") & filters.user(ADMINS))
 async def list_bad_words_handler(client, message):
-    """List all bad words command"""
-    from info import BAD_WORDS
-    
-    if not BAD_WORDS:
+    """List all bad words in order from database"""
+    from database.bad_words_mdb import get_bad_words
+
+    words = await get_bad_words()
+
+    if not words:
         return await message.reply_text("<b>No bad words found.</b>")
 
-    word_list = "\n".join([f"• {word}" for word in BAD_WORDS])
-    text = f"<b>Bad Words List ({len(BAD_WORDS)} words):</b>\n\n{word_list}"
+    word_list = "\n".join([f"• {word}" for word in words])
+    text = f"<b>Bad Words List ({len(words)} words):</b>\n\n{word_list}"
 
     if len(text) > 4096:
         # If message is too long, send as file
-        with open('bad_words.txt', 'w+') as f:
-            f.write('\n'.join(BAD_WORDS))
-        await message.reply_document('bad_words.txt', caption=f"<b>Bad Words List ({len(BAD_WORDS)} words)</b>")
+        with open('bad_words.txt', 'w+', encoding='utf-8') as f:
+            f.write('\n'.join(words))
+        await message.reply_document('bad_words.txt', caption=f"<b>Bad Words List ({len(words)} words)</b>")
         os.remove('bad_words.txt')
     else:
         await message.reply_text(text)
@@ -1796,14 +1740,14 @@ async def generate_getfile_link(client, message):
     """Generate auto-search link for given movie name"""
     if len(message.command) < 2:
         return await message.reply_text("<b>Usage: /getfile movie name\n\nExample: /getfile Saare Jahaan Se Mehnga</b>")
-    
+
     movie_name = " ".join(message.command[1:])
     # Convert spaces to hyphens for URL
     url_safe_name = movie_name.replace(" ", "-")
-    
+
     bot_username = temp.U_NAME
     getfile_link = f"https://t.me/{bot_username}?start=getfile-{url_safe_name}"
-    
+
     await message.reply_text(
         f"<b>🎬 Auto-Search Link Generated:</b>\n\n"
         f"<b>Movie:</b> {movie_name}\n"
@@ -1859,7 +1803,7 @@ async def handle_auto_search(client, message, search_query):
 
         # Perform search
         files, next_offset, total = await get_search_results("", search_query, max_results=50, offset=0)
-        
+
         if not files:
             await message.reply_text(
                 f"<b>❌ No files found for '{search_query}'</b>\n\n"
@@ -1870,13 +1814,13 @@ async def handle_auto_search(client, message, search_query):
         # Create buttons for files using same format as PM filter
         settings = await get_settings(message.chat.id) if hasattr(message, 'chat') else {'file_secure': False}
         pre = 'filep' if settings.get('file_secure', False) else 'file'
-        
+
         buttons = []
         for file in files:
             # Use enhanced button formatting
             from utils import format_file_button
             btn_text = format_file_button(file)
-            
+
             buttons.append([
                 InlineKeyboardButton(
                     text=btn_text,
@@ -1885,7 +1829,7 @@ async def handle_auto_search(client, message, search_query):
             ])
 
         reply_markup = InlineKeyboardMarkup(buttons)
-        
+
         # Use new format with search results details
         caption = f"<b>🎬 Search Results for '{search_query}'</b>\n\n"
         caption += f"<b>📊 Found:</b> {len(files)} files\n"

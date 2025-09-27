@@ -213,6 +213,132 @@ async def broadcast_messages_group(chat_id, message):
     except Exception as e:
         return False, "Error"
 
+async def remove_bad_words_from_filename(filename):
+    """Remove bad words from filename with enhanced tokenization"""
+    original_filename = filename
+    removed_words = []
+
+    # Get bad words from database
+    from database.bad_words_mdb import get_all_bad_words
+    try:
+        bad_words = await get_all_bad_words()
+        if not bad_words:
+            # Fallback to info.py if database is empty
+            from info import BAD_WORDS
+            bad_words = BAD_WORDS
+    except:
+        # Fallback to info.py if database error
+        from info import BAD_WORDS
+        bad_words = BAD_WORDS
+
+    # First split the filename into tokens using various delimiters
+    # Split by common separators like spaces, dots, dashes, underscores
+    import re
+    tokens = re.split(r'[\s\.\-_]+', filename)
+
+    # Remove empty tokens
+    tokens = [token for token in tokens if token.strip()]
+
+    # Remove all bad words from tokens
+    cleaned_tokens = []
+    for token in tokens:
+        token_removed = False
+
+        # Check exact match against each bad word (case-insensitive)
+        for bad_word in bad_words:
+            if token.lower() == bad_word.lower():
+                removed_words.append(token)
+                logger.info(f"Removed exact word match: '{token}' (matched bad word: '{bad_word}')")
+                token_removed = True
+                break
+
+            # Check if the token contains the bad word as a substring
+            elif bad_word.lower() in token.lower() and len(bad_word) > 2:  # Only for longer bad words
+                removed_words.append(token)
+                logger.info(f"Removed token containing bad word: '{token}' (contains: '{bad_word}')")
+                token_removed = True
+                break
+
+            # Check if the token is contained within the bad word
+            elif token.lower() in bad_word.lower() and len(token) > 2:  # Only for longer tokens
+                removed_words.append(token)
+                logger.info(f"Removed token found in bad word pattern: '{token}' (found in: '{bad_word}')")
+                token_removed = True
+                break
+
+        if not token_removed:
+            cleaned_tokens.append(token)
+
+    # Rejoin the cleaned tokens with spaces
+    cleaned_filename = ' '.join(cleaned_tokens)
+
+    # Clean up extra spaces
+    cleaned_filename = ' '.join(cleaned_filename.split())
+
+    # Log the cleaning result
+    if removed_words:
+        logger.info(f"BAD WORDS REMOVAL: Original: '{original_filename}' -> Cleaned: '{cleaned_filename}' | Removed words: {removed_words}")
+    else:
+        logger.info(f"BAD WORDS REMOVAL: No bad words found in '{original_filename}'")
+
+    return cleaned_filename
+
+async def remove_ignore_words_from_filename(filename):
+    """Remove IGNORE_WORDS from filename with enhanced tokenization"""
+    import re
+
+    original_filename = filename
+    removed_words = []
+
+    # Split the filename into tokens using various delimiters
+    tokens = re.split(r'[\s\.\-_~]+', filename)
+    tokens = [token for token in tokens if token.strip()]
+
+    # Convert IGNORE_WORDS to lowercase set for faster lookup
+    ignore_words_lower = {word.lower() for word in IGNORE_WORDS}
+
+    # Remove all ignore words
+    cleaned_tokens = []
+    for token in tokens:
+        # Clean token by removing special characters but keep original for comparison
+        token_cleaned = re.sub(r'[@#~\-_()]+', '', token)
+        token_lower = token_cleaned.lower()
+
+        # Skip empty tokens after cleaning
+        if not token_cleaned:
+            continue
+
+        token_removed = False
+
+        # Check exact match against IGNORE_WORDS (case-insensitive)
+        if token_lower in ignore_words_lower:
+            removed_words.append(token)
+            logger.info(f"Removed IGNORE_WORD exact match: '{token}' -> '{token_lower}'")
+            token_removed = True
+        else:
+            # Check if token contains any ignore word as substring (for longer words)
+            for ignore_word in IGNORE_WORDS:
+                if len(ignore_word) > 3:  # Only check longer ignore words for substring match
+                    if ignore_word.lower() in token_lower:
+                        removed_words.append(token)
+                        logger.info(f"Removed token containing IGNORE_WORD: '{token}' (contains: '{ignore_word}')")
+                        token_removed = True
+                        break
+
+        if not token_removed:
+            cleaned_tokens.append(token_cleaned)  # Use cleaned version
+
+    # Rejoin the cleaned tokens with spaces
+    clean_filename_result = ' '.join(cleaned_tokens)
+    clean_filename_result = ' '.join(clean_filename_result.split())  # Clean up extra spaces
+
+    if removed_words:
+        logger.info(f"IGNORE WORDS REMOVAL: Original: '{original_filename}' -> Cleaned: '{clean_filename_result}' | Removed words: {removed_words}")
+    else:
+        logger.info(f"IGNORE WORDS REMOVAL: No ignore words found in '{original_filename}'")
+
+    return clean_filename_result
+
 def clean_filename(file_name):
     original_filename = file_name
     removed_words = []
@@ -784,16 +910,16 @@ def format_file_button(file):
     """Format file button with enhanced info extraction - Format: {file_size} ! {movie_name} {year} {language} {quality}"""
     filename = file['file_name']
     file_size = get_size(file['file_size'])
-    
+
     # Extract enhanced info using improved methods
     movie_info = extract_enhanced_movie_info(filename, file.get('caption', ''))
-    
+
     # Build button text: {file_size} ! {movie_name} {year} {language} {quality}
     button_parts = [file_size, "!"]
-    
+
     if movie_info['name']:
         button_parts.append(movie_info['name'])
-    
+
     details = []
     if movie_info['year']:
         details.append(movie_info['year'])
@@ -801,33 +927,33 @@ def format_file_button(file):
         details.append(movie_info['language'])
     if movie_info['quality']:
         details.append(movie_info['quality'])
-    
+
     if details:
         button_parts.append(" ".join(details))
-    
+
     return " ".join(button_parts)
 
 def extract_enhanced_movie_info(filename, caption_text=None):
     """Extract movie name, year, language, and quality from filename and caption"""
     import re
-    
+
     logger.info(f"🔍 Starting enhanced extraction for: {filename}")
-    
+
     # Remove file extension
     name_without_ext = re.sub(r'\.[^.]+$', '', filename)
-    
+
     # Step 1: Extract Year
     year = extract_year_from_filename(name_without_ext)
-    
+
     # Step 2: Extract Quality using token-based method
     quality = extract_quality_from_tokens(name_without_ext)
-    
+
     # Step 3: Extract Language from both filename and caption, prioritize caption
     language = extract_language_comprehensive(name_without_ext, caption_text)
-    
+
     # Step 4: Extract clean movie name (remove bad words first)
     movie_name = extract_clean_movie_name_enhanced(name_without_ext, year, quality, language)
-    
+
     return {
         'name': movie_name,
         'year': year,
@@ -838,23 +964,23 @@ def extract_enhanced_movie_info(filename, caption_text=None):
 def extract_year_from_filename(filename):
     """Extract year from filename using the method from example code"""
     import re
-    
+
     # Look for 4-digit year patterns
     year_pattern = re.compile(r"(?<![A-Za-z0-9])(?:19|20)\d{2}(?![A-Za-z0-9])")
     year_match = year_pattern.search(filename)
-    
+
     if year_match:
         year = year_match.group(0)
         logger.info(f"📅 Found year: {year}")
         return year
-    
+
     logger.info(f"📅 No year found")
     return None
 
 def extract_quality_from_tokens(filename):
     """Extract quality using token-based method from example code"""
     import re
-    
+
     logger.info(f"🎯 Extracting quality from: {filename}")
 
     # Split into tokens using multiple delimiters
@@ -904,7 +1030,7 @@ def extract_quality_from_tokens(filename):
 def extract_language_comprehensive(filename, caption_text=None):
     """Extract language from both filename and caption, prioritizing caption hashtags"""
     import re
-    
+
     logger.info(f"🌍 Extracting language from filename: {filename}")
     if caption_text:
         logger.info(f"📝 Caption available for language extraction")
@@ -948,7 +1074,7 @@ def extract_language_comprehensive(filename, caption_text=None):
 def extract_language_from_caption(caption_text):
     """Extract language from message caption (hashtags and plain text patterns)"""
     import re
-    
+
     if not caption_text:
         return "N/A"
 
@@ -1009,7 +1135,7 @@ def extract_language_from_caption(caption_text):
         r'\b(Tamil|Hindi|English|Telugu|Malayalam|Kannada|Bengali|Marathi|Gujarati|Punjabi|Urdu)\s+(Movie|Film|Cinema)\b',
         r'\b(Movie|Film|Cinema)\s+in\s+(Tamil|Hindi|English|Telugu|Malayalam|Kannada|Bengali|Marathi|Gujarati|Punjabi|Urdu)\b'
     ]
-    
+
     for pattern in context_patterns:
         matches = re.findall(pattern, caption_text, re.IGNORECASE)
         for match in matches:
@@ -1028,7 +1154,7 @@ def extract_language_from_caption(caption_text):
 def extract_language_from_tokens(filename):
     """Extract language using token-based method"""
     import re
-    
+
     # Token-based method - split filename into tokens
     tokens = re.split(r'[\s\-_\.]+', filename)
     language_tokens = []
@@ -1068,7 +1194,7 @@ def extract_language_from_tokens(filename):
 def extract_bracket_languages(filename):
     """Extract languages from bracket format like [Tam + Tel + Hin]"""
     import re
-    
+
     bracket_pattern = re.search(r'\[([^\]]+)\]', filename)
     if bracket_pattern:
         bracket_content = bracket_pattern.group(1)
@@ -1093,13 +1219,13 @@ def extract_bracket_languages(filename):
                 logger.info(f"✅ Found bracket language: {lang_clean} -> {lang_mapping[lang_clean]}")
 
         return language_tokens
-    
+
     return []
 
 def extract_clean_movie_name_enhanced(filename, year=None, quality=None, language=None):
     """Extract clean movie name following exact priority: BAD_WORDS (highest) -> IGNORE_WORDS -> special characters"""
     import re
-    
+
     logger.info(f"🔍 Starting enhanced movie name extraction for: {filename}")
 
     # Step 1: Remove file extension first
@@ -1109,7 +1235,7 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     # Step 2: Remove BAD_WORDS first (HIGHEST PRIORITY)
     clean_name = remove_bad_words_from_filename(name_without_ext)
     logger.info(f"❌ After removing BAD_WORDS (Priority 1): {clean_name}")
-    
+
     # Step 3: Remove IGNORE_WORDS second priority
     clean_name = remove_ignore_words_from_filename(clean_name)
     logger.info(f"🚫 After removing IGNORE_WORDS (Priority 2): {clean_name}")
@@ -1117,12 +1243,12 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
     # Step 4: Remove special characters @ ~ # last (lowest priority)
     clean_name = re.sub(r'[@~#]+', ' ', clean_name)
     logger.info(f"🧹 After removing special chars (@~#) (Priority 3): {clean_name}")
-    
+
     # Step 5: Remove year if found
     if year:
         clean_name = re.sub(rf'\b{re.escape(year)}\b', '', clean_name)
         logger.info(f"📅 After removing year {year}: {clean_name}")
-    
+
     # Step 6: Remove quality and codec indicators (be more aggressive)
     quality_remove_patterns = [
         r'\b(4K|2160p|1080p|720p|480p|360p|240p|140p|540p|1440p)\b',
@@ -1131,13 +1257,13 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         r'\b(10bit|8bit|ESub|MSub)\b',
         r'\b(HQ|Clean|Proper|REPACK|EXTENDED)\b'
     ]
-    
+
     for pattern in quality_remove_patterns:
         before = clean_name
         clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
         if before != clean_name:
             logger.info(f"🎯 Removed quality pattern: {pattern}")
-    
+
     # Step 7: Remove language indicators more aggressively
     language_remove_patterns = [
         r'\b(Hindi|Hin|Tamil|Tam|Telugu|Tel|Malayalam|Mal|Kannada|Kan)\b',
@@ -1147,13 +1273,13 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         r'\[([^\]]*)\]',  # Remove bracket content like [Tam + Tel + Hin]
         r'\(([^\)]*)\)'   # Remove parenthesis content
     ]
-    
+
     for pattern in language_remove_patterns:
         before = clean_name
         clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
         if before != clean_name:
             logger.info(f"🌍 Removed language pattern: {pattern}")
-    
+
     # Step 8: Remove other unwanted patterns
     unwanted_patterns = [
         r'\b(Season|Series|Episode|EP|Part|Vol|Volume)\b',  # Series indicators
@@ -1162,50 +1288,50 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         r'[-_~\.]{2,}',  # Multiple separators
         r'\{[^}]*\}',  # Content in curly braces
     ]
-    
+
     for pattern in unwanted_patterns:
         before = clean_name
         clean_name = re.sub(pattern, '', clean_name, flags=re.IGNORECASE)
         if before != clean_name:
             logger.info(f"🗑️ Removed unwanted pattern: {pattern}")
-    
+
     # Step 9: Clean up separators and normalize spaces
     clean_name = re.sub(r'[-_~\.]+', ' ', clean_name)
     clean_name = re.sub(r'\s+', ' ', clean_name)
     clean_name = clean_name.strip()
     logger.info(f"✨ After cleanup: {clean_name}")
-    
+
     # Step 10: Split into tokens and final filtering
     tokens = clean_name.split()
     clean_tokens = []
     ignore_words_lower = {word.lower() for word in IGNORE_WORDS}
-    
+
     for i, token in enumerate(tokens):
         logger.info(f"🔍 Processing final token {i+1}: '{token}'")
-        
+
         # Skip very short tokens (unless they're meaningful like "V" in "Gen V")
         if len(token) < 2 and not (len(token) == 1 and token.isalpha()):
             logger.info(f"❌ Token too short, skipping: '{token}'")
             continue
-            
+
         # Skip tokens that are just numbers 
         if token.isdigit():
             logger.info(f"❌ Token is just a number, skipping: '{token}'")
             continue
-        
+
         # Skip tokens that don't contain letters
         if not any(c.isalpha() for c in token):
             logger.info(f"❌ Token has no letters, skipping: '{token}'")
             continue
-        
+
         # Final check against IGNORE_WORDS
         if token.lower() in ignore_words_lower:
             logger.info(f"❌ Token found in IGNORE_WORDS, skipping: '{token}'")
             continue
-            
+
         clean_tokens.append(token)
         logger.info(f"✅ Token accepted: '{token}'")
-    
+
     # Step 11: Rebuild name
     if clean_tokens:
         movie_name = ' '.join(clean_tokens)
@@ -1218,17 +1344,19 @@ def extract_clean_movie_name_enhanced(filename, year=None, quality=None, languag
         return "Unknown Movie"
 
 def remove_bad_words_from_filename(filename):
-    """Remove bad words first using the same method as clean_filename function"""
-    import re
-    
+    """Remove bad words from filename with enhanced tokenization"""
     original_filename = filename
     removed_words = []
 
-    # Split the filename into tokens using various delimiters
+    # First split the filename into tokens using various delimiters
+    # Split by common separators like spaces, dots, dashes, underscores
+    import re
     tokens = re.split(r'[\s\.\-_]+', filename)
+
+    # Remove empty tokens
     tokens = [token for token in tokens if token.strip()]
 
-    # Remove all bad words first (from beginning to end)
+    # Remove all bad words from tokens
     cleaned_tokens = []
     for token in tokens:
         token_removed = False
@@ -1259,20 +1387,23 @@ def remove_bad_words_from_filename(filename):
             cleaned_tokens.append(token)
 
     # Rejoin the cleaned tokens with spaces
-    clean_filename_result = ' '.join(cleaned_tokens)
-    clean_filename_result = ' '.join(clean_filename_result.split())  # Clean up extra spaces
+    cleaned_filename = ' '.join(cleaned_tokens)
 
+    # Clean up extra spaces
+    cleaned_filename = ' '.join(cleaned_filename.split())
+
+    # Log the cleaning result
     if removed_words:
-        logger.info(f"BAD WORDS REMOVAL: Original: '{original_filename}' -> Cleaned: '{clean_filename_result}' | Removed words: {removed_words}")
+        logger.info(f"BAD WORDS REMOVAL: Original: '{original_filename}' -> Cleaned: '{cleaned_filename}' | Removed words: {removed_words}")
     else:
         logger.info(f"BAD WORDS REMOVAL: No bad words found in '{original_filename}'")
 
-    return clean_filename_result
+    return cleaned_filename
 
 def remove_ignore_words_from_filename(filename):
     """Remove IGNORE_WORDS from filename with enhanced tokenization"""
     import re
-    
+
     original_filename = filename
     removed_words = []
 
@@ -1289,11 +1420,11 @@ def remove_ignore_words_from_filename(filename):
         # Clean token by removing special characters but keep original for comparison
         token_cleaned = re.sub(r'[@#~\-_()]+', '', token)
         token_lower = token_cleaned.lower()
-        
+
         # Skip empty tokens after cleaning
         if not token_cleaned:
             continue
-        
+
         token_removed = False
 
         # Check exact match against IGNORE_WORDS (case-insensitive)
