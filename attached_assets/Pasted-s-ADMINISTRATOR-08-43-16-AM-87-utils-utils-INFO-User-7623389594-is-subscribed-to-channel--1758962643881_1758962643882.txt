@@ -1,0 +1,76 @@
+s.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002025155845
+08:43:16 AM - 95 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1002025155845: True
+08:43:16 AM - 103 - plugins.commands - commands - INFO - User 7623389594 not joined channels: []
+08:43:16 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1001764441595: ChatMemberStatus.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1001764441595
+08:43:16 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1002903033591: ChatMemberStatus.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002903033591
+08:43:16 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1001910410959: ChatMemberStatus.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1001910410959
+08:43:16 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1003011512366: ChatMemberStatus.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1003011512366
+08:43:16 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1002075044088: ChatMemberStatus.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002075044088
+08:43:16 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1002025155845: ChatMemberStatus.ADMINISTRATOR
+08:43:16 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002025155845
+08:43:21 AM - 376 - pyrogram.dispatcher - dispatcher - ERROR - name 'format_file_button' is not defined
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 58, in give_filter
+    await auto_filter(client, message.text, message, reply_msg, ai_search)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 1774, in auto_filter
+    btn = [
+          ^
+  File "/home/runner/workspace/plugins/pm_filter.py", line 1776, in <listcomp>
+    InlineKeyboardButton(text=format_file_button(file), callback_data=f'{pre}#{file["file_id"]}'),
+                              ^^^^^^^^^^^^^^^^^^
+NameError: name 'format_file_button' is not defined
+08:43:28 AM - 376 - pyrogram.dispatcher - dispatcher - ERROR - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/handlers/callback_query_handler.py", line 207, in resolve_future_or_callback
+    await self.original_callback(client, query, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 254, in advantage_spoll_choker
+    movie = movies[(int(movie_))]
+            ~~~~~~^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+08:43:35 AM - 376 - pyrogram.dispatcher - dispatcher - ERROR - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/handlers/callback_query_handler.py", line 207, in resolve_future_or_callback
+    await self.original_callback(client, query, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 254, in advantage_spoll_choker
+    movie = movies[(int(movie_))]
+            ~~~~~~^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+08:43:40 AM - 376 - pyrogram.dispatcher - dispatcher - ERROR - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/handlers/callback_query_handler.py", line 207, in resolve_future_or_callback
+    await self.original_callback(client, query, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 254, in advantage_spoll_choker
+    movie = movies[(int(movie_))]
+            ~~~~~~^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+08:43:51 AM - 376 - pyrogram.dispatcher - dispatcher - ERROR - name 'format_file_button' is not defined
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 121, in pm_text
+    await auto_filter(bot, content, message, reply_msg, ai_search)
+  File "/home/runner/workspace/plugins/pm_filter.py", line 1774, in auto_filter
+    btn = [
+          ^
+  File "/home/runner/workspace/plugins/pm_filter.py", line 1776, in <listcomp>
+    InlineKeyboardButton(text=format_file_button(file), callback_data=f'{pre}#{file["file_id"]}'),
+                              ^^^^^^^^^^^^^^^^^^
+NameError: name 'format_file_button' is not defined
