@@ -11,7 +11,7 @@ from database.ia_filterdb import col, sec_col, get_file_details, unpack_new_file
 from database.users_chats_db import db, delete_all_referal_users, get_referal_users_count, get_referal_all_users, referal_add_user
 from database.join_reqs import JoinReqs
 from database.ignored_words_mdb import add_ignored_word, remove_ignored_word, get_ignored_words
-from database.bad_words_mdb import add_bad_word, remove_bad_word, get_bad_words # Import database functions for bad words
+from database.bad_words_mdb import add_bad_word, remove_bad_word, get_all_bad_words # Import database functions for bad words
 from info import CLONE_MODE, OWNER_LNK, REACTIONS, CHANNELS, REQUEST_TO_JOIN_MODE, TRY_AGAIN_BTN, ADMINS, SHORTLINK_MODE, PREMIUM_AND_REFERAL_MODE, STREAM_MODE, AUTH_CHANNEL, AUTH_CHANNELS, REFERAL_PREMEIUM_TIME, REFERAL_COUNT, PAYMENT_TEXT, PAYMENT_QR, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT, MAX_B_TN, VERIFY, SHORTLINK_API, SHORTLINK_URL, TUTORIAL, VERIFY_TUTORIAL, IS_TUTORIAL, URL, BAD_WORDS
 from utils import get_settings, pub_is_subscribed, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink, get_tutorial, get_seconds, clean_filename
 from database.connections_mdb import active_connection
@@ -1505,9 +1505,9 @@ async def remove_bad_word_handler(client, message):
 @Client.on_message(filters.command("listbadwords") & filters.user(ADMINS))
 async def list_bad_words_handler(client, message):
     """List all bad words in order from database"""
-    from database.bad_words_mdb import get_bad_words
+    from database.bad_words_mdb import get_all_bad_words
 
-    words = await get_bad_words()
+    words = await get_all_bad_words()
 
     if not words:
         return await message.reply_text("<b>No bad words found.</b>")
