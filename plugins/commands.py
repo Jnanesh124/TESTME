@@ -1867,36 +1867,29 @@ async def handle_auto_search(client, message, search_query):
             )
             return
 
-        # Create buttons for files
+        # Create buttons for files using same format as PM filter
+        settings = await get_settings(message.chat.id) if hasattr(message, 'chat') else {'file_secure': False}
+        pre = 'filep' if settings.get('file_secure', False) else 'file'
+        
         buttons = []
-        for file in files[:20]:  # Limit to 20 files
+        for file in files:
             file_name = clean_filename(file['file_name'])
             file_size = get_size(file['file_size'])
             
-            # Create callback data for file
-            btn_text = f"📁 {file_name}"
-            if len(btn_text) > 64:
-                btn_text = btn_text[:61] + "..."
+            # Use same format as PM filter: "[size] | filename"
+            btn_text = f"{file_size} | {file_name}"
             
             buttons.append([
                 InlineKeyboardButton(
-                    btn_text,
-                    callback_data=f"file#{file['file_id']}"
+                    text=btn_text,
+                    callback_data=f'{pre}#{file["file_id"]}'
                 )
-            ])
-
-        # Add pagination if more files exist
-        if len(files) > 20:
-            buttons.append([
-                InlineKeyboardButton(f"📄 Next ({total-20} more)", callback_data=f"next_{search_query}_20")
             ])
 
         reply_markup = InlineKeyboardMarkup(buttons)
         
-        caption = f"<b>🎬 Search Results for '{search_query}'</b>\n\n"
-        caption += f"<b>📊 Found:</b> {total} files\n"
-        caption += f"<b>👤 Requested by:</b> {message.from_user.mention}\n\n"
-        caption += f"<i>Select a file to download:</i>"
+        # Use simpler format to match PM filter style
+        caption = f"<b>Your Requested Movie File 📤 👇</b>"
 
         await message.reply_text(
             text=caption,

@@ -1782,8 +1782,8 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     if settings.get('button'):
         btn = [
             [
-                InlineKeyboardButton(text=f" {get_size(file['file_size'])} | " + clean_filename(
-                    file['file_name']), callback_data=f'file#{file["file_id"]}'[:64]),
+                InlineKeyboardButton(text=f"{get_size(file['file_size'])} | " + clean_filename(
+                    file['file_name']), callback_data=f'{pre}#{file["file_id"]}'),
             ]
             for file in files
         ]
@@ -1852,9 +1852,9 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
     else:
         if settings["button"]:
-            cap = f"<b><u>Your Requisted Movie File 📤 👇</b>"
+            cap = f"<b>Your Requested Movie File 📤 👇</b>"
         else:
-            cap = f"<b><u>Your Requisted Movie File 📤 👇</b>"
+            cap = f"<b>Your Requested Movie File 📤 👇</b>"
             cap+="<b><u>🍿 Your Movie Files 👇</u></b>\n\n"
             for file in files:
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
