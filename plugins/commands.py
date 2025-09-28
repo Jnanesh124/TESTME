@@ -224,14 +224,19 @@ async def start(client, message):
             from plugins.pm_filter import auto_filter
             
             # Create a mock message object for auto_filter
+            class MockChat:
+                def __init__(self, chat_id, chat_type):
+                    self.id = chat_id
+                    self.type = chat_type
+            
             class MockMessage:
-                def __init__(self, chat_id, from_user, text):
-                    self.chat = type('obj', (object,), {'id': chat_id, 'type': message.chat.type})
+                def __init__(self, chat_id, from_user, text, chat_type):
+                    self.chat = MockChat(chat_id, chat_type)
                     self.from_user = from_user
                     self.text = text
                     self.id = reply_msg.id
             
-            mock_message = MockMessage(message.chat.id, message.from_user, search_query)
+            mock_message = MockMessage(message.chat.id, message.from_user, search_query, message.chat.type)
             
             # Call auto_filter with proper parameters
             await auto_filter(client, mock_message)
