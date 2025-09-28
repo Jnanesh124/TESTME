@@ -1609,8 +1609,8 @@ async def add_bad_word_cmd(client, message):
             await message.reply_text(f"'{word}' is already in bad words list")
             return
 
-        # Add new word to existing list
-        existing_words.append(word)
+        # Add new word to beginning of existing list (first position)
+        existing_words.insert(0, word)
 
         # Create new formatted list with proper indentation
         if existing_words:
@@ -1876,13 +1876,17 @@ async def handle_auto_search(client, message, search_query):
         logger.info(f"Search results: {total_results} files found for '{clean_query}'")
         
         if files and total_results > 0:
-            # Create a pseudo message object for auto_filter
-            pseudo_message = type('obj', (object,), {
-                'from_user': message.from_user,
-                'chat': type('obj', (object,), {'id': message.from_user.id})(),
-                'text': search_query,
-                'id': message.id
-            })()
+            # Create a pseudo message object for auto_filter using SimpleNamespace
+            from types import SimpleNamespace
+            
+            pseudo_chat = SimpleNamespace()
+            pseudo_chat.id = message.from_user.id
+            
+            pseudo_message = SimpleNamespace()
+            pseudo_message.from_user = message.from_user
+            pseudo_message.chat = pseudo_chat
+            pseudo_message.text = search_query
+            pseudo_message.id = message.id
             
             # Use the auto_filter function to display results
             ai_search = True
