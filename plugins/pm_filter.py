@@ -132,15 +132,33 @@ async def next_page(bot, query):
         offset = 0
     search = FRESH.get(key)
     if not search:
+        # Debug log to help troubleshoot
+        logger.warning(f"🚨 Missing FRESH entry for key: {key}. Available keys: {list(FRESH.keys())}")
+        
         # Try to get search from the original message text if available
         try:
             if hasattr(query.message, 'reply_to_message') and query.message.reply_to_message:
-                search = query.message.reply_to_message.text
-                FRESH[key] = search  # Store it for future use
+                # Extract search from reply message
+                reply_text = query.message.reply_to_message.text
+                if "Searching For" in reply_text:
+                    # Extract search query from "Searching For {query} 🔍" pattern
+                    import re
+                    match = re.search(r'Searching For (.+?) 🔍', reply_text)
+                    if match:
+                        search = match.group(1)
+                        FRESH[key] = search  # Store it for future use
+                        logger.info(f"✅ Recovered search query from reply: '{search}'")
+                    else:
+                        search = reply_text
+                        FRESH[key] = search
+                else:
+                    search = reply_text
+                    FRESH[key] = search
             else:
                 await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
                 return
-        except:
+        except Exception as e:
+            logger.error(f"❌ Error recovering search query: {e}")
             await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
             return
 
@@ -1744,10 +1762,13 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     pre = 'filep' if settings['file_secure'] else 'file'
     key = f"{message.chat.id}-{message.id}"
     req = message.from_user.id if message.from_user else 0
-    # Store search query for pagination
+    # Store search query for pagination - ensure it's always stored
     FRESH[key] = search
     temp.GETALL[key] = files
     temp.SHORT[message.from_user.id] = message.chat.id
+    
+    # Debug log to verify FRESH storage
+    logger.info(f"🔑 Stored in FRESH[{key}]: '{search}' for pagination")
     # Always use 5 buttons max
     MAX_BUTTONS_PER_PAGE = 5
     

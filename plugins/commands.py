@@ -372,6 +372,71 @@ async def start(client, message):
         await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ\n\njoin @JNK_BACKUP</b>")
         return
 
+    elif data.split("-", 1)[0] == "DSTORE":
+        sts = await message.reply("<b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...</b>")
+        b_string = data.split("-", 1)[1]
+        decoded = (base64.urlsafe_b64decode(b_string + "=" * (-len(b_string) % 4))).decode("ascii")
+        try:
+            f_msg_id, l_msg_id, f_chat_id, protect = decoded.split("_", 3)
+        except:
+            f_msg_id, l_msg_id, f_chat_id = decoded.split("_", 2)
+            protect = "/pbatch" if PROTECT_CONTENT else "batch"
+        diff = int(l_msg_id) - int(f_msg_id)
+        filesarr = []
+        async for msg in client.iter_messages(int(f_chat_id), int(l_msg_id), int(f_msg_id)):
+            if msg.media:
+                media = getattr(msg, msg.media.value)
+                file_type = msg.media
+                file = getattr(msg, file_type.value)
+                size = get_size(int(file.file_size))
+                file_name = getattr(media, 'file_name', '')
+                f_caption = getattr(msg, 'caption', file_name)
+                if BATCH_FILE_CAPTION:
+                    try:
+                        f_caption=BATCH_FILE_CAPTION.format(file_name=file_name, file_size='' if size is None else size, file_caption=f_caption)
+                    except:
+                        f_caption = getattr(msg, 'caption', '')
+                file_id = file.file_id
+                if STREAM_MODE == True:
+                    log_msg = await client.send_cached_media(chat_id=LOG_CHANNEL, file_id=file_id)
+                    fileName = {quote_plus(get_name(log_msg))}
+                    stream = f"{URL}watch/{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+                    download = f"{URL}{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+
+                if STREAM_MODE == True:
+                    [[
+                    InlineKeyboardButton('UPDATE CHANNEL', url=f"https://t.me/JNK_BACKUP")
+                    ]]
+                    reply_markup = InlineKeyboardMarkup(button)
+                else:
+                    reply_markup = None
+                try:
+                    p = await msg.copy(message.chat.id, caption=f_caption, protect_content=True if protect == "/pbatch" else False, reply_markup=reply_markup)
+                except FloodWait as e:
+                    await asyncio.sleep(e.value)
+                    p = await msg.copy(message.chat.id, caption=f_caption, protect_content=True if protect == "/pbatch" else False, reply_markup=reply_markup)
+                except:
+                    continue
+            elif msg.empty:
+                continue
+            else:
+                try:
+                    p = await msg.copy(message.chat.id, protect_content=True if protect == "/pbatch" else False)
+                except FloodWait as e:
+                    await asyncio.sleep(e.value)
+                    p = await msg.copy(message.chat.id, protect_content=True if protect == "/pbatch" else False)
+                except:
+                    continue
+            filesarr.append(p)
+            await asyncio.sleep(1)
+        await sts.delete()
+        k = await client.send_message(chat_id = message.from_user.id, text=f"<blockquote><b>\n\nᴛʜɪs File 📁 ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ ⏰<b><u>10 mins</u>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs)\n\n<b>ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ᴏʀ ᴀɴʏ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.\n\n 🍿 Update Channel : @JNK_BACKUP</b></b></blockquote>")
+        await asyncio.sleep(600)
+        for x in filesarr:
+            await x.delete()
+        await k.edit_text("<b>✅ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ\n\njoin @JNK_BACKUP</b>")
+        return
+
     elif data.split("-", 1)[0] == "verify":
         userid = data.split("-", 2)[1]
         token = data.split("-", 3)[2]
@@ -1589,7 +1654,7 @@ async def add_bad_word_cmd(client, message):
         import re
         pattern = r'BAD_WORDS\s*=\s*\[(.*?)\](\s*#.*)?'
         match = re.search(pattern, content, re.DOTALL)
-        
+
         if not match:
             await message.reply_text("❌ Could not find BAD_WORDS in info.py")
             return
@@ -1598,7 +1663,7 @@ async def add_bad_word_cmd(client, message):
         words_content = match.group(1).strip()
         comment_part = match.group(2) if match.group(2) else " # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands"
         existing_words = []
-        
+
         if words_content:
             # Extract words from the list format, handling both single and double quotes
             word_matches = re.findall(r'["\']([^"\']*)["\']', words_content)
@@ -1688,7 +1753,7 @@ async def remove_bad_word_cmd(client, message):
         import re
         pattern = r'BAD_WORDS\s*=\s*\[(.*?)\]'
         match = re.search(pattern, content, re.DOTALL)
-        
+
         if not match:
             await message.reply_text("❌ Could not find BAD_WORDS in info.py")
             return
@@ -1696,7 +1761,7 @@ async def remove_bad_word_cmd(client, message):
         # Parse existing words more carefully
         words_content = match.group(1).strip()
         existing_words = []
-        
+
         if words_content:
             # Extract words from the list format, handling both single and double quotes
             word_matches = re.findall(r'["\']([^"\']*)["\']', words_content)
@@ -1708,7 +1773,7 @@ async def remove_bad_word_cmd(client, message):
             if existing_word.lower() == word.lower():
                 word_to_remove = existing_word
                 break
-        
+
         if not word_to_remove:
             await message.reply_text(f"'{word}' is not in bad words list")
             return
@@ -1856,15 +1921,15 @@ async def handle_auto_search(client, message, search_query):
 
         # Show searching message
         search_msg = await message.reply_text(f"<b><i>Searching For {search_query} 🔍</i></b>")
-        
+
         # Clean up the search query properly
         clean_query = search_query.lower().strip()
         logger.info(f"Auto-search initiated for query: '{clean_query}'")
-        
+
         # Import functions needed for search
         from database.ia_filterdb import get_search_results
         from plugins.pm_filter import auto_filter
-        
+
         # Try to get search results first with proper chat_id (use message.from_user.id for private search)
         files, offset, total_results = await get_search_results(
             chat_id=message.from_user.id,  # Use user's private chat ID for search
@@ -1872,22 +1937,22 @@ async def handle_auto_search(client, message, search_query):
             offset=0,
             filter=True
         )
-        
+
         logger.info(f"Search results: {total_results} files found for '{clean_query}'")
-        
+
         if files and total_results > 0:
             # Create a pseudo message object for auto_filter using SimpleNamespace
             from types import SimpleNamespace
-            
+
             pseudo_chat = SimpleNamespace()
             pseudo_chat.id = message.from_user.id
-            
+
             pseudo_message = SimpleNamespace()
             pseudo_message.from_user = message.from_user
             pseudo_message.chat = pseudo_chat
             pseudo_message.text = search_query
             pseudo_message.id = message.id
-            
+
             # Use the auto_filter function to display results
             ai_search = True
             await auto_filter(client, clean_query, pseudo_message, search_msg, ai_search)
