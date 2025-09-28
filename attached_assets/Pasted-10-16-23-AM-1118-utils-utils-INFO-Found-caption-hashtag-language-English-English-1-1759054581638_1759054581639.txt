@@ -1,0 +1,21 @@
+10:16:23 AM - 1118 - utils - utils - INFO - ✅ Found caption hashtag language: #English -> English
+10:16:23 AM - 1126 - utils - utils - INFO - ✅ Found caption plain text language: kannada -> Kannada
+10:16:23 AM - 1160 - utils - utils - INFO - 🌍 Final caption language: English, Kannada
+10:16:23 AM - 1054 - utils - utils - INFO - ✅ Found caption languages: English, Kannada
+10:16:23 AM - 1198 - utils - utils - INFO - ✅ Found filename language token: kannada -> Kannada
+10:16:23 AM - 1063 - utils - utils - INFO - ✅ Found filename languages: Kannada
+10:16:23 AM - 1080 - utils - utils - INFO - 🌍 Final comprehensive language: English+Kannada
+10:16:23 AM - 1238 - utils - utils - INFO - 🔍 Starting enhanced movie name extraction for: Maadeva 2025 Kannada HDRIP 600MB mkv
+10:16:23 AM - 1242 - utils - utils - INFO - 📝 After removing extension: Maadeva 2025 Kannada HDRIP 600MB mkv
+10:16:23 AM - 1252 - utils - utils - INFO - 🎯 YEAR-BACKWARD METHOD: Found year '2025' at position 8
+10:16:23 AM - 1253 - utils - utils - INFO - 🎯 Text before year: 'Maadeva'
+10:16:23 AM - 1254 - utils - utils - INFO - 🎯 Ignored text after year: '2025 Kannada HDRIP 600MB mkv'
+10:16:23 AM - 1423 - utils - utils - INFO - BAD WORDS REMOVAL: No bad words found in 'Maadeva'
+10:16:23 AM - 1261 - utils - utils - INFO - ❌ After removing BAD_WORDS (Priority 2): Maadeva
+10:16:23 AM - 1479 - utils - utils - INFO - IGNORE WORDS REMOVAL: No ignore words found in 'Maadeva'
+10:16:23 AM - 1265 - utils - utils - INFO - 🚫 After removing IGNORE_WORDS (Priority 3): Maadeva
+10:16:23 AM - 1269 - utils - utils - INFO - 🧹 After removing special chars (@~#) (Priority 4): Maadeva
+10:16:23 AM - 1323 - utils - utils - INFO - ✨ After cleanup: Maadeva
+10:16:23 AM - 1331 - utils - utils - INFO - 🔍 Processing final token 1: 'Maadeva'
+10:16:23 AM - 1354 - utils - utils - INFO - ✅ Token accepted: 'Maadeva'
+10:16:23 AM - 1362 - utils - utils - INFO - 🎬 Final movie name (using year-backward method): 'Maadeva'

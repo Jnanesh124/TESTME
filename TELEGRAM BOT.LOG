@@ -1,1 +1,2 @@
-[09/28/2025 10:12:44 AM:utils:751:ERROR] Error shortening verification link: Cannot connect to host https:443 ssl:False [Name or service not known]
+[09/28/2025 10:15:55 AM:plugins.pm_filter:190:ERROR] ❌ Error recovering search query: cannot access local variable 're' where it is not associated with a value
+[09/28/2025 10:16:09 AM:plugins.pm_filter:190:ERROR] ❌ Error recovering search query: cannot access local variable 're' where it is not associated with a value
