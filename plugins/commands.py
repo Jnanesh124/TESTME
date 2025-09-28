@@ -197,45 +197,61 @@ async def start(client, message):
         logger.info(f"🔍 Processing getfile auto-search for: {search_query}")
         
         try:
-            # Import here to avoid circular imports
-            from plugins.pm_filter import auto_filter, FRESH
+            # Import required functions
+            from database.ia_filterdb import get_search_results
+            from utils import get_settings
             
             # Create a search message reply
             reply_msg = await message.reply(f"<b><i>Searching For {search_query} 🔍</i></b>")
             
-            # Store the search query in FRESH for pagination
-            key = f"{message.chat.id}-{reply_msg.id}"
-            FRESH[key] = search_query
-            logger.info(f"✅ Stored search query in FRESH: {key} -> {search_query}")
+            # Get search results directly
+            files, offset, total_results = await get_search_results(
+                chat_id=message.chat.id, 
+                query=search_query, 
+                file_type=None, 
+                max_results=50, 
+                offset=0
+            )
             
-            # Also store with message key for backward compatibility
-            message_key = f"{message.chat.id}-{message.id}"
-            FRESH[message_key] = search_query
-            logger.info(f"✅ Also stored with message key: {message_key} -> {search_query}")
+            if not files:
+                await reply_msg.edit_text(f"<b>❌ No files found for: {search_query}</b>")
+                return
             
-            # Call auto_filter with the search query
-            logger.info(f"🚀 Calling auto_filter for: {search_query}")
+            # Get settings for the chat
+            settings = await get_settings(message.chat.id)
             
-            # Add timeout to prevent hanging
-            import asyncio
+            # Import required modules for auto_filter
+            from plugins.pm_filter import auto_filter
+            
+            # Create a mock message object for auto_filter
+            class MockMessage:
+                def __init__(self, chat_id, from_user, text):
+                    self.chat = type('obj', (object,), {'id': chat_id, 'type': message.chat.type})
+                    self.from_user = from_user
+                    self.text = text
+                    self.id = reply_msg.id
+            
+            mock_message = MockMessage(message.chat.id, message.from_user, search_query)
+            
+            # Call auto_filter with proper parameters
+            await auto_filter(client, mock_message)
+            
+            # Delete the searching message
             try:
-                await asyncio.wait_for(
-                    auto_filter(client, search_query, message, reply_msg, ai_search=True),
-                    timeout=30.0  # 30 second timeout
-                )
-                logger.info(f"✅ auto_filter completed for: {search_query}")
-            except asyncio.TimeoutError:
-                logger.error(f"⏰ auto_filter timed out for: {search_query}")
-                await reply_msg.edit_text(f"**⏰ Search timed out for: {search_query}**\n**Please try again.**")
+                await reply_msg.delete()
+            except:
+                pass
+                
+            logger.info(f"✅ auto_filter completed for: {search_query}")
             
         except Exception as e:
             logger.error(f"❌ Error in getfile auto-search: {e}")
             import traceback
             logger.error(f"❌ Full traceback: {traceback.format_exc()}")
             try:
-                await reply_msg.edit_text("❌ Search failed. Please try again.")
+                await reply_msg.edit_text(f"❌ Search failed for: {search_query}\nPlease try searching manually.")
             except:
-                await message.reply("❌ Search failed. Please try again.")
+                await message.reply(f"❌ Search failed for: {search_query}\nPlease try searching manually.")
         return
 
     if data.split("-", 1)[0] == "VJ":
@@ -1905,11 +1921,11 @@ async def list_bad_words_handler(client, message):
 async def generate_getfile_link(client, message):
     """Generate auto-search link for given movie name"""
     if len(message.command) < 2:
-        return await message.reply_text("<b>Usage: /getfile movie name\n\nExample: /getfile Saare Jahaan Se Mehnga</b>")
+        return await message.reply_text("<b>Usage: /getfile movie name\n\nExample: /getfile My Crazy Sex</b>")
 
     movie_name = " ".join(message.command[1:])
-    # Convert spaces to hyphens for URL
-    url_safe_name = movie_name.replace(" ", "-")
+    # Convert spaces to hyphens for URL, ensure proper encoding
+    url_safe_name = movie_name.replace(" ", "-").replace("'", "").replace('"', '')
 
     bot_username = temp.U_NAME
     getfile_link = f"https://t.me/{bot_username}?start=getfile-{url_safe_name}"
@@ -1918,6 +1934,7 @@ async def generate_getfile_link(client, message):
         f"<b>🎬 Auto-Search Link Generated:</b>\n\n"
         f"<b>Movie:</b> {movie_name}\n"
         f"<b>Link:</b> <code>{getfile_link}</code>\n\n"
-        f"<i>When users click this link, it will automatically search for '{movie_name}' in your bot.</i>"
+        f"<i>When users click this link, it will automatically search for '{movie_name}' in your bot.</i>\n\n"
+        f"<b>Test the link:</b> {getfile_link}"
     )
 
