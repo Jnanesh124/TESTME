@@ -132,8 +132,17 @@ async def next_page(bot, query):
         offset = 0
     search = FRESH.get(key)
     if not search:
-        await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
-        return
+        # Try to get search from the original message text if available
+        try:
+            if hasattr(query.message, 'reply_to_message') and query.message.reply_to_message:
+                search = query.message.reply_to_message.text
+                FRESH[key] = search  # Store it for future use
+            else:
+                await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+                return
+        except:
+            await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+            return
 
     files, n_offset, total = await get_search_results(query.message.chat.id, search, offset=offset, filter=True)
     try:
@@ -1735,6 +1744,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     pre = 'filep' if settings['file_secure'] else 'file'
     key = f"{message.chat.id}-{message.id}"
     req = message.from_user.id if message.from_user else 0
+    # Store search query for pagination
     FRESH[key] = search
     temp.GETALL[key] = files
     temp.SHORT[message.from_user.id] = message.chat.id
