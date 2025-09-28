@@ -1781,13 +1781,27 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             search = search.replace(".", "")
             
             logger.info(f"🔍 Executing search for: '{search}' (original: '{name}')")
-            files, offset, total_results = await get_search_results(message.chat.id, search, offset=0, filter=True)
-            settings = await get_settings(message.chat.id)
             
-            logger.info(f"📊 Search results: {total_results} files found")
-            if not files:
-                if settings["spell_check"]:
-                    return await advantage_spell_chok(client, name, msg, reply_msg, ai_search)
+            try:
+                files, offset, total_results = await get_search_results(message.chat.id, search, offset=0, filter=True)
+                settings = await get_settings(message.chat.id)
+                
+                logger.info(f"📊 Search results: {total_results} files found")
+                
+                if not files or total_results == 0:
+                    logger.info(f"❌ No files found for search: '{search}'")
+                    if settings["spell_check"]:
+                        logger.info(f"🔄 Trying spell check for: '{search}'")
+                        return await advantage_spell_chok(client, name, msg, reply_msg, ai_search)
+                    else:
+                        logger.info(f"❌ No spell check, returning no results message")
+                        return await reply_msg.edit_text(f"**⚠️ No File Found For Your Query - {name}**\n**Make Sure Spelling Is Correct.**")
+                
+                logger.info(f"✅ Files found, proceeding with display")
+                
+            except Exception as e:
+                logger.error(f"❌ Error in search execution: {e}")
+                return await reply_msg.edit_text(f"**❌ Search failed for: {name}**\n**Please try again.**")
                 else:
                     return await reply_msg.edit_text(f"**⚠️ No File Found For Your Query - {name}**\n**Make Sure Spelling Is Correct.**")
         else:
@@ -1812,29 +1826,39 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     temp.GETALL[key] = files
     temp.SHORT[message.from_user.id] = message.chat.id
     logger.info(f"✅ Stored search in FRESH with original key: {key} -> {search}")
+    logger.info(f"📁 Stored {len(files)} files in temp.GETALL[{key}]")
 
     # Always use 5 buttons max
     MAX_BUTTONS_PER_PAGE = 5
+    logger.info(f"🔢 Using MAX_BUTTONS_PER_PAGE: {MAX_BUTTONS_PER_PAGE}")
 
+    logger.info(f"🎛️ Button mode: {settings.get('button', False)}")
+    
     if settings.get('button'):
+        logger.info(f"🔘 Creating buttons for {min(len(files), MAX_BUTTONS_PER_PAGE)} files")
         btn = [
             [
                 InlineKeyboardButton(text=format_file_button(file), callback_data=f'{pre}#{file["file_id"]}'),
             ]
             for file in files[:MAX_BUTTONS_PER_PAGE]  # Limit to 5 buttons
         ]
+        logger.info(f"✅ Created {len(btn)} file buttons")
     else:
         btn = []
+        logger.info(f"📝 Text mode - no file buttons created")
 
     # Add pagination buttons properly
+    logger.info(f"📄 Adding pagination - offset: {offset}, total_results: {total_results}")
     if offset != "" and int(offset) > 0:
         btn.append(
             [InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(text=f"1/{math.ceil(int(total_results)/MAX_BUTTONS_PER_PAGE)}",callback_data="pages"), InlineKeyboardButton(text="𝐍𝐄𝐗𝐓 ➪",callback_data=f"next_{req}_{key}_{offset}")]
         )
+        logger.info(f"✅ Added pagination with NEXT button")
     else:
         btn.append(
             [InlineKeyboardButton(text="𝐍𝐎 𝐌𝐎𝐑𝐄 𝐏𝐀𝐆𝐄𝐒 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄",callback_data="pages")]
         )
+        logger.info(f"✅ Added 'no more pages' button")
     imdb = await get_poster(search, file=(files[0])['file_name']) if settings["imdb"] else None
     cur_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
     time_difference = timedelta(hours=cur_time.hour, minutes=cur_time.minute, seconds=(cur_time.second+(cur_time.microsecond/1000000))) - timedelta(hours=curr_time.hour, minutes=curr_time.minute, seconds=(curr_time.second+(curr_time.microsecond/1000000)))
@@ -1892,53 +1916,74 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             for idx, file in enumerate(files, 1):
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
 
-    if imdb and imdb.get('poster'):
-        try:
-            hehe = await message.reply_photo(photo=imdb.get('poster'), caption=cap, reply_markup=InlineKeyboardMarkup(btn))
-            await reply_msg.delete()
+    logger.info(f"🖼️ IMDB poster available: {bool(imdb and imdb.get('poster'))}")
+    
+    try:
+        if imdb and imdb.get('poster'):
+            logger.info(f"📸 Sending photo message with IMDB poster")
             try:
-                if settings['auto_delete']:
+                hehe = await message.reply_photo(photo=imdb.get('poster'), caption=cap, reply_markup=InlineKeyboardMarkup(btn))
+                await reply_msg.delete()
+                logger.info(f"✅ Successfully sent photo message and deleted search message")
+                try:
+                    if settings['auto_delete']:
+                        await asyncio.sleep(300)
+                        await hehe.delete()
+                except KeyError:
+                    await save_group_settings(message.chat.id, 'auto_delete', True)
                     await asyncio.sleep(300)
                     await hehe.delete()
-            except KeyError:
-                await save_group_settings(message.chat.id, 'auto_delete', True)
-                await asyncio.sleep(300)
-                await hehe.delete()
-        except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
-            pic = imdb.get('poster')
-            poster = pic.replace('.jpg', "._V1_UX360.jpg") 
-            hmm = await message.reply_photo(photo=poster, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
-            await reply_msg.delete()
-            try:
-               if settings['auto_delete']:
+            except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
+                logger.warning(f"⚠️ Original poster failed, trying alternative poster")
+                pic = imdb.get('poster')
+                poster = pic.replace('.jpg', "._V1_UX360.jpg") 
+                hmm = await message.reply_photo(photo=poster, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
+                await reply_msg.delete()
+                logger.info(f"✅ Successfully sent alternative photo message")
+                try:
+                   if settings['auto_delete']:
+                        await asyncio.sleep(300)
+                        await hmm.delete()
+                except KeyError:
+                    await save_group_settings(message.chat.id, 'auto_delete', True)
                     await asyncio.sleep(300)
                     await hmm.delete()
-            except KeyError:
-                await save_group_settings(message.chat.id, 'auto_delete', True)
-                await asyncio.sleep(300)
-                await hmm.delete()
-        except Exception as e:
-            logger.exception(e) 
-            fek = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn))
+            except Exception as e:
+                logger.error(f"❌ Photo message failed, falling back to text: {e}")
+                fek = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn))
+                logger.info(f"✅ Successfully sent fallback text message")
+                try:
+                    if settings['auto_delete']:
+                        await asyncio.sleep(300)
+                        await fek.delete()
+                except KeyError:
+                    await save_group_settings(message.chat.id, 'auto_delete', True)
+                    await asyncio.sleep(300)
+                    await fek.delete()
+        else:
+            logger.info(f"📝 Sending text message (no IMDB poster)")
+            fuk = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
+            logger.info(f"✅ Successfully sent text message")
+
             try:
                 if settings['auto_delete']:
                     await asyncio.sleep(300)
-                    await fek.delete()
+                    await fuk.delete()
             except KeyError:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
                 await asyncio.sleep(300)
-                await fek.delete()
-    else:
-        fuk = await reply_msg.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
-
-        try:
-            if settings['auto_delete']:
-                await asyncio.sleep(300)
                 await fuk.delete()
-        except KeyError:
-            await save_group_settings(message.chat.id, 'auto_delete', True)
-            await asyncio.sleep(300)
-            await fuk.delete()
+                
+        logger.info(f"🎉 AUTO_FILTER COMPLETED SUCCESSFULLY for search: '{search}'")
+        
+    except Exception as e:
+        logger.error(f"❌ CRITICAL ERROR in auto_filter message display: {e}")
+        import traceback
+        logger.error(f"❌ Full traceback: {traceback.format_exc()}")
+        try:
+            await reply_msg.edit_text(f"❌ Error displaying results for: {name}")
+        except:
+            pass
 
 async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
     mv_id = msg.id
