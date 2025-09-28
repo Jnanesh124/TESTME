@@ -144,7 +144,6 @@ async def next_page(bot, query):
                 caption_text = query.message.caption
                 # Look for search pattern in caption
                 if "Search Results for" in caption_text:
-                    import re
                     match = re.search(r"Search Results for ['\"](.+?)['\"]", caption_text)
                     if match:
                         search = match.group(1)
@@ -156,7 +155,6 @@ async def next_page(bot, query):
             if not search_recovered and hasattr(query.message, 'reply_to_message') and query.message.reply_to_message:
                 reply_text = query.message.reply_to_message.text
                 if "Searching For" in reply_text:
-                    import re
                     match = re.search(r'Searching For (.+?) 🔍', reply_text)
                     if match:
                         search = match.group(1)
