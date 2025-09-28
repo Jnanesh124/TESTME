@@ -1953,6 +1953,12 @@ async def handle_auto_search(client, message, search_query):
             pseudo_message.text = search_query
             pseudo_message.id = message.id
 
+            # Ensure the search query is stored in FRESH for pagination
+            key = f"{pseudo_message.chat.id}-{pseudo_message.id}"
+            from plugins.pm_filter import FRESH
+            FRESH[key] = clean_query
+            logger.info(f"🔑 Auto-search stored query '{clean_query}' in FRESH[{key}] for pagination")
+
             # Use the auto_filter function to display results
             ai_search = True
             await auto_filter(client, clean_query, pseudo_message, search_msg, ai_search)

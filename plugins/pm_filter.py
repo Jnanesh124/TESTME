@@ -135,31 +135,60 @@ async def next_page(bot, query):
         # Debug log to help troubleshoot
         logger.warning(f"🚨 Missing FRESH entry for key: {key}. Available keys: {list(FRESH.keys())}")
         
-        # Try to get search from the original message text if available
+        # Try to recover search query from the current message caption/text
         try:
-            if hasattr(query.message, 'reply_to_message') and query.message.reply_to_message:
-                # Extract search from reply message
+            search_recovered = False
+            
+            # Method 1: Extract from current message caption if it contains search results
+            if hasattr(query.message, 'caption') and query.message.caption:
+                caption_text = query.message.caption
+                # Look for search pattern in caption
+                if "Search Results for" in caption_text:
+                    import re
+                    match = re.search(r"Search Results for ['\"](.+?)['\"]", caption_text)
+                    if match:
+                        search = match.group(1)
+                        FRESH[key] = search
+                        search_recovered = True
+                        logger.info(f"✅ Recovered search from message caption: '{search}'")
+            
+            # Method 2: Extract from reply message if available
+            if not search_recovered and hasattr(query.message, 'reply_to_message') and query.message.reply_to_message:
                 reply_text = query.message.reply_to_message.text
                 if "Searching For" in reply_text:
-                    # Extract search query from "Searching For {query} 🔍" pattern
                     import re
                     match = re.search(r'Searching For (.+?) 🔍', reply_text)
                     if match:
                         search = match.group(1)
-                        FRESH[key] = search  # Store it for future use
-                        logger.info(f"✅ Recovered search query from reply: '{search}'")
-                    else:
-                        search = reply_text
                         FRESH[key] = search
-                else:
-                    search = reply_text
-                    FRESH[key] = search
-            else:
-                await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+                        search_recovered = True
+                        logger.info(f"✅ Recovered search query from reply: '{search}'")
+            
+            # Method 3: Try to extract from message text patterns
+            if not search_recovered and hasattr(query.message, 'text') and query.message.text:
+                message_text = query.message.text
+                # Look for common search result patterns
+                patterns = [
+                    r"Found:.*files.*for [\'\"](.+?)[\'\"]",
+                    r"Search Results for [\'\"](.+?)[\'\"]",
+                    r"🎬 (.+?)(?:\n|$)"
+                ]
+                for pattern in patterns:
+                    match = re.search(pattern, message_text)
+                    if match:
+                        search = match.group(1)
+                        FRESH[key] = search
+                        search_recovered = True
+                        logger.info(f"✅ Recovered search from message text: '{search}'")
+                        break
+            
+            if not search_recovered:
+                await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name), show_alert=True)
                 return
+                
         except Exception as e:
             logger.error(f"❌ Error recovering search query: {e}")
-            await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+            await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name), show_alert=True)
             return
 
     files, n_offset, total = await get_search_results(query.message.chat.id, search, offset=offset, filter=True)
@@ -1762,13 +1791,19 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     pre = 'filep' if settings['file_secure'] else 'file'
     key = f"{message.chat.id}-{message.id}"
     req = message.from_user.id if message.from_user else 0
+    
     # Store search query for pagination - ensure it's always stored
     FRESH[key] = search
     temp.GETALL[key] = files
     temp.SHORT[message.from_user.id] = message.chat.id
     
     # Debug log to verify FRESH storage
-    logger.info(f"🔑 Stored in FRESH[{key}]: '{search}' for pagination")
+    logger.info(f"🔑 Auto-filter stored in FRESH[{key}]: '{search}' for pagination")
+    
+    # Also store with a backup key format for deep link recovery
+    backup_key = f"{message.from_user.id}-{search.lower().replace(' ', '-')}"
+    FRESH[backup_key] = search
+    logger.info(f"🔑 Backup key stored in FRESH[{backup_key}]: '{search}'")
     # Always use 5 buttons max
     MAX_BUTTONS_PER_PAGE = 5
     
