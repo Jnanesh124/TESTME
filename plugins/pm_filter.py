@@ -131,9 +131,9 @@ async def next_page(bot, query):
     except:
         offset = 0
     search = FRESH.get(key)
-   # if not search:
-      #  await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
-       # return
+    if not search:
+        await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+        return
 
     files, n_offset, total = await get_search_results(query.message.chat.id, search, offset=offset, filter=True)
     try:
@@ -147,20 +147,21 @@ async def next_page(bot, query):
     temp.SHORT[query.from_user.id] = query.message.chat.id
     settings = await get_settings(query.message.chat.id)
     pre = 'filep' if settings['file_secure'] else 'file'
+    
+    # Always use 5 buttons max as configured
+    MAX_BUTTONS_PER_PAGE = 5
+    
     if settings['button']:
         btn = [
             [
                 InlineKeyboardButton(text=format_file_button(file), callback_data=f'{pre}#{file["file_id"]}'),
             ]
-            for file in files
+            for file in files[:MAX_BUTTONS_PER_PAGE]
         ]
-
     else:
         btn = []
     
-    # Always use 5 buttons max as configured
-    MAX_BUTTONS_PER_PAGE = 5
-    
+    # Calculate pagination properly
     if 0 < offset <= MAX_BUTTONS_PER_PAGE:
         off_set = 0
     elif offset == 0:
@@ -168,13 +169,22 @@ async def next_page(bot, query):
     else:
         off_set = offset - MAX_BUTTONS_PER_PAGE
     
+    # Add pagination buttons
     if n_offset == 0:
-        btn.append(
-            [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/MAX_BUTTONS_PER_PAGE)+1} / {math.ceil(total/MAX_BUTTONS_PER_PAGE)}", callback_data="pages")]
-        )
+        # Only back button if no more pages
+        if off_set is not None:
+            btn.append(
+                [InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"), InlineKeyboardButton(f"{math.ceil(int(offset)/MAX_BUTTONS_PER_PAGE)+1} / {math.ceil(total/MAX_BUTTONS_PER_PAGE)}", callback_data="pages")]
+            )
+        else:
+            btn.append(
+                [InlineKeyboardButton(f"{math.ceil(int(offset)/MAX_BUTTONS_PER_PAGE)+1} / {math.ceil(total/MAX_BUTTONS_PER_PAGE)}", callback_data="pages")]
+            )
     elif off_set is None:
+        # Only next button on first page
         btn.append([InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(f"{math.ceil(int(offset)/MAX_BUTTONS_PER_PAGE)+1} / {math.ceil(total/MAX_BUTTONS_PER_PAGE)}", callback_data="pages"), InlineKeyboardButton("𝐍𝐄𝐗𝐓 ➪", callback_data=f"next_{req}_{key}_{n_offset}")])
     else:
+        # Both back and next buttons
         btn.append(
             [
                 InlineKeyboardButton("⌫ 𝐁𝐀𝐂𝐊", callback_data=f"next_{req}_{key}_{off_set}"),
@@ -1741,7 +1751,8 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     else:
         btn = []
     
-    if offset != "":
+    # Add pagination buttons properly
+    if offset != "" and int(offset) > 0:
         btn.append(
             [InlineKeyboardButton("𝐏𝐀𝐆𝐄", callback_data="pages"), InlineKeyboardButton(text=f"1/{math.ceil(int(total_results)/MAX_BUTTONS_PER_PAGE)}",callback_data="pages"), InlineKeyboardButton(text="𝐍𝐄𝐗𝐓 ➪",callback_data=f"next_{req}_{key}_{offset}")]
         )
