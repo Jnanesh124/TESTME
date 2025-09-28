@@ -1587,7 +1587,7 @@ async def add_bad_word_cmd(client, message):
 
         # Extract current BAD_WORDS list from file with better pattern
         import re
-        pattern = r'BAD_WORDS\s*=\s*\[(.*?)\]'
+        pattern = r'BAD_WORDS\s*=\s*\[(.*?)\](\s*#.*)?'
         match = re.search(pattern, content, re.DOTALL)
         
         if not match:
@@ -1596,6 +1596,7 @@ async def add_bad_word_cmd(client, message):
 
         # Parse existing words more carefully
         words_content = match.group(1).strip()
+        comment_part = match.group(2) if match.group(2) else " # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands"
         existing_words = []
         
         if words_content:
@@ -1614,13 +1615,13 @@ async def add_bad_word_cmd(client, message):
         # Create new formatted list with proper indentation
         if existing_words:
             formatted_words = ',\n    '.join([f'"{w}"' for w in existing_words])
-            new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]'
+            new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]{comment_part}'
         else:
-            new_bad_words = 'BAD_WORDS = []'
+            new_bad_words = f'BAD_WORDS = []{comment_part}'
 
         # Replace the BAD_WORDS section in content with more precise pattern
         new_content = re.sub(
-            r'BAD_WORDS\s*=\s*\[.*?\]',
+            r'BAD_WORDS\s*=\s*\[.*?\](\s*#.*)?',
             new_bad_words,
             content,
             flags=re.DOTALL
@@ -1628,7 +1629,10 @@ async def add_bad_word_cmd(client, message):
 
         # Backup original file
         import shutil
-        shutil.copy('info.py', 'info.py.backup')
+        try:
+            shutil.copy('info.py', 'info.py.backup')
+        except:
+            pass
 
         # Write back to file
         with open('info.py', 'w', encoding='utf-8') as f:
@@ -1637,9 +1641,12 @@ async def add_bad_word_cmd(client, message):
         # Verify the change worked by reading it back
         with open('info.py', 'r', encoding='utf-8') as f:
             verify_content = f.read()
-            if word not in verify_content:
+            if f'"{word}"' not in verify_content:
                 # Restore backup if write failed
-                shutil.copy('info.py.backup', 'info.py')
+                try:
+                    shutil.copy('info.py.backup', 'info.py')
+                except:
+                    pass
                 await message.reply_text(f"❌ Failed to save '{word}' to info.py")
                 return
 
@@ -1650,7 +1657,7 @@ async def add_bad_word_cmd(client, message):
         except Exception as db_error:
             logger.warning(f"Failed to add to database but file updated: {db_error}")
 
-        await message.reply_text(f"✅ Added '{word}' to bad words list and saved to info.py")
+        await message.reply_text(f"✅ Added '{word}' to bad words list and saved to info.py\n\nUpdated BAD_WORDS list now has {len(existing_words)} words")
         logger.info(f"Added bad word: {word}")
 
     except Exception as e:
@@ -1852,25 +1859,37 @@ async def handle_auto_search(client, message, search_query):
         
         # Clean up the search query properly
         clean_query = search_query.lower().strip()
+        logger.info(f"Auto-search initiated for query: '{clean_query}'")
         
         # Import functions needed for search
         from database.ia_filterdb import get_search_results
         from plugins.pm_filter import auto_filter
         
-        # Try to get search results first
+        # Try to get search results first with proper chat_id (use LOG_CHANNEL for general search)
         files, offset, total_results = await get_search_results(
-            chat_id=message.from_user.id,  # Use user ID for PM search
+            chat_id=LOG_CHANNEL,  # Use LOG_CHANNEL instead of user ID
             query=clean_query,
             offset=0,
             filter=True
         )
         
+        logger.info(f"Search results: {total_results} files found for '{clean_query}'")
+        
         if files and total_results > 0:
+            # Create a pseudo message object for auto_filter
+            pseudo_message = type('obj', (object,), {
+                'from_user': message.from_user,
+                'chat': type('obj', (object,), {'id': message.from_user.id})(),
+                'text': search_query,
+                'id': message.id
+            })()
+            
             # Use the auto_filter function to display results
             ai_search = True
-            await auto_filter(client, search_query, message, search_msg, ai_search)
+            await auto_filter(client, clean_query, pseudo_message, search_msg, ai_search)
         else:
             # If no files found, try spell check
+            logger.info(f"No direct results found, trying spell check for '{clean_query}'")
             from plugins.pm_filter import advantage_spell_chok
             await advantage_spell_chok(client, search_query, message, search_msg, True)
 
