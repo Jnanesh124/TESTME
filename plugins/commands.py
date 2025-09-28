@@ -1572,7 +1572,7 @@ async def verified_users_count(client, message):
         await message.reply_text("<b>❌ Error retrieving verification data.</b>")
 
 @Client.on_message(filters.command("addbadword") & filters.user(ADMINS))
-async def add_bad_word(client, message):
+async def add_bad_word_cmd(client, message):
     """Add word to BAD_WORDS list and save to info.py"""
     try:
         if len(message.command) < 2:
@@ -1626,6 +1626,10 @@ async def add_bad_word(client, message):
         with open('info.py', 'w', encoding='utf-8') as f:
             f.write(new_content)
 
+        # Also add to database for runtime usage
+        from database.bad_words_mdb import add_bad_word
+        await add_bad_word(word)
+
         await message.reply_text(f"✅ Added '{word}' to bad words list and saved to info.py")
         logger.info(f"Added bad word: {word}")
 
@@ -1634,7 +1638,7 @@ async def add_bad_word(client, message):
         logger.error(f"Error adding bad word: {e}")
 
 @Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
-async def remove_bad_word(client, message):
+async def remove_bad_word_cmd(client, message):
     """Remove word from BAD_WORDS list and save to info.py"""
     try:
         if len(message.command) < 2:
@@ -1690,6 +1694,10 @@ async def remove_bad_word(client, message):
         # Write back to file
         with open('info.py', 'w', encoding='utf-8') as f:
             f.write(new_content)
+
+        # Also remove from database for runtime usage
+        from database.bad_words_mdb import remove_bad_word
+        await remove_bad_word(word)
 
         await message.reply_text(f"✅ Removed '{word}' from bad words list and saved to info.py")
         logger.info(f"Removed bad word: {word}")
@@ -1784,46 +1792,15 @@ async def handle_auto_search(client, message, search_query):
             )
             return
 
-        # Perform search
-        files, next_offset, total = await get_search_results("", search_query, max_results=50, offset=0)
-
-        if not files:
-            await message.reply_text(
-                f"<b>❌ No files found for '{search_query}'</b>\n\n"
-                f"<i>Try different keywords or check spelling.</i>"
-            )
-            return
-
-        # Create buttons for files using same format as PM filter
-        settings = await get_settings(message.chat.id) if hasattr(message, 'chat') else {'file_secure': False}
-        pre = 'filep' if settings.get('file_secure', False) else 'file'
-
-        buttons = []
-        for file in files:
-            # Use enhanced button formatting
-            from utils import format_file_button
-            btn_text = format_file_button(file)
-
-            buttons.append([
-                InlineKeyboardButton(
-                    text=btn_text,
-                    callback_data=f'{pre}#{file["file_id"]}'
-                )
-            ])
-
-        reply_markup = InlineKeyboardMarkup(buttons)
-
-        # Use new format with search results details
-        caption = f"<b>🎬 Search Results for '{search_query}'</b>\n\n"
-        caption += f"<b>📊 Found:</b> {len(files)} files\n"
-        caption += f"<b>👤 Requested by:</b> {message.from_user.first_name}\n\n"
-        caption += f"<b>Select a file to download:</b>"
-
-        await message.reply_text(
-            text=caption,
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
+        # Show searching message
+        ai_search = True
+        reply_msg = await message.reply_text(f"<b><i>Searching For {search_query} 🔍</i></b>")
+        
+        # Import auto_filter function from pm_filter
+        from plugins.pm_filter import auto_filter
+        
+        # Use the same auto_filter function that handles normal searches
+        await auto_filter(client, search_query, message, reply_msg, ai_search)
 
     except Exception as e:
         logger.error(f"Error in auto search: {e}")
