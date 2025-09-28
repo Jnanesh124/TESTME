@@ -1,7 +1,0 @@
-[09/28/2025 10:38:41 AM:plugins.commands:253:ERROR] ❌ Error in getfile auto-search: auto_filter() missing 3 required positional arguments: 'msg', 'reply_msg', and 'ai_search'
-[09/28/2025 10:38:41 AM:plugins.commands:255:ERROR] ❌ Full traceback: Traceback (most recent call last):
-  File "/home/runner/workspace/plugins/commands.py", line 242, in start
-    await auto_filter(client, mock_message)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: auto_filter() missing 3 required positional arguments: 'msg', 'reply_msg', and 'ai_search'
-
