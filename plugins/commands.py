@@ -208,12 +208,24 @@ async def start(client, message):
             FRESH[key] = search_query
             logger.info(f"✅ Stored search query in FRESH: {key} -> {search_query}")
             
+            # Also store with message key for backward compatibility
+            message_key = f"{message.chat.id}-{message.id}"
+            FRESH[message_key] = search_query
+            logger.info(f"✅ Also stored with message key: {message_key} -> {search_query}")
+            
             # Call auto_filter with the search query
+            logger.info(f"🚀 Calling auto_filter for: {search_query}")
             await auto_filter(client, search_query, message, reply_msg, ai_search=True)
+            logger.info(f"✅ auto_filter completed for: {search_query}")
             
         except Exception as e:
             logger.error(f"❌ Error in getfile auto-search: {e}")
-            await message.reply("❌ Search failed. Please try again.")
+            import traceback
+            logger.error(f"❌ Full traceback: {traceback.format_exc()}")
+            try:
+                await reply_msg.edit_text("❌ Search failed. Please try again.")
+            except:
+                await message.reply("❌ Search failed. Please try again.")
         return
 
     if data.split("-", 1)[0] == "VJ":

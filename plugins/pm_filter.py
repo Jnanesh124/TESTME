@@ -1756,11 +1756,15 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     curr_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
     if not spoll:
         message = msg
-        if message.text.startswith("/"): return  # ignore commands
-        if re.findall(r"((^\/|^,|^!|^\.|^[\U0001F600-\U0001F64F]).*)", message.text):
+        if hasattr(message, 'text') and message.text.startswith("/"): return  # ignore commands
+        if hasattr(message, 'text') and re.findall(r"((^\/|^,|^!|^\.|^[\U0001F600-\U0001F64F]).*)", message.text):
             return
-        if len(message.text) < 100:
-            search = name
+        
+        # Handle both direct messages and getfile searches
+        search_text = name if name else (message.text if hasattr(message, 'text') else "")
+        
+        if len(search_text) < 100:
+            search = search_text
             search = search.lower()
             find = search.split(" ")
             search = ""
@@ -1775,8 +1779,12 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             search = search.replace("-", " ")
             search = search.replace(":", "")
             search = search.replace(".", "")
-            files, offset, total_results = await get_search_results(message.chat.id ,search, offset=0, filter=True)
+            
+            logger.info(f"🔍 Executing search for: '{search}' (original: '{name}')")
+            files, offset, total_results = await get_search_results(message.chat.id, search, offset=0, filter=True)
             settings = await get_settings(message.chat.id)
+            
+            logger.info(f"📊 Search results: {total_results} files found")
             if not files:
                 if settings["spell_check"]:
                     return await advantage_spell_chok(client, name, msg, reply_msg, ai_search)
