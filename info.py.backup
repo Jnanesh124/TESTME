@@ -117,8 +117,6 @@ BAD_WORDS = [
     ".mkv",
     "mkv",
     ".mp4",
-    "jnanesh"
-] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands",
     "HQ",
     "@RM_Movie_Flix",
     "@JNK_BACKUP",
@@ -128,7 +126,9 @@ BAD_WORDS = [
     "www.",
     "@",
     "@ROCKERSBACKUP",
-    "TEST"
+    "TEST",
+    "jnanesh",
+    "gowda"
 ] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands
 
 IGNORE_WORDS = {

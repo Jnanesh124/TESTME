@@ -110,6 +110,7 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/+JS5D7Oi3CkQ0NTBl') # Support C
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/JNK_BACKUP')
 
 BAD_WORDS = [
+    "jnanesh",
     "3",
     "@MovieShopLinks",
     "UNTOUCHED",
@@ -119,8 +120,8 @@ BAD_WORDS = [
     ".mp4",
     "HQ",
     "@RM_Movie_Flix",
-    "@JNK_BACKUP",
-    "[MS]",
+    "@JNK_BACKUP"
+] # List of bad words to filter out - Can be modified at runtime using /addbadword and /removebadword commands",
     "[",
     "]",
     "www.",
