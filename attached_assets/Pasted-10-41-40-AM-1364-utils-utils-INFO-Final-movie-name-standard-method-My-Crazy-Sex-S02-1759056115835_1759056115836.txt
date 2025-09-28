@@ -1,0 +1,24 @@
+10:41:40 AM - 1364 - utils - utils - INFO - 🎬 Final movie name (standard method): 'My Crazy Sex S02e03 All The Wrong Places'
+10:41:41 AM - 190 - plugins.pm_filter - pm_filter - ERROR - ❌ Error recovering search query: cannot access local variable 're' where it is not associated with a value
+10:41:44 AM - 41 - plugins.commands - commands - INFO - Start command received from user 7623389594
+10:41:44 AM - 91 - plugins.commands - commands - INFO - User 7623389594 checking AUTH_CHANNELS: [-1001764441595, -1002903033591, -1001910410959, -1003011512366, -1002075044088, -1002025155845]
+10:41:44 AM - 96 - plugins.commands - commands - INFO - Total force subscribe channels to check: 6
+10:41:44 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1001764441595: ChatMemberStatus.ADMINISTRATOR
+10:41:44 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1001764441595
+10:41:44 AM - 104 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1001764441595: True
+10:41:44 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1002903033591: ChatMemberStatus.ADMINISTRATOR
+10:41:44 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002903033591
+10:41:44 AM - 104 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1002903033591: True
+10:41:45 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1001910410959: ChatMemberStatus.ADMINISTRATOR
+10:41:45 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1001910410959
+10:41:45 AM - 104 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1001910410959: True
+10:41:45 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1003011512366: ChatMemberStatus.ADMINISTRATOR
+10:41:45 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1003011512366
+10:41:45 AM - 104 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1003011512366: True
+10:41:45 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1002075044088: ChatMemberStatus.ADMINISTRATOR
+10:41:45 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002075044088
+10:41:45 AM - 104 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1002075044088: True
+10:41:45 AM - 78 - utils - utils - INFO - User 7623389594 status in channel -1002025155845: ChatMemberStatus.ADMINISTRATOR
+10:41:45 AM - 87 - utils - utils - INFO - User 7623389594 is subscribed to channel -1002025155845
+10:41:45 AM - 104 - plugins.commands - commands - INFO - User 7623389594 subscription check for channel -1002025155845: True
+10:41:45 AM - 112 - plugins.commands - commands - INFO - User 7623389594 not joined channels: []

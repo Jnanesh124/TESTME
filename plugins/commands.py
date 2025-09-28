@@ -239,7 +239,7 @@ async def start(client, message):
             mock_message = MockMessage(message.chat.id, message.from_user, search_query, message.chat.type)
             
             # Call auto_filter with proper parameters (name, msg, reply_msg, ai_search)
-            await auto_filter(client, search_query, mock_message, reply_msg, True)</old_str>
+            await auto_filter(client, search_query, mock_message, reply_msg, True)
                 
             logger.info(f"✅ auto_filter completed for: {search_query}")
             
