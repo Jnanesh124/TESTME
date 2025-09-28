@@ -1579,56 +1579,76 @@ async def add_bad_word_cmd(client, message):
             await message.reply_text("Usage: /addbadword <word>")
             return
 
-        word = message.command[1]
+        word = message.command[1].strip()
 
         # Read current info.py content
         with open('info.py', 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # Extract current BAD_WORDS list from file
+        # Extract current BAD_WORDS list from file with better pattern
         import re
-        pattern = r'BAD_WORDS = \[(.*?)\]'
+        pattern = r'BAD_WORDS\s*=\s*\[(.*?)\]'
         match = re.search(pattern, content, re.DOTALL)
         
         if not match:
             await message.reply_text("❌ Could not find BAD_WORDS in info.py")
             return
 
-        # Parse existing words
-        words_content = match.group(1)
+        # Parse existing words more carefully
+        words_content = match.group(1).strip()
         existing_words = []
         
-        # Extract words from the list format
-        word_matches = re.findall(r'"([^"]*)"', words_content)
-        existing_words = word_matches
+        if words_content:
+            # Extract words from the list format, handling both single and double quotes
+            word_matches = re.findall(r'["\']([^"\']*)["\']', words_content)
+            existing_words = [w.strip() for w in word_matches if w.strip()]
 
-        # Check if word already exists
-        if word in existing_words:
+        # Check if word already exists (case-insensitive)
+        if word.lower() in [w.lower() for w in existing_words]:
             await message.reply_text(f"'{word}' is already in bad words list")
             return
 
-        # Add new word
+        # Add new word to existing list
         existing_words.append(word)
 
-        # Create new formatted list
-        formatted_words = ',\n    '.join([f'"{w}"' for w in existing_words])
-        new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]'
+        # Create new formatted list with proper indentation
+        if existing_words:
+            formatted_words = ',\n    '.join([f'"{w}"' for w in existing_words])
+            new_bad_words = f'BAD_WORDS = [\n    {formatted_words}\n]'
+        else:
+            new_bad_words = 'BAD_WORDS = []'
 
-        # Replace the BAD_WORDS section in content
+        # Replace the BAD_WORDS section in content with more precise pattern
         new_content = re.sub(
-            r'BAD_WORDS = \[.*?\]',
+            r'BAD_WORDS\s*=\s*\[.*?\]',
             new_bad_words,
             content,
             flags=re.DOTALL
         )
 
+        # Backup original file
+        import shutil
+        shutil.copy('info.py', 'info.py.backup')
+
         # Write back to file
         with open('info.py', 'w', encoding='utf-8') as f:
             f.write(new_content)
 
+        # Verify the change worked by reading it back
+        with open('info.py', 'r', encoding='utf-8') as f:
+            verify_content = f.read()
+            if word not in verify_content:
+                # Restore backup if write failed
+                shutil.copy('info.py.backup', 'info.py')
+                await message.reply_text(f"❌ Failed to save '{word}' to info.py")
+                return
+
         # Also add to database for runtime usage
-        from database.bad_words_mdb import add_bad_word
-        await add_bad_word(word)
+        try:
+            from database.bad_words_mdb import add_bad_word
+            await add_bad_word(word)
+        except Exception as db_error:
+            logger.warning(f"Failed to add to database but file updated: {db_error}")
 
         await message.reply_text(f"✅ Added '{word}' to bad words list and saved to info.py")
         logger.info(f"Added bad word: {word}")
@@ -1636,6 +1656,12 @@ async def add_bad_word_cmd(client, message):
     except Exception as e:
         await message.reply_text(f"❌ Error: {e}")
         logger.error(f"Error adding bad word: {e}")
+        # Try to restore backup if it exists
+        try:
+            import shutil
+            shutil.copy('info.py.backup', 'info.py')
+        except:
+            pass
 
 @Client.on_message(filters.command("removebadword") & filters.user(ADMINS))
 async def remove_bad_word_cmd(client, message):
@@ -1645,36 +1671,43 @@ async def remove_bad_word_cmd(client, message):
             await message.reply_text("Usage: /removebadword <word>")
             return
 
-        word = message.command[1]
+        word = message.command[1].strip()
 
         # Read current info.py content
         with open('info.py', 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # Extract current BAD_WORDS list from file
+        # Extract current BAD_WORDS list from file with better pattern
         import re
-        pattern = r'BAD_WORDS = \[(.*?)\]'
+        pattern = r'BAD_WORDS\s*=\s*\[(.*?)\]'
         match = re.search(pattern, content, re.DOTALL)
         
         if not match:
             await message.reply_text("❌ Could not find BAD_WORDS in info.py")
             return
 
-        # Parse existing words
-        words_content = match.group(1)
+        # Parse existing words more carefully
+        words_content = match.group(1).strip()
         existing_words = []
         
-        # Extract words from the list format
-        word_matches = re.findall(r'"([^"]*)"', words_content)
-        existing_words = word_matches
+        if words_content:
+            # Extract words from the list format, handling both single and double quotes
+            word_matches = re.findall(r'["\']([^"\']*)["\']', words_content)
+            existing_words = [w.strip() for w in word_matches if w.strip()]
 
-        # Check if word exists
-        if word not in existing_words:
+        # Check if word exists (case-insensitive matching)
+        word_to_remove = None
+        for existing_word in existing_words:
+            if existing_word.lower() == word.lower():
+                word_to_remove = existing_word
+                break
+        
+        if not word_to_remove:
             await message.reply_text(f"'{word}' is not in bad words list")
             return
 
         # Remove the word
-        existing_words.remove(word)
+        existing_words.remove(word_to_remove)
 
         # Create new formatted list
         if existing_words:
@@ -1683,28 +1716,50 @@ async def remove_bad_word_cmd(client, message):
         else:
             new_bad_words = 'BAD_WORDS = []'
 
-        # Replace the BAD_WORDS section in content
+        # Replace the BAD_WORDS section in content with more precise pattern
         new_content = re.sub(
-            r'BAD_WORDS = \[.*?\]',
+            r'BAD_WORDS\s*=\s*\[.*?\]',
             new_bad_words,
             content,
             flags=re.DOTALL
         )
 
+        # Backup original file
+        import shutil
+        shutil.copy('info.py', 'info.py.backup')
+
         # Write back to file
         with open('info.py', 'w', encoding='utf-8') as f:
             f.write(new_content)
 
-        # Also remove from database for runtime usage
-        from database.bad_words_mdb import remove_bad_word
-        await remove_bad_word(word)
+        # Verify the change worked by reading it back
+        with open('info.py', 'r', encoding='utf-8') as f:
+            verify_content = f.read()
+            if word_to_remove in verify_content and len(existing_words) > 0:
+                # Restore backup if write failed
+                shutil.copy('info.py.backup', 'info.py')
+                await message.reply_text(f"❌ Failed to remove '{word}' from info.py")
+                return
 
-        await message.reply_text(f"✅ Removed '{word}' from bad words list and saved to info.py")
-        logger.info(f"Removed bad word: {word}")
+        # Also remove from database for runtime usage
+        try:
+            from database.bad_words_mdb import remove_bad_word
+            await remove_bad_word(word_to_remove)
+        except Exception as db_error:
+            logger.warning(f"Failed to remove from database but file updated: {db_error}")
+
+        await message.reply_text(f"✅ Removed '{word_to_remove}' from bad words list and saved to info.py")
+        logger.info(f"Removed bad word: {word_to_remove}")
 
     except Exception as e:
         await message.reply_text(f"❌ Error: {e}")
         logger.error(f"Error removing bad word: {e}")
+        # Try to restore backup if it exists
+        try:
+            import shutil
+            shutil.copy('info.py.backup', 'info.py')
+        except:
+            pass
 
 @Client.on_message(filters.command("listbadwords") & filters.user(ADMINS))
 async def list_bad_words_handler(client, message):
@@ -1793,18 +1848,38 @@ async def handle_auto_search(client, message, search_query):
             return
 
         # Show searching message
-        ai_search = True
-        reply_msg = await message.reply_text(f"<b><i>Searching For {search_query} 🔍</i></b>")
+        search_msg = await message.reply_text(f"<b><i>Searching For {search_query} 🔍</i></b>")
         
-        # Import auto_filter function from pm_filter
+        # Clean up the search query properly
+        clean_query = search_query.lower().strip()
+        
+        # Import functions needed for search
+        from database.ia_filterdb import get_search_results
         from plugins.pm_filter import auto_filter
         
-        # Use the same auto_filter function that handles normal searches
-        await auto_filter(client, search_query, message, reply_msg, ai_search)
+        # Try to get search results first
+        files, offset, total_results = await get_search_results(
+            chat_id=message.from_user.id,  # Use user ID for PM search
+            query=clean_query,
+            offset=0,
+            filter=True
+        )
+        
+        if files and total_results > 0:
+            # Use the auto_filter function to display results
+            ai_search = True
+            await auto_filter(client, search_query, message, search_msg, ai_search)
+        else:
+            # If no files found, try spell check
+            from plugins.pm_filter import advantage_spell_chok
+            await advantage_spell_chok(client, search_query, message, search_msg, True)
 
     except Exception as e:
         logger.error(f"Error in auto search: {e}")
-        await message.reply_text(
-            f"<b>❌ Error occurred while searching for '{search_query}'</b>\n\n"
-            f"<i>Please try again later or contact support.</i>"
-        )
+        try:
+            await message.reply_text(
+                f"<b>❌ Error occurred while searching for '{search_query}'</b>\n\n"
+                f"<i>Please try again later or contact support.</i>"
+            )
+        except:
+            pass
