@@ -238,14 +238,8 @@ async def start(client, message):
             
             mock_message = MockMessage(message.chat.id, message.from_user, search_query, message.chat.type)
             
-            # Call auto_filter with proper parameters
-            await auto_filter(client, mock_message)
-            
-            # Delete the searching message
-            try:
-                await reply_msg.delete()
-            except:
-                pass
+            # Call auto_filter with proper parameters (name, msg, reply_msg, ai_search)
+            await auto_filter(client, search_query, mock_message, reply_msg, True)</old_str>
                 
             logger.info(f"✅ auto_filter completed for: {search_query}")
             
