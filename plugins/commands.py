@@ -1606,7 +1606,7 @@ async def add_bad_word_cmd(client, message):
 
         # Check if word already exists (case-insensitive)
         if word.lower() in [w.lower() for w in existing_words]:
-            await message.reply_text(f"'{word}' is already in bad words list")
+            await message.reply_text(f"❌ The word '{word}' is already added to the bad words list!")
             return
 
         # Add new word to beginning of existing list (first position)
@@ -1657,7 +1657,7 @@ async def add_bad_word_cmd(client, message):
         except Exception as db_error:
             logger.warning(f"Failed to add to database but file updated: {db_error}")
 
-        await message.reply_text(f"✅ Added '{word}' to bad words list and saved to info.py\n\nUpdated BAD_WORDS list now has {len(existing_words)} words")
+        await message.reply_text(f"✅ Successfully added '{word}' to bad words list and saved to info.py!\n\n📊 Total bad words: {len(existing_words)}\n\n💡 Use /listbadwords to see all bad words")
         logger.info(f"Added bad word: {word}")
 
     except Exception as e:
@@ -1865,9 +1865,9 @@ async def handle_auto_search(client, message, search_query):
         from database.ia_filterdb import get_search_results
         from plugins.pm_filter import auto_filter
         
-        # Try to get search results first with proper chat_id (use LOG_CHANNEL for general search)
+        # Try to get search results first with proper chat_id (use message.from_user.id for private search)
         files, offset, total_results = await get_search_results(
-            chat_id=LOG_CHANNEL,  # Use LOG_CHANNEL instead of user ID
+            chat_id=message.from_user.id,  # Use user's private chat ID for search
             query=clean_query,
             offset=0,
             filter=True
