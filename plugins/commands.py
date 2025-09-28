@@ -215,8 +215,18 @@ async def start(client, message):
             
             # Call auto_filter with the search query
             logger.info(f"🚀 Calling auto_filter for: {search_query}")
-            await auto_filter(client, search_query, message, reply_msg, ai_search=True)
-            logger.info(f"✅ auto_filter completed for: {search_query}")
+            
+            # Add timeout to prevent hanging
+            import asyncio
+            try:
+                await asyncio.wait_for(
+                    auto_filter(client, search_query, message, reply_msg, ai_search=True),
+                    timeout=30.0  # 30 second timeout
+                )
+                logger.info(f"✅ auto_filter completed for: {search_query}")
+            except asyncio.TimeoutError:
+                logger.error(f"⏰ auto_filter timed out for: {search_query}")
+                await reply_msg.edit_text(f"**⏰ Search timed out for: {search_query}**\n**Please try again.**")
             
         except Exception as e:
             logger.error(f"❌ Error in getfile auto-search: {e}")

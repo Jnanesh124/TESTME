@@ -1801,6 +1801,8 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 
             except Exception as e:
                 logger.error(f"❌ Error in search execution: {e}")
+                import traceback
+                logger.error(f"❌ Full traceback: {traceback.format_exc()}")
                 return await reply_msg.edit_text(f"**❌ Search failed for: {name}**\n**Please try again.**")
         else:
             return
