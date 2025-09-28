@@ -134,11 +134,11 @@ async def next_page(bot, query):
     if not search:
         # Debug log to help troubleshoot
         logger.warning(f"🚨 Missing FRESH entry for key: {key}. Available keys: {list(FRESH.keys())}")
-        
+
         # Try to recover search query from the current message caption/text
         try:
             search_recovered = False
-            
+
             # Method 1: Extract from current message caption if it contains search results
             if hasattr(query.message, 'caption') and query.message.caption:
                 caption_text = query.message.caption
@@ -151,7 +151,7 @@ async def next_page(bot, query):
                         FRESH[key] = search
                         search_recovered = True
                         logger.info(f"✅ Recovered search from message caption: '{search}'")
-            
+
             # Method 2: Extract from reply message if available
             if not search_recovered and hasattr(query.message, 'reply_to_message') and query.message.reply_to_message:
                 reply_text = query.message.reply_to_message.text
@@ -163,7 +163,7 @@ async def next_page(bot, query):
                         FRESH[key] = search
                         search_recovered = True
                         logger.info(f"✅ Recovered search query from reply: '{search}'")
-            
+
             # Method 3: Try to extract from message text patterns
             if not search_recovered and hasattr(query.message, 'text') and query.message.text:
                 message_text = query.message.text
@@ -181,11 +181,11 @@ async def next_page(bot, query):
                         search_recovered = True
                         logger.info(f"✅ Recovered search from message text: '{search}'")
                         break
-            
+
             if not search_recovered:
                 await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name), show_alert=True)
                 return
-                
+
         except Exception as e:
             logger.error(f"❌ Error recovering search query: {e}")
             await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name), show_alert=True)
@@ -201,12 +201,13 @@ async def next_page(bot, query):
         return
     temp.GETALL[key] = files
     temp.SHORT[query.from_user.id] = query.message.chat.id
+
     settings = await get_settings(query.message.chat.id)
     pre = 'filep' if settings['file_secure'] else 'file'
-    
+
     # Always use 5 buttons max as configured
     MAX_BUTTONS_PER_PAGE = 5
-    
+
     if settings['button']:
         btn = [
             [
@@ -216,7 +217,7 @@ async def next_page(bot, query):
         ]
     else:
         btn = []
-    
+
     # Calculate pagination properly
     if 0 < offset <= MAX_BUTTONS_PER_PAGE:
         off_set = 0
@@ -224,7 +225,7 @@ async def next_page(bot, query):
         off_set = None
     else:
         off_set = offset - MAX_BUTTONS_PER_PAGE
-    
+
     # Add pagination buttons
     if n_offset == 0:
         # Only back button if no more pages
@@ -1131,7 +1132,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         buttons = [[
              InlineKeyboardButton('⚙️ ᴀᴅᴍɪɴ ᴏɴʟʏ 🔧', callback_data='admin'),
          ], [ 
-             InlineKeyboardButton('ʀᴇɴᴀᴍᴇ', callback_data='r_txt'),   
+             InlineKeyboardButton('Rᴇɴᴀᴍᴇ', callback_data='r_txt'),   
              InlineKeyboardButton('sᴛʀᴇᴀᴍ/ᴅᴏᴡɴʟᴏᴀᴅ', callback_data='s_txt') 
          ], [ 
              InlineKeyboardButton('ꜰɪʟᴇ ꜱᴛᴏʀᴇ', callback_data='store_file'),   
@@ -1791,22 +1792,22 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     pre = 'filep' if settings['file_secure'] else 'file'
     key = f"{message.chat.id}-{message.id}"
     req = message.from_user.id if message.from_user else 0
-    
-    # Store search query for pagination - ensure it's always stored
+
+    # Store search query for pagination - use reply message ID if available for consistency
+    if hasattr(reply_msg, 'id'):
+        pagination_key = f"{message.chat.id}-{reply_msg.id}"
+        FRESH[pagination_key] = search
+        logger.info(f"✅ Stored search in FRESH with reply key: {pagination_key} -> {search}")
+
+    # Also store with original key for backward compatibility
     FRESH[key] = search
     temp.GETALL[key] = files
     temp.SHORT[message.from_user.id] = message.chat.id
-    
-    # Debug log to verify FRESH storage
-    logger.info(f"🔑 Auto-filter stored in FRESH[{key}]: '{search}' for pagination")
-    
-    # Also store with a backup key format for deep link recovery
-    backup_key = f"{message.from_user.id}-{search.lower().replace(' ', '-')}"
-    FRESH[backup_key] = search
-    logger.info(f"🔑 Backup key stored in FRESH[{backup_key}]: '{search}'")
+    logger.info(f"✅ Stored search in FRESH with original key: {key} -> {search}")
+
     # Always use 5 buttons max
     MAX_BUTTONS_PER_PAGE = 5
-    
+
     if settings.get('button'):
         btn = [
             [
@@ -1816,7 +1817,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         ]
     else:
         btn = []
-    
+
     # Add pagination buttons properly
     if offset != "" and int(offset) > 0:
         btn.append(

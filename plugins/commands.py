@@ -36,6 +36,29 @@ BATCH_FILES = {}
 join_db = JoinReqs
 
 @Client.on_message(filters.command("start") & filters.incoming)
+async def handle_auto_search(client, message, search_query):
+    """Handle auto-search functionality for deep link searches like getfile-"""
+    try:
+        logger.info(f"🔍 Handling auto-search for query: {search_query}")
+        
+        # Import here to avoid circular imports
+        from plugins.pm_filter import auto_filter, FRESH
+        
+        # Create a search message reply
+        reply_msg = await message.reply(f"<b><i>Searching For {search_query} 🔍</i></b>")
+        
+        # Store the search query in FRESH for pagination
+        key = f"{message.chat.id}-{reply_msg.id}"
+        FRESH[key] = search_query
+        logger.info(f"✅ Stored search query in FRESH: {key} -> {search_query}")
+        
+        # Call auto_filter with the search query
+        await auto_filter(client, search_query, message, reply_msg, ai_search=True)
+        
+    except Exception as e:
+        logger.error(f"❌ Error in handle_auto_search: {e}")
+        await message.reply("❌ Search failed. Please try again.")
+
 async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
