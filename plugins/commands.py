@@ -36,49 +36,34 @@ BATCH_FILES = {}
 join_db = JoinReqs
 
 @Client.on_message(filters.command("start") & filters.incoming)
-async def handle_auto_search(client, message, search_query):
-    """Handle auto-search functionality for deep link searches like getfile-"""
-    try:
-        logger.info(f"🔍 Handling auto-search for query: {search_query}")
-        
-        # Import here to avoid circular imports
-        from plugins.pm_filter import auto_filter, FRESH
-        
-        # Create a search message reply
-        reply_msg = await message.reply(f"<b><i>Searching For {search_query} 🔍</i></b>")
-        
-        # Store the search query in FRESH for pagination
-        key = f"{message.chat.id}-{reply_msg.id}"
-        FRESH[key] = search_query
-        logger.info(f"✅ Stored search query in FRESH: {key} -> {search_query}")
-        
-        # Call auto_filter with the search query
-        await auto_filter(client, search_query, message, reply_msg, ai_search=True)
-        
-    except Exception as e:
-        logger.error(f"❌ Error in handle_auto_search: {e}")
-        await message.reply("❌ Search failed. Please try again.")
-
 async def start(client, message):
     try:
+        logger.info(f"Start command received from user {message.from_user.id if message.from_user else 'Unknown'}")
         await message.react(emoji=random.choice(REACTIONS), big=True)
-    except:
+    except Exception as e:
+        logger.error(f"Error adding reaction: {e}")
         pass
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        buttons = [[
-            InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK)
-        ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await message.reply(script.START_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup, disable_web_page_preview=True)
-        await asyncio.sleep(2) # 😢 https://github.com/EvamariaTG/EvaMaria/blob/master/plugins/p_ttishow.py#L17 😬 wait a bit, before checking.
-        if not await db.get_chat(message.chat.id):
-            total=await client.get_chat_members_count(message.chat.id)
-            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(message.chat.title, message.chat.id, total, "Unknown"))       
-            await db.add_chat(message.chat.id, message.chat.title)
+        try:
+            buttons = [[
+                InlineKeyboardButton('ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK)
+            ]]
+            reply_markup = InlineKeyboardMarkup(buttons)
+            await message.reply(script.START_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup, disable_web_page_preview=True)
+            await asyncio.sleep(2) # 😢 https://github.com/EvamariaTG/EvaMaria/blob/master/plugins/p_ttishow.py#L17 😬 wait a bit, before checking.
+            if not await db.get_chat(message.chat.id):
+                total=await client.get_chat_members_count(message.chat.id)
+                await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(message.chat.title, message.chat.id, total, "Unknown"))       
+                await db.add_chat(message.chat.id, message.chat.title)
+        except Exception as e:
+            logger.error(f"Error handling group start command: {e}")
         return 
-    if not await db.is_user_exist(message.from_user.id):
-        await db.add_user(message.from_user.id, message.from_user.first_name)
-        await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
+    try:
+        if not await db.is_user_exist(message.from_user.id):
+            await db.add_user(message.from_user.id, message.from_user.first_name)
+            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
+    except Exception as e:
+        logger.error(f"Error adding user to database: {e}")
     if len(message.command) != 2:
         if PREMIUM_AND_REFERAL_MODE == True:
             buttons = [[
@@ -209,8 +194,26 @@ async def start(client, message):
     # Handle getfile format for auto-search
     if data.startswith("getfile-"):
         search_query = data.replace("getfile-", "").replace("-", " ")
-        # Trigger auto-search functionality
-        await handle_auto_search(client, message, search_query)
+        logger.info(f"🔍 Processing getfile auto-search for: {search_query}")
+        
+        try:
+            # Import here to avoid circular imports
+            from plugins.pm_filter import auto_filter, FRESH
+            
+            # Create a search message reply
+            reply_msg = await message.reply(f"<b><i>Searching For {search_query} 🔍</i></b>")
+            
+            # Store the search query in FRESH for pagination
+            key = f"{message.chat.id}-{reply_msg.id}"
+            FRESH[key] = search_query
+            logger.info(f"✅ Stored search query in FRESH: {key} -> {search_query}")
+            
+            # Call auto_filter with the search query
+            await auto_filter(client, search_query, message, reply_msg, ai_search=True)
+            
+        except Exception as e:
+            logger.error(f"❌ Error in getfile auto-search: {e}")
+            await message.reply("❌ Search failed. Please try again.")
         return
 
     if data.split("-", 1)[0] == "VJ":
@@ -1896,107 +1899,3 @@ async def generate_getfile_link(client, message):
         f"<i>When users click this link, it will automatically search for '{movie_name}' in your bot.</i>"
     )
 
-async def handle_auto_search(client, message, search_query):
-    """Handle auto-search functionality for getfile links"""
-    try:
-        # Check force subscribe
-        force_sub_channels = []
-        if AUTH_CHANNELS:
-            force_sub_channels.extend(AUTH_CHANNELS)
-        elif AUTH_CHANNEL:
-            force_sub_channels.append(AUTH_CHANNEL)
-
-        # Check subscription
-        not_joined_channels = []
-        for channel in force_sub_channels:
-            try:
-                is_member = await is_subscribed(client, message, channel)
-                if not is_member:
-                    not_joined_channels.append(channel)
-            except Exception as e:
-                logger.error(f"Error checking subscription for channel {channel}: {e}")
-                not_joined_channels.append(channel)
-
-        if not_joined_channels:
-            btn = []
-            for channel in not_joined_channels:
-                if channel in AUTH_CHANNELS:
-                    try:
-                        chat_info = await client.get_chat(int(channel))
-                        channel_name = chat_info.title if chat_info.title else f"Channel {channel}"
-                        if REQUEST_TO_JOIN_MODE == True:
-                            invite_link = await client.create_chat_invite_link(chat_id=int(channel), creates_join_request=True)
-                        else:
-                            invite_link = await client.create_chat_invite_link(int(channel))
-                        btn.append([InlineKeyboardButton(f"ᴊᴏɪɴ {channel_name}", url=invite_link.invite_link)])
-                    except Exception as e:
-                        logger.error(f"Error creating invite link for channel {channel}: {e}")
-                        continue
-
-            text = "**⚪ You Need To Join My Below all Channel After U Get Direct File📥**"
-            await client.send_message(
-                chat_id=message.from_user.id,
-                text=text,
-                reply_markup=InlineKeyboardMarkup(btn),
-                parse_mode=enums.ParseMode.MARKDOWN
-            )
-            return
-
-        # Show searching message
-        search_msg = await message.reply_text(f"<b><i>Searching For {search_query} 🔍</i></b>")
-
-        # Clean up the search query properly
-        clean_query = search_query.lower().strip()
-        logger.info(f"Auto-search initiated for query: '{clean_query}'")
-
-        # Import functions needed for search
-        from database.ia_filterdb import get_search_results
-        from plugins.pm_filter import auto_filter
-
-        # Try to get search results first with proper chat_id (use message.from_user.id for private search)
-        files, offset, total_results = await get_search_results(
-            chat_id=message.from_user.id,  # Use user's private chat ID for search
-            query=clean_query,
-            offset=0,
-            filter=True
-        )
-
-        logger.info(f"Search results: {total_results} files found for '{clean_query}'")
-
-        if files and total_results > 0:
-            # Create a pseudo message object for auto_filter using SimpleNamespace
-            from types import SimpleNamespace
-
-            pseudo_chat = SimpleNamespace()
-            pseudo_chat.id = message.from_user.id
-
-            pseudo_message = SimpleNamespace()
-            pseudo_message.from_user = message.from_user
-            pseudo_message.chat = pseudo_chat
-            pseudo_message.text = search_query
-            pseudo_message.id = message.id
-
-            # Ensure the search query is stored in FRESH for pagination
-            key = f"{pseudo_message.chat.id}-{pseudo_message.id}"
-            from plugins.pm_filter import FRESH
-            FRESH[key] = clean_query
-            logger.info(f"🔑 Auto-search stored query '{clean_query}' in FRESH[{key}] for pagination")
-
-            # Use the auto_filter function to display results
-            ai_search = True
-            await auto_filter(client, clean_query, pseudo_message, search_msg, ai_search)
-        else:
-            # If no files found, try spell check
-            logger.info(f"No direct results found, trying spell check for '{clean_query}'")
-            from plugins.pm_filter import advantage_spell_chok
-            await advantage_spell_chok(client, search_query, message, search_msg, True)
-
-    except Exception as e:
-        logger.error(f"Error in auto search: {e}")
-        try:
-            await message.reply_text(
-                f"<b>❌ Error occurred while searching for '{search_query}'</b>\n\n"
-                f"<i>Please try again later or contact support.</i>"
-            )
-        except:
-            pass
