@@ -1802,8 +1802,6 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             except Exception as e:
                 logger.error(f"❌ Error in search execution: {e}")
                 return await reply_msg.edit_text(f"**❌ Search failed for: {name}**\n**Please try again.**")
-                else:
-                    return await reply_msg.edit_text(f"**⚠️ No File Found For Your Query - {name}**\n**Make Sure Spelling Is Correct.**")
         else:
             return
     else:
