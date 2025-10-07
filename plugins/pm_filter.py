@@ -34,6 +34,72 @@ SPELL_CHECK = {}
 @Client.on_message(filters.group & filters.text & filters.incoming)
 async def give_filter(client, message):
     if message.chat.id != SUPPORT_CHAT_ID:
+        content = message.text
+        
+        # Ignore commands and hashtags
+        if content.startswith("/") or content.startswith("#"):
+            return
+        
+        # Convert to lowercase for case-insensitive checking
+        content_lower = content.lower()
+        
+        # Ignore if content contains usernames (starting with @)
+        if "@" in content:
+            return
+        
+        # Comprehensive link patterns including all domains and URL schemes
+        link_patterns = [
+            "t.me/", "telegram.me/", "telegram.dog/",
+            "http://", "https://", "www.", 
+            ".com", ".org", ".net", ".in", ".co", ".io", ".me", ".ly", ".cc", 
+            ".tk", ".ml", ".ga", ".cf", ".xyz", ".info", ".biz", ".tv", ".asia",
+            ".ru", ".uk", ".de", ".fr", ".it", ".es", ".cn", ".jp", ".kr",
+            ".pro", ".app", ".dev", ".ai", ".site", ".online", ".club", ".fun",
+            "bit.ly", "tinyurl", "short", "linktr.ee", "cutt.ly", "rb.gy",
+            "://", "//", "link/", "join/", "channel/"
+        ]
+        
+        # Check for any link patterns
+        for pattern in link_patterns:
+            if pattern in content_lower:
+                return
+        
+        # Ignore if content contains encoded/hidden link keywords
+        hidden_link_patterns = [
+            "click here", "download here", "get file", "join now", "visit",
+            "check this", "open link", "go to", "redirect", "shortlink",
+            "tap here", "follow link", "access here", "get link", "video link",
+            "download link", "membership", "buy msg", "msg me", "contact me",
+            "dm me", "inbox me", "reach me", "whatsapp", "payment", "price"
+        ]
+        
+        for pattern in hidden_link_patterns:
+            if pattern in content_lower:
+                return
+        
+        # Ignore if content contains suspicious characters that might indicate encoded links or HTML
+        suspicious_chars = ["{", "}", "<", ">", "[", "]"]
+        if any(char in content for char in suspicious_chars):
+            return
+        
+        # Ignore if message contains entities like URLs or text_links
+        if message.entities:
+            for entity in message.entities:
+                if entity.type in [enums.MessageEntityType.URL, enums.MessageEntityType.TEXT_LINK, 
+                                  enums.MessageEntityType.MENTION, enums.MessageEntityType.TEXT_MENTION]:
+                    return
+        
+        # Additional check for common spam/promotional keywords
+        spam_keywords = [
+            "free access", "lifetime free", "one time payment", "premium", 
+            "subscription", "buy", "purchase", "payment", "₹", "$", "price",
+            "totally price", "if u want", "direct video"
+        ]
+        
+        for keyword in spam_keywords:
+            if keyword in content_lower:
+                return
+        
         settings = await get_settings(message.chat.id)
         chatid = message.chat.id 
         user_id = message.from_user.id if message.from_user else 0
