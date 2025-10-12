@@ -79,8 +79,12 @@ async def addgfilter(client, message):
     )
 
 
-@Client.on_message(filters.command(['viewgfilters', 'gfilters']) & filters.incoming & filters.user(ADMINS))
+@Client.on_message(filters.command(['viewgfilters', 'gfilters']) & filters.incoming)
 async def get_all_gfilters(client, message):
+    # Check if user is admin
+    if message.from_user.id not in ADMINS:
+        return await message.reply_text("This command is only for admins!", quote=True)
+
     texts = await get_gfilters('gfilters')
     count = await count_gfilters('gfilters')
     if count:

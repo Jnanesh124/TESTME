@@ -2269,18 +2269,10 @@ async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
             text=f"**🔍 Did you mean any of these?**\n\n**📝 Your search:** `{mv_rqst}`\n\n**👇 Select the correct movie:**",
             reply_markup=InlineKeyboardMarkup(btn)
         )
-        # Auto-delete spell check message after 10 minutes
+        # Auto-delete spell check message after 60 seconds
+        await asyncio.sleep(60)
         try:
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await spell_check_del.delete()
-        except KeyError:
-            grpid = await active_connection(str(msg.from_user.id))
-            await save_group_settings(grpid, 'auto_delete', True)
-            settings = await get_settings(msg.chat.id)
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await spell_check_del.delete()
+            await spell_check_del.delete()
         except:
             pass
 
