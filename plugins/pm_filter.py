@@ -35,18 +35,18 @@ SPELL_CHECK = {}
 async def give_filter(client, message):
     if message.chat.id != SUPPORT_CHAT_ID:
         content = message.text
-        
+
         # Ignore commands and hashtags
         if content.startswith("/") or content.startswith("#"):
             return
-        
+
         # Convert to lowercase for case-insensitive checking
         content_lower = content.lower()
-        
+
         # Ignore if content contains usernames (starting with @)
         if "@" in content:
             return
-        
+
         # Comprehensive link patterns including all domains and URL schemes
         link_patterns = [
             "t.me/", "telegram.me/", "telegram.dog/",
@@ -58,48 +58,59 @@ async def give_filter(client, message):
             "bit.ly", "tinyurl", "short", "linktr.ee", "cutt.ly", "rb.gy",
             "://", "//", "link/", "join/", "channel/"
         ]
-        
+
         # Check for any link patterns
         for pattern in link_patterns:
             if pattern in content_lower:
                 return
-        
+
+        # Ignore if content contains full stop/period followed by letters (hidden links)
+        if re.search(r'\.[a-zA-Z]{2,}', content):
+            return
+
         # Ignore if content contains encoded/hidden link keywords
         hidden_link_patterns = [
             "click here", "download here", "get file", "join now", "visit",
             "check this", "open link", "go to", "redirect", "shortlink",
             "tap here", "follow link", "access here", "get link", "video link",
             "download link", "membership", "buy msg", "msg me", "contact me",
-            "dm me", "inbox me", "reach me", "whatsapp", "payment", "price"
+            "dm me", "inbox me", "reach me", "whatsapp", "payment", "price",
+            "website", "web site", "site link", "url", "domain"
         ]
-        
+
         for pattern in hidden_link_patterns:
             if pattern in content_lower:
                 return
-        
+
         # Ignore if content contains suspicious characters that might indicate encoded links or HTML
-        suspicious_chars = ["{", "}", "<", ">", "[", "]"]
+        suspicious_chars = ["{", "}", "<", ">", "[", "]", "|"]
         if any(char in content for char in suspicious_chars):
             return
-        
+
         # Ignore if message contains entities like URLs or text_links
         if message.entities:
             for entity in message.entities:
                 if entity.type in [enums.MessageEntityType.URL, enums.MessageEntityType.TEXT_LINK, 
                                   enums.MessageEntityType.MENTION, enums.MessageEntityType.TEXT_MENTION]:
                     return
-        
+
         # Additional check for common spam/promotional keywords
         spam_keywords = [
             "free access", "lifetime free", "one time payment", "premium", 
             "subscription", "buy", "purchase", "payment", "₹", "$", "price",
-            "totally price", "if u want", "direct video"
+            "totally price", "if u want", "direct video", "special offer",
+            "limited time", "exclusive", "vip access"
         ]
-        
+
         for keyword in spam_keywords:
             if keyword in content_lower:
                 return
-        
+
+        # Validate search query - ignore if empty or just punctuation
+        clean_search = re.sub(r'[^\w\s]', '', content).strip()
+        if not clean_search or len(clean_search) < 1:
+            return
+
         settings = await get_settings(message.chat.id)
         chatid = message.chat.id 
         user_id = message.from_user.id if message.from_user else 0
@@ -172,13 +183,18 @@ async def pm_text(bot, message):
         if pattern in content_lower:
             return
 
+    # Ignore if content contains full stop/period followed by letters (hidden links)
+    if re.search(r'\.[a-zA-Z]{2,}', content):
+        return
+
     # Ignore if content contains encoded/hidden link keywords
     hidden_link_patterns = [
         "click here", "download here", "get file", "join now", "visit",
         "check this", "open link", "go to", "redirect", "shortlink",
         "tap here", "follow link", "access here", "get link", "video link",
         "download link", "membership", "buy msg", "msg me", "contact me",
-        "dm me", "inbox me", "reach me", "whatsapp", "payment", "price"
+        "dm me", "inbox me", "reach me", "whatsapp", "payment", "price",
+        "website", "web site", "site link", "url", "domain"
     ]
 
     for pattern in hidden_link_patterns:
@@ -186,7 +202,7 @@ async def pm_text(bot, message):
             return
 
     # Ignore if content contains suspicious characters that might indicate encoded links or HTML
-    suspicious_chars = ["{", "}", "<", ">", "[", "]"]
+    suspicious_chars = ["{", "}", "<", ">", "[", "]", "|"]
     if any(char in content for char in suspicious_chars):
         return
 
@@ -201,12 +217,18 @@ async def pm_text(bot, message):
     spam_keywords = [
         "free access", "lifetime free", "one time payment", "premium", 
         "subscription", "buy", "purchase", "payment", "₹", "$", "price",
-        "totally price", "if u want", "direct video"
+        "totally price", "if u want", "direct video", "special offer",
+        "limited time", "exclusive", "vip access"
     ]
-    
+
     for keyword in spam_keywords:
         if keyword in content_lower:
             return
+
+    # Validate search query - ignore if empty or just punctuation
+    clean_search = re.sub(r'[^\w\s]', '', content).strip()
+    if not clean_search or len(clean_search) < 1:
+        return
 
     if PM_SEARCH == True:
         ai_search = True
@@ -362,16 +384,27 @@ async def next_page(bot, query):
 async def advantage_spoll_choker(bot, query):
     _, user, movie_ = query.data.split('#')
     movies = SPELL_CHECK.get(query.message.reply_to_message.id)
-  #  if not movies:
-     #   return await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name), show_alert=True)
+    #  if not movies:
+    #      await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name), show_alert=True)
     if int(user) != 0 and query.from_user.id != int(user):
         return await query.answer(script.ALRT_TXT.format(query.from_user.first_name), show_alert=True)
     if movie_ == "close_spellcheck":
-        return await query.message.delete()
+        try:
+            await query.message.delete()
+        except:
+            pass
+        return
     movie = movies[(int(movie_))]
     movie = re.sub(r"[:\-]", " ", movie)
     movie = re.sub(r"\s+", " ", movie).strip()
     await query.answer(script.TOP_ALRT_MSG)
+
+    # Show searching message first
+    try:
+        reply_msg = await query.message.edit_text(f"<b><i>🔄 Re-searching For {movie} 🔍</i></b>")
+    except:
+        reply_msg = await query.message.reply_text(f"<b><i>🔄 Re-searching For {movie} 🔍</i></b>")
+
     gl = await global_filters(bot, query.message, text=movie)
     if gl == False:
         k = await manual_filters(bot, query.message, text=movie)
@@ -380,16 +413,31 @@ async def advantage_spoll_choker(bot, query):
             if files:
                 k = (movie, files, offset, total_results)
                 ai_search = True
-                reply_msg = await query.message.edit_text(f"<b><i>Searching For {movie} 🔍</i></b>")
                 await auto_filter(bot, movie, query, reply_msg, ai_search, k)
             else:
                 reqstr1 = query.from_user.id if query.from_user else 0
                 reqstr = await bot.get_users(reqstr1)
                 if NO_RESULTS_MSG:
                     await bot.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, movie)))
-                k = await query.message.edit(script.MVE_NT_FND)
-                await asyncio.sleep(10)
-                await k.delete()
+
+                # Create Google search button with the movie query
+                reqst_gle = movie.replace(" ", "+")
+                button = [[
+                    InlineKeyboardButton("🔍 Check Spelling on Google", url=f"https://www.google.com/search?q={reqst_gle}+movie")
+                ]]
+
+                error_text = f"**🎬 Movie Not Available!**\n\n**📝 Your Search:** `{movie}`\n\n**❓ Possible Reasons:**\n\n• 🎞️ Not added by admin yet\n• 🚀 Not released/available\n• ✍️ Check spelling with Google\n\n**⏰ Auto-delete in 60 seconds**"
+                k = await reply_msg.edit_text(text=error_text, reply_markup=InlineKeyboardMarkup(button))
+                await asyncio.sleep(60)
+                try:
+                    await k.delete()
+                except:
+                    pass
+                try:
+                    await query.message.delete()
+                except:
+                    pass
+                return
 
 # Removed year, episode, season, language, and quality filter handlers
 
@@ -768,9 +816,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data.startswith("send_fsall"):
         temp_var, ident, key, offset = query.data.split("#")
         search = BUTTON0.get(key)
-     #   if not search:
-      #      await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
-      #      return
+        #   if not search:
+        #      await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+        #      return
         files, n_offset, total = await get_search_results(query.message.chat.id, search, offset=int(offset), filter=True)
         await send_all(client, query.from_user.id, files, ident, query.message.chat.id, query.from_user.first_name, query)
         search = BUTTONS1.get(key)
@@ -784,9 +832,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data.startswith("send_fall"):
         temp_var, ident, key, offset = query.data.split("#")
         search = FRESH.get(key)
-     #   if not search:
-       #     await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
-      #      return
+        #   if not search:
+        #      await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
+        #      return
         files, n_offset, total = await get_search_results(query.message.chat.id, search, offset=int(offset), filter=True)
         await send_all(client, query.from_user.id, files, ident, query.message.chat.id, query.from_user.first_name, query)
         await query.answer(f"Hey {query.from_user.first_name}, All files on this page has been sent successfully to your PM !", show_alert=True)
@@ -984,9 +1032,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data.startswith("show_option"):
         ident, from_user = query.data.split("#")
         btn = [[
-                InlineKeyboardButton("Uɴᴀᴠᴀɪʟᴀʙʟᴇ", callback_data=f"unavailable#{from_user}"),
+                InlineKeyboardButton("Uɴᴀᴠᴀɪʟᴀʙʟᴇ", callback_data=f"unalert#{from_user}"),
                 InlineKeyboardButton("Uᴘʟᴏᴀᴅᴇᴅ", callback_data=f"uploaded#{from_user}")
-             ],[
+              ],[
                 InlineKeyboardButton("Aʟʀᴇᴀᴅʏ Aᴠᴀɪʟᴀʙʟᴇ", callback_data=f"already_available#{from_user}")
               ]]
         btn2 = [[
@@ -1850,13 +1898,27 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
         if hasattr(message, 'text') and message.text.startswith("/"): return  # ignore commands
         if hasattr(message, 'text') and re.findall(r"((^\/|^,|^!|^\.|^[\U0001F600-\U0001F64F]).*)", message.text):
             return
-        
+
         # Handle both direct messages and getfile searches
         search_text = name if name else (message.text if hasattr(message, 'text') else "")
         
+        # Validate search text after getting it
+        clean_check = re.sub(r'[^\w\s]', '', search_text).strip()
+        if not clean_check or len(clean_check) < 1:
+            try:
+                await reply_msg.delete()
+            except:
+                pass
+            return
+
         if len(search_text) < 100:
             search = search_text
             search = search.lower()
+            # Remove full stop and other punctuation first
+            search = search.replace(".", " ")
+            search = search.replace(":", " ")
+            search = search.replace("-", " ")
+            
             find = search.split(" ")
             search = ""
             removes = ["in","upload", "series", "full", "horror", "mystery", "print", "file"]
@@ -1867,34 +1929,63 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                     search = search + x + " "
             search = re.sub(r"\b(pl(i|e)*?(s|z+|ease|se|ese|(e+)s(e)?)|((send|snd|giv(e)?|gib)(\sme)?)|movie(s)?|new|latest|bro|bruh|broh|helo|that|find|dubbed|link|venum|iruka|pannunga|pannungga|anuppunga|anupunga|anuppungga|anupungga|film|undo|kitti|kitty|tharu|kittumo|kittum|movie|any(one)|with\ssubtitle(s)?)", "", search, flags=re.IGNORECASE)
             search = re.sub(r"\s+", " ", search).strip()
-            search = search.replace("-", " ")
-            search = search.replace(":", "")
-            search = search.replace(".", "")
-            
+
             logger.info(f"🔍 Executing search for: '{search}' (original: '{name}')")
-            
+
             try:
-                files, offset, total_results = await get_search_results(message.chat.id, search, offset=0, filter=True)
+                # Add timeout for search operation (2 minutes)
+                async def search_with_timeout():
+                    return await get_search_results(message.chat.id, search, offset=0, filter=True)
+
+                files, offset, total_results = await asyncio.wait_for(search_with_timeout(), timeout=120)
                 settings = await get_settings(message.chat.id)
-                
+
                 logger.info(f"📊 Search results: {total_results} files found")
-                
+
                 if not files or total_results == 0:
                     logger.info(f"❌ No files found for search: '{search}'")
-                    if settings["spell_check"]:
-                        logger.info(f"🔄 Trying spell check for: '{search}'")
+                    # Always use spell check when no results found
+                    logger.info(f"🔄 Trying IMDb spell check for: '{search}'")
+                    settings = await get_settings(message.chat.id)
+                    if settings.get("spell_check", True):
                         return await advantage_spell_chok(client, name, msg, reply_msg, ai_search)
                     else:
-                        logger.info(f"❌ No spell check, returning no results message")
-                        return await reply_msg.edit_text(f"**⚠️ No File Found For Your Query - {name}**\n**Make Sure Spelling Is Correct.**")
-                
+                        # If spell check is disabled, show error message
+                        reqst_gle = search.replace(" ", "+")
+                        button = [[
+                            InlineKeyboardButton("🔍 Check Spelling on Google", url=f"https://www.google.com/search?q={reqst_gle}+movie")
+                        ]]
+                        error_text = f"**🎬 Movie Not Available!**\n\n**📝 Your Search:** `{search}`\n\n**❓ Possible Reasons:**\n\n• 🎞️ Not added by admin yet\n• 🚀 Not released/available\n• ✍️ Check spelling with Google\n\n**⏰ Auto-delete in 60 seconds**"
+                        k = await reply_msg.edit_text(text=error_text, reply_markup=InlineKeyboardMarkup(button))
+                        await asyncio.sleep(60)
+                        try:
+                            await k.delete()
+                        except:
+                            pass
+                        return
+
                 logger.info(f"✅ Files found, proceeding with display")
-                
+
+            except asyncio.TimeoutError:
+                logger.error(f"⏱️ Search timeout after 2 minutes for: '{search}'")
+                error_msg = await reply_msg.edit_text(f"**⏱️ Search Timeout!**\n\n**Your search '{name}' took too long.**\n**Please try with a shorter or more specific query.**")
+                await asyncio.sleep(60)
+                try:
+                    await error_msg.delete()
+                except:
+                    pass
+                return
             except Exception as e:
                 logger.error(f"❌ Error in search execution: {e}")
                 import traceback
                 logger.error(f"❌ Full traceback: {traceback.format_exc()}")
-                return await reply_msg.edit_text(f"**❌ Search failed for: {name}**\n**Please try again.**")
+                error_msg = await reply_msg.edit_text(f"**❌ Search Failed!**\n\n**Error: {str(e)}**\n**Please try again.**")
+                await asyncio.sleep(60)
+                try:
+                    await error_msg.delete()
+                except:
+                    pass
+                return
         else:
             return
     else:
@@ -1924,7 +2015,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
     logger.info(f"🔢 Using MAX_BUTTONS_PER_PAGE: {MAX_BUTTONS_PER_PAGE}")
 
     logger.info(f"🎛️ Button mode: {settings.get('button', False)}")
-    
+
     if settings.get('button'):
         logger.info(f"🔘 Creating buttons for {min(len(files), MAX_BUTTONS_PER_PAGE)} files")
         btn = [
@@ -2008,7 +2099,7 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 cap += f"<b>\n{idx}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'>[{get_size(file.file_size)}] {clean_filename(file.file_name)}\n</a></b>"
 
     logger.info(f"🖼️ IMDB poster available: {bool(imdb and imdb.get('poster'))}")
-    
+
     try:
         if imdb and imdb.get('poster'):
             logger.info(f"📸 Sending photo message with IMDB poster")
@@ -2018,11 +2109,11 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 logger.info(f"✅ Successfully sent photo message and deleted search message")
                 try:
                     if settings['auto_delete']:
-                        await asyncio.sleep(300)
+                        await asyncio.sleep(60)
                         await hehe.delete()
                 except KeyError:
                     await save_group_settings(message.chat.id, 'auto_delete', True)
-                    await asyncio.sleep(300)
+                    await asyncio.sleep(60)
                     await hehe.delete()
             except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
                 logger.warning(f"⚠️ Original poster failed, trying alternative poster")
@@ -2033,11 +2124,11 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 logger.info(f"✅ Successfully sent alternative photo message")
                 try:
                    if settings['auto_delete']:
-                        await asyncio.sleep(300)
+                        await asyncio.sleep(60)
                         await hmm.delete()
                 except KeyError:
                     await save_group_settings(message.chat.id, 'auto_delete', True)
-                    await asyncio.sleep(300)
+                    await asyncio.sleep(60)
                     await hmm.delete()
             except Exception as e:
                 logger.error(f"❌ Photo message failed, falling back to text: {e}")
@@ -2045,11 +2136,11 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
                 logger.info(f"✅ Successfully sent fallback text message")
                 try:
                     if settings['auto_delete']:
-                        await asyncio.sleep(300)
+                        await asyncio.sleep(60)
                         await fek.delete()
                 except KeyError:
                     await save_group_settings(message.chat.id, 'auto_delete', True)
-                    await asyncio.sleep(300)
+                    await asyncio.sleep(60)
                     await fek.delete()
         else:
             logger.info(f"📝 Sending text message (no IMDB poster)")
@@ -2058,15 +2149,15 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
 
             try:
                 if settings['auto_delete']:
-                    await asyncio.sleep(300)
+                    await asyncio.sleep(60)
                     await fuk.delete()
             except KeyError:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
-                await asyncio.sleep(300)
+                await asyncio.sleep(60)
                 await fuk.delete()
-                
+
         logger.info(f"🎉 AUTO_FILTER COMPLETED SUCCESSFULLY for search: '{search}'")
-        
+
     except Exception as e:
         logger.error(f"❌ CRITICAL ERROR in auto_filter message display: {e}")
         import traceback
@@ -2084,40 +2175,53 @@ async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
     settings = await get_settings(msg.chat.id)
     query = re.sub(
         r"\b(pl(i|e)*?(s|z+|ease|se|ese|(e+)s(e)?)|((send|snd|giv(e)?|gib)(\sme)?)|movie(s)?|new|latest|br((o|u)h?)*|^h(e|a)?(l)*(o)*|mal(ayalam)?|t(h)?amil|file|that|find|und(o)*|kit(t(i|y)?)?o(w)?|thar(u)?(o)*w?|kittum(o)*|aya(k)*(um(o)*)?|full\smovie|any(one)|with\ssubtitle(s)?)",
-        "", msg.text, flags=re.IGNORECASE)  # plis contribute some common words
+        "", msg.text, flags=re.IGNORECASE)
     query = query.strip() + " movie"
+
     try:
         movies = await get_poster(mv_rqst, bulk=True)
     except Exception as e:
         logger.exception(e)
         reqst_gle = mv_rqst.replace(" ", "+")
         button = [[
-            InlineKeyboardButton("Gᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={reqst_gle}")
+            InlineKeyboardButton("🔍 Check Spelling on Google", url=f"https://www.google.com/search?q={reqst_gle}+movie")
         ]]
         if NO_RESULTS_MSG:
             await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
-        k = await reply_msg.edit_text(text=script.I_CUDNT.format(mv_rqst), reply_markup=InlineKeyboardMarkup(button))
-        await asyncio.sleep(30)
-        await k.delete()
+
+        error_text = f"**🎬 Movie Not Available!**\n\n**📝 Your Search:** `{mv_rqst}`\n\n**❓ Possible Reasons:**\n\n• 🎞️ Not added by admin yet\n• 🚀 Not released/available\n• ✍️ Check spelling with Google\n\n**⏰ Auto-delete in 60 seconds**"
+        k = await reply_msg.edit_text(text=error_text, reply_markup=InlineKeyboardMarkup(button))
+        await asyncio.sleep(60)
+        try:
+            await k.delete()
+        except:
+            pass
         return
+
     movielist = []
     if not movies:
         reqst_gle = mv_rqst.replace(" ", "+")
         button = [[
-            InlineKeyboardButton("Gᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={reqst_gle}")
+            InlineKeyboardButton("🔍 Check Spelling on Google", url=f"https://www.google.com/search?q={reqst_gle}+movie")
         ]]
         if NO_RESULTS_MSG:
             await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
-        k = await reply_msg.edit_text(text=script.I_CUDNT.format(mv_rqst), reply_markup=InlineKeyboardMarkup(button))
-        await asyncio.sleep(30)
-        await k.delete()
+
+        error_text = f"**🎬 Movie Not Available!**\n\n**📝 Your Search:** `{mv_rqst}`\n\n**❓ Possible Reasons:**\n\n• 🎞️ Not added by admin yet\n• 🚀 Not released/available\n• ✍️ Check spelling with Google\n\n**⏰ Auto-delete in 60 seconds**"
+        k = await reply_msg.edit_text(text=error_text, reply_markup=InlineKeyboardMarkup(button))
+        await asyncio.sleep(60)
+        try:
+            await k.delete()
+        except:
+            pass
         return
     movielist += [movie.get('title') for movie in movies]
     movielist += [f"{movie.get('title')} {movie.get('year')}" for movie in movies]
     SPELL_CHECK[mv_id] = movielist
+
     if AI_SPELL_CHECK == True and vj_search == True:
         vj_search_new = False
-        vj_ai_msg = await reply_msg.edit_text("<b><i>I Am Trying To Find Your Movie With Your Wrong Spelling.</i></b>")
+        vj_ai_msg = await reply_msg.edit_text("<b><i>🔍 Searching IMDb with AI spell correction...</i></b>")
         movienamelist = []
         movienamelist += [movie.get('title') for movie in movies]
         for techvj in movienamelist:
@@ -2128,15 +2232,21 @@ async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
             if mv_rqst.startswith(techvj[0]):
                 await auto_filter(client, techvj, msg, reply_msg, vj_search_new)
                 break
+
         reqst_gle = mv_rqst.replace(" ", "+")
         button = [[
-            InlineKeyboardButton("Gᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={reqst_gle}")
+            InlineKeyboardButton("🔍 Check Spelling on Google", url=f"https://www.google.com/search?q={reqst_gle}+movie")
         ]]
         if NO_RESULTS_MSG:
             await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
-        k = await reply_msg.edit_text(text=script.I_CUDNT.format(mv_rqst), reply_markup=InlineKeyboardMarkup(button))
-        await asyncio.sleep(30)
-        await k.delete()
+
+        error_text = f"**🎬 Movie Not Available!**\n\n**📝 Your Search:** `{mv_rqst}`\n\n**❓ Possible Reasons:**\n\n• 🎞️ Not added by admin yet\n• 🚀 Not released/available\n• ✍️ Check spelling with Google\n\n**⏰ Auto-delete in 60 seconds**"
+        k = await reply_msg.edit_text(text=error_text, reply_markup=InlineKeyboardMarkup(button))
+        await asyncio.sleep(60)
+        try:
+            await k.delete()
+        except:
+            pass
         return
     else:
         btn = [
@@ -2148,11 +2258,12 @@ async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
             ]
             for k, movie_name in enumerate(movielist)
         ]
-        btn.append([InlineKeyboardButton(text="Close", callback_data=f'spol#{reqstr1}#close_spellcheck')])
+        btn.append([InlineKeyboardButton(text="❌ Close", callback_data=f'spol#{reqstr1}#close_spellcheck')])
         spell_check_del = await reply_msg.edit_text(
-            text=script.CUDNT_FND.format(mv_rqst),
+            text=f"**🔍 Did you mean any of these?**\n\n**📝 Your search:** `{mv_rqst}`\n\n**👇 Select the correct movie:**",
             reply_markup=InlineKeyboardMarkup(btn)
         )
+        # Auto-delete spell check message after 10 minutes
         try:
             if settings['auto_delete']:
                 await asyncio.sleep(600)
@@ -2164,6 +2275,8 @@ async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
             if settings['auto_delete']:
                 await asyncio.sleep(600)
                 await spell_check_del.delete()
+        except:
+            pass
 
 async def manual_filters(client, message, text=False):
     settings = await get_settings(message.chat.id)
