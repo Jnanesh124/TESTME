@@ -1,0 +1,66 @@
+/home/runner/workspace/plugins/genlink.py:44: SyntaxWarning: invalid escape sequence '\.'
+  regex = re.compile("(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$")
+/home/runner/workspace/plugins/index.py:65: SyntaxWarning: invalid escape sequence '\.'
+  regex = re.compile("(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$")
+12:28:34 PM - 30 - verification_storage - verification_storage - INFO - Loaded 2 verified users from verified_users.json
+
+
+Initalizing Your Bot
+No additional clients found, using default client
+Tech VJ Imported => __init__
+Tech VJ Imported => banned
+Tech VJ Imported => broadcast
+Tech VJ Imported => channel
+Tech VJ Imported => clone
+Tech VJ Imported => commands
+Tech VJ Imported => connection
+Tech VJ Imported => files_delete
+Tech VJ Imported => filters
+Tech VJ Imported => genlink
+Tech VJ Imported => index
+Tech VJ Imported => inline
+Tech VJ Imported => misc
+Tech VJ Imported => p_ttishow
+Tech VJ Imported => route
+Tech VJ Imported => verification_admin
+Tech VJ Imported => pm_filter
+Tech VJ Imported => gfilters
+12:28:35 PM - 63 - root - bot - INFO - 
+████████╗███████╗███████╗██╗  ██╗    ╔██        ██╗       ██╗
+╚═ ██╔══╝██╔════╝██╔════╝██║  ██║     ║██      ██║        ██║
+   ██║    █████╗  ██║      ███████║      ║██    ██║         ██║
+   ██║    ██╔══╝  ██║      ██╔══██║       ║██  ██║  ╔██     ██║
+   ██║    ███████╗███████╗██║  ██║        ║████║   ║████████║
+   ╚═╝    ╚══════╝╚══════╝╚═╝  ╚═╝        ╚════╝   ╚════════╝
+📊 Verified Users Status: 2 users currently verified
+📋 Verified Users Details:
+  👤 User 7623389594: Verified at 2025-09-28 10:12:47, 0.0 hours remaining
+  👤 User 523652181: Verified at 2025-09-28 10:17:53, 0.0 hours remaining
+✅ Bad words database initialized successfully
+12:28:36 PM - 129 - __main__ - bot - INFO - Loaded 2 verified users from storage
+12:28:36 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+12:28:36 PM - 507 - apscheduler.scheduler - base - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+12:28:36 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+12:28:36 PM - 1090 - apscheduler.scheduler - base - INFO - Added job "VerificationScheduler.cleanup_expired_verifications" to job store "default"
+12:28:36 PM - 214 - apscheduler.scheduler - base - INFO - Scheduler started
+12:28:36 PM - 39 - verification_scheduler - verification_scheduler - INFO - Verification cleanup scheduler started with 24-hour global verification
+12:28:36 PM - 728 - apscheduler.scheduler - base - INFO - Removed job startup_cleanup
+12:28:36 PM - 179 - apscheduler.executors.default - base - INFO - Running job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-10-12 12:28:36 UTC], next run at: 2025-10-12 12:28:36 UTC)" (scheduled at 2025-10-12 12:28:36.360065+00:00)
+12:28:36 PM - 79 - verification_scheduler - verification_scheduler - INFO - Removed 2 expired verifications (24-hour limit)
+12:28:36 PM - 203 - apscheduler.executors.default - base - INFO - Job "VerificationScheduler.cleanup_expired_verifications (trigger: date[2025-10-12 12:28:36 UTC], next run at: 2025-10-12 12:28:36 UTC)" executed successfully
+12:28:37 PM - 214 - aiohttp.access - web_log - INFO - 172.31.64.130 [12/Oct/2025:12:28:37 +0000] "GET / HTTP/1.1" 200 173 "https://9d633163-1736-4415-a0fb-c276dcf82076-00-3vu7f2d8l7dlk.pike.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arfl%3A" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+12:28:48 PM - 376 - pyrogram.dispatcher - dispatcher - ERROR - 'Collection' object is not callable. If you meant to call the 'count' method on a 'Collection' object it is failing because no such method exists.
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/gfilters.py", line 89, in get_all_gfilters
+    count = await count_gfilters('gfilters')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/database/gfilters_mdb.py", line 100, in count_gfilters
+    count = mycol.count()
+            ^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pymongo/synchronous/collection.py", line 428, in __call__
+    raise TypeError(
+TypeError: 'Collection' object is not callable. If you meant to call the 'count' method on a 'Collection' object it is failing because no such method exists.

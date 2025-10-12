@@ -1,1 +1,15 @@
-[09/28/2025 10:41:41 AM:plugins.pm_filter:190:ERROR] ❌ Error recovering search query: cannot access local variable 're' where it is not associated with a value
+[10/12/2025 12:28:48 PM:pyrogram.dispatcher:376:ERROR] 'Collection' object is not callable. If you meant to call the 'count' method on a 'Collection' object it is failing because no such method exists.
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/dispatcher.py", line 363, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pyrogram/handlers/message_handler.py", line 154, in resolve_future_or_callback
+    await self.original_callback(client, message, *args)
+  File "/home/runner/workspace/plugins/gfilters.py", line 89, in get_all_gfilters
+    count = await count_gfilters('gfilters')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/database/gfilters_mdb.py", line 100, in count_gfilters
+    count = mycol.count()
+            ^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/pymongo/synchronous/collection.py", line 428, in __call__
+    raise TypeError(
+TypeError: 'Collection' object is not callable. If you meant to call the 'count' method on a 'Collection' object it is failing because no such method exists.
